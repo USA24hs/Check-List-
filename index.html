@@ -85,29 +85,6 @@
         .btn-print:hover, .btn-email:hover {
             background: #b80000;
         }
-        .file-input-container {
-            display: inline-block;
-            margin-left: 5px;
-            position: relative;
-            overflow: hidden;
-            background: #d90000;
-            color: #fff;
-            padding: 5px 14px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.10);
-        }
-        .file-input-container:hover {
-            background: #b80000;
-        }
-        .file-input-container input[type=file] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
         .notification {
             position: fixed;
             bottom: 20px;
@@ -131,46 +108,6 @@
             background: #ff9800;
             color: white;
         }
-        .file-preview {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .file-item {
-            position: relative;
-            border: 1px solid #ddd;
-            padding: 5px;
-            border-radius: 5px;
-            background: #f9f9f9;
-            max-width: 200px;
-        }
-        .file-item img {
-            max-width: 100%;
-            max-height: 150px;
-            display: block;
-        }
-        .file-item .file-name {
-            font-size: 12px;
-            margin-top: 5px;
-            word-break: break-all;
-        }
-        .file-item .remove-file {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255,255,255,0.7);
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #d90000;
-        }
         .required-field {
             border: 1px solid #d90000 !important;
         }
@@ -191,10 +128,6 @@
     <!-- Botão de impressão e email -->
     <div class="toolbar no-print">
         <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
-        <div class="file-input-container">
-            📎 Carregar Arquivos
-            <input type="file" id="fileInput" multiple accept="image/*">
-        </div>
         <button class="btn-email" onclick="enviarPorEmail()">✉️ Enviar por E-mail</button>
     </div>
     
@@ -281,9 +214,6 @@
         <h2>🛠️ OBSERVAÇÕES DE AVARIAS</h2>
         <textarea id="observacoesAvarias" rows="15" style="width: 100%;"></textarea>
         
-        <!-- Área para preview dos arquivos carregados -->
-        <div id="filePreview" class="file-preview no-print"></div>
-        
         <h2>✍️ ASSINATURAS</h2>
         <div class="signature">
             <p><strong>Condutor Recebendo o Plantão:</strong><br>
@@ -306,58 +236,6 @@
         // Definir data atual
         document.getElementById("data").value = new Date().toISOString().split("T")[0];
         
-        // Array para armazenar os arquivos selecionados
-        let selectedFiles = [];
-        
-        // Event listener para o input de arquivo
-        document.getElementById("fileInput").addEventListener("change", function(event) {
-            const files = event.target.files;
-            
-            // Adicionar novos arquivos ao array
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-            
-            // Atualizar a visualização dos arquivos
-            updateFilePreview();
-        });
-        
-        // Função para atualizar a visualização dos arquivos
-        function updateFilePreview() {
-            const previewContainer = document.getElementById("filePreview");
-            previewContainer.innerHTML = "";
-            
-            selectedFiles.forEach((file, index) => {
-                const fileItem = document.createElement("div");
-                fileItem.className = "file-item";
-                
-                // Se for uma imagem, criar uma miniatura
-                if (file.type.startsWith("image/")) {
-                    const img = document.createElement("img");
-                    img.src = URL.createObjectURL(file);
-                    fileItem.appendChild(img);
-                }
-                
-                // Adicionar nome do arquivo
-                const fileName = document.createElement("div");
-                fileName.className = "file-name";
-                fileName.textContent = file.name;
-                fileItem.appendChild(fileName);
-                
-                // Adicionar botão para remover o arquivo
-                const removeButton = document.createElement("button");
-                removeButton.className = "remove-file";
-                removeButton.innerHTML = "×";
-                removeButton.onclick = function() {
-                    selectedFiles.splice(index, 1);
-                    updateFilePreview();
-                };
-                fileItem.appendChild(removeButton);
-                
-                previewContainer.appendChild(fileItem);
-            });
-        }
-        
         // Função para validar campos obrigatórios
         function validateForm() {
             const requiredFields = [
@@ -372,4 +250,65 @@
             
             let isValid = true;
             let missingFields = [];
-     
+            
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (!element.value.trim()) {
+                    isValid = false;
+                    missingFields.push(field.name);
+                    element.classList.add("required-field");
+                } else {
+                    element.classList.remove("required-field");
+                }
+            });
+            
+            if (!isValid) {
+                showNotification("Por favor, preencha os campos obrigatórios: " + missingFields.join(", "), "error");
+            }
+            
+            return isValid;
+        }
+        
+        // Função para enviar por email
+        function enviarPorEmail() {
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Coletar dados do formulário
+            const formData = {
+                hospital: document.getElementById("hospital").value,
+                data: document.getElementById("data").value,
+                horarioEntrada: document.getElementById("horarioEntrada").value,
+                horarioSaida: document.getElementById("horarioSaida").value,
+                condutorPlantao: document.getElementById("condutorPlantao").value,
+                recebendoDe: document.getElementById("recebendoDe").value,
+                placa: document.getElementById("placa").value,
+                kmAtual: document.getElementById("kmAtual").value,
+                nivelCombustivel: document.getElementById("nivelCombustivel").value,
+                crvValido: document.getElementById("crvValido").value,
+                proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
+                cartaoDisponivel: document.getElementById("cartaoDisponivel").checked,
+                cartaoNaoDisponivel: document.getElementById("cartaoNaoDisponivel").checked,
+                observacoesAvarias: document.getElementById("observacoesAvarias").value
+            };
+            
+            // Aqui você implementaria o envio do email
+            // Por enquanto, apenas mostramos uma notificação
+            showNotification("Check-list enviado com sucesso!", "success");
+        }
+        
+        // Função para mostrar notificações
+        function showNotification(message, type) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.className = "notification " + type;
+            notification.style.display = "block";
+            
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 5000);
+        }
+    </script>
+</body>
+    </html>
