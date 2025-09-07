@@ -316,9 +316,10 @@
             let corpoEmail = `
                 <div style="font-family: Arial, sans-serif; font-size: 14px;">
                     <h2 style="color: #d90000;">Check-list Diário - Viatura ${dadosViatura.placa}</h2>
-                    <p><strong>Hospital:</strong> ${dadosCabecalho.hospital}</p>
-                    <p><strong>Condutor de Plantão:</strong> ${dadosCabecalho.condutorPlantao}</p>
-                    
+                    <p><strong>Hospital:</strong> ${dadosCabecalho.hospital}<br>
+                    <strong>Condutor de Plantão:</strong> ${dadosCabecalho.condutorPlantao}<br>
+                                        <strong>Horário de Entrada:</strong> ${dadosCabecalho.horarioEntrada}<br>
+                    <strong>Horário de Saida:</strong> ${dadosCabecalho.horarioSaida}</p>
                     <h3 style="color: #333;">Dados da Viatura</h3>
                     <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
                         <tr><td style="background-color: #f0f0f0;"><strong>Placa:</strong></td><td>${dadosViatura.placa}</td></tr>
