@@ -2,12 +2,26 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check-list Diário - LEFE</title>
     <style>
+        :root {
+            --primary-color: #d90000;
+            --primary-dark: #b80000;
+            --secondary-color: #0056b3;
+            --secondary-dark: #004494;
+            --light-gray: #f4f4f4;
+            --medium-gray: #ccc;
+            --dark-gray: #333;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
+        
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
             margin: 5px;
             line-height: 1.6;
         }
@@ -15,13 +29,13 @@
             max-width: 900px;
             margin: auto;
             background: white;
-            padding: 20px; /* Aumentado para melhor espaçamento */
+            padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1, h2 {
-            color: #d90000;
-            border-bottom: 2px solid #d90000;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 5px;
         }
         h1 {
@@ -29,7 +43,7 @@
             text-align: center;
         }
         h2 {
-            font-size: 18px; /* Aumentado para melhor hierarquia */
+            font-size: 18px;
             margin-top: 20px;
         }
         table {
@@ -38,8 +52,8 @@
             margin: 10px 0;
         }
         th, td {
-            padding: 8px; /* Aumentado para melhor legibilidade */
-            border: 1px solid #ccc;
+            padding: 8px;
+            border: 1px solid var(--medium-gray);
             text-align: left;
         }
         th {
@@ -47,13 +61,13 @@
         }
         input[type="text"], input[type="date"], input[type="time"], input[type="number"], select, textarea {
             width: 100%;
-            padding: 5px;
-            border: 1px solid #ccc;
+            padding: 8px;
+            border: 1px solid var(--medium-gray);
             border-radius: 4px;
-            box-sizing: border-box; /* Garante que padding não afete a largura total */
+            box-sizing: border-box;
         }
         td input, td select {
-            width: auto; /* Ajusta o tamanho dos inputs na tabela */
+            width: auto;
         }
         .signature {
             margin-top: 15px;
@@ -64,19 +78,23 @@
             text-align: center;
             color: #666;
         }
-        /* Toolbar e botão de impressão */
+        /* Toolbar e botões */
         .toolbar {
             position: sticky;
             top: 0;
             z-index: 999;
-            background: #f4f4f4;
+            background: var(--light-gray);
             padding: 10px 0;
             max-width: 900px;
             margin: 0 auto 5px;
             text-align: right;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+            border-radius: 5px;
         }
-        .btn-print, .btn-email {
-            background: #d90000;
+        .toolbar button {
             color: #fff;
             border: none;
             padding: 10px 15px;
@@ -84,10 +102,27 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.10);
-            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .btn-print:hover, .btn-email:hover {
-            background: #b80000;
+        .btn-print {
+            background: var(--primary-color);
+        }
+        .btn-print:hover {
+            background: var(--primary-dark);
+        }
+        .btn-email {
+            background: var(--secondary-color);
+        }
+        .btn-email:hover {
+            background: var(--secondary-dark);
+        }
+        .btn-save {
+            background: var(--success);
+        }
+        .btn-save:hover {
+            background: #3d8b40;
         }
         .notification {
             position: fixed;
@@ -101,14 +136,92 @@
             max-width: 300px;
             font-size: 16px;
         }
-        .notification.success { background: #4CAF50; color: white; }
-        .notification.error { background: #f44336; color: white; }
-        .notification.warning { background: #ff9800; color: white; }
+        .notification.success { background: var(--success); color: white; }
+        .notification.error { background: var(--danger); color: white; }
+        .notification.warning { background: var(--warning); color: white; }
+        .notification.info { background: var(--secondary-color); color: white; }
 
         .required-field {
-            border: 2px solid #d90000 !important;
+            border: 2px solid var(--primary-color) !important;
             background-color: #fff2f2;
         }
+        
+        /* Novos estilos para melhorias */
+        .status-counters {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .status-counter {
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            min-width: 120px;
+        }
+        .status-ok { background-color: var(--success); }
+        .status-ruim { background-color: var(--warning); }
+        .status-quebrado { background-color: #ff5722; }
+        .status-faltando { background-color: #9c27b0; }
+        .status-parar { background-color: var(--danger); }
+        
+        .search-box {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid var(--medium-gray);
+        }
+        .search-box input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+        }
+        
+        .critical-item {
+            background-color: #fff2f2 !important;
+            font-weight: bold;
+        }
+        
+        .item-highlight {
+            animation: highlight 2s ease;
+            background-color: #ffffd0;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: #ffffd0; }
+            100% { background-color: transparent; }
+        }
+        
+        .save-indicator {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+            font-style: italic;
+        }
+        
+        .mobile-optimized select, .mobile-optimized input[type="text"] {
+            font-size: 16px; /* Previne zoom no iOS */
+        }
+        
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .toolbar button {
+                width: 100%;
+                justify-content: center;
+            }
+            .status-counters {
+                flex-direction: column;
+            }
+        }
+        
         @media print {
             .no-print, .no-print * {
                 display: none !important;
@@ -119,19 +232,37 @@
                 box-shadow: none;
                 border-radius: 0;
             }
+            .status-counters, .search-box {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Barra de ferramentas flutuante -->
     <div class="toolbar no-print">
-        <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
-        <button class="btn-email" onclick="enviarPorEmail()">✉️ Enviar por E-mail</button>
+        <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
+        <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> Enviar por E-mail</button>
+        <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar Agora</button>
+        <span id="saveIndicator" class="save-indicator"></span>
     </div>
     
     <div class="container">
         <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
         <h2> 📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
+        
+        <div class="search-box no-print">
+            <input type="text" id="searchInput" placeholder="Buscar item...">
+        </div>
+        
+        <div class="status-counters no-print">
+            <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
+            <div class="status-counter status-ruim">⚠️ Ruim: <span id="count-ruim">0</span></div>
+            <div class="status-counter status-quebrado">🛠️ Quebrado: <span id="count-quebrado">0</span></div>
+            <div class="status-counter status-faltando">❌ Faltando: <span id="count-faltando">0</span></div>
+            <div class="status-counter status-parar">🛑 Parar: <span id="count-parar">0</span></div>
+        </div>
+        
         <table>
             <tr><td><strong>Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima"></td></tr>
             <tr><td><strong>Data:</strong></td><td><input type="date" id="data"></td></tr>
@@ -165,7 +296,7 @@
                 <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th></tr>
             </thead>
             <tbody>
-                <!-- Os itens serão gerados via JavaScript para facilitar a manipulação -->
+                <!-- Os itens serão gerados via JavaScript -->
             </tbody>
         </table>
         
@@ -188,22 +319,70 @@
     <div id="notification" class="notification"></div>
     
     <script>
-        // Lista de todos os itens do checklist
+        // Lista de todos os itens do checklist com identificação de itens críticos
         const inspectionItems = [
-            "Óleo do motor", "Óleo hidráulico (caixa de direção)", "Fluido do radiador", "Água do limpador de para-brisa",
-            "Correia do alternador", "Correia dentada do motor", "Retrovisores", "Para-brisa", "Caixa de marchas",
-            "Pisca dos retrovisores", "Faróis dianteiros", "Lanternas traseiras", "Buzina e pisca de alerta",
-            "Botões dos vidros elétricos", "Travamento das portas", "Sinalizadores de emergência", "Sirene",
-            "Luzes internas", "Farol de embarque", "Freio de estacionamento", "Pastilhas de freio (dianteira/traseira)",
-            "Pneus", "Macaco, chave de roda, triângulo", "Limpadores/palhetas do para-brisa", "Limpeza interna",
-            "Limpeza externa", "Ar condicionado (dianteiro)", "Ar condicionado (traseiro)", "Extintor de incêndio",
-            "Alarme de estacionamento", "Alinhamento/Balanceamento", "Cilindro de oxigênio fixo (01)",
-            "Cintos de segurança", "Maca e cinto de segurança", "Cadeira de rodas (se aplicável)", "Prancha/Escada",
-            "Bateria, inversor, transformador", "Bancos e capas", "Pintura/Plotagem", "Câmera de ré (se aplicável)",
-            "Chave de troca de oxigênio", "Bala de oxigênio portátil", "Desfibrilador", "Monitor", "Respirador",
-            "Oxímetro", "Termômetro", "Glicosímetro", "Bolsa de medicação", "Bolsa de entubação", "Bolsa de ventilação",
-            "Bolsa via aérea", "Armário do salão", "Gavetas do salão", "Baú do salão", "Painel de controle do salão"
+            { name: "Óleo do motor", critical: true },
+            { name: "Óleo hidráulico (caixa de direção)", critical: true },
+            { name: "Fluido do radiador", critical: true },
+            { name: "Fluido de freio", critical: true },  <!-- NOVO ITEM ADICIONADO AQUI -->
+            { name: "Água do limpador de para-brisa", critical: false },
+            { name: "Correia do alternador", critical: true },
+            { name: "Correia dentada do motor", critical: true },
+            { name: "Retrovisores", critical: true },
+            { name: "Para-brisa", critical: true },
+            { name: "Caixa de marchas", critical: true },
+            { name: "Pisca dos retrovisores", critical: false },
+            { name: "Faróis dianteiros", critical: true },
+            { name: "Lanternas traseiras", critical: true },
+            { name: "Buzina e pisca de alerta", critical: false },
+            { name: "Botões dos vidros elétricos", critical: false },
+            { name: "Travamento das portas", critical: true },
+            { name: "Sinalizadores de emergência", critical: true },
+            { name: "Sirene", critical: true },
+            { name: "Luzes internas", critical: false },
+            { name: "Farol de embarque", critical: false },
+            { name: "Freio de estacionamento", critical: true },
+            { name: "Pastilhas de freio (dianteira/traseira)", critical: true },
+            { name: "Pneus", critical: true },
+            { name: "Macaco, chave de roda, triângulo", critical: true },
+            { name: "Limpadores/palhetas do para-brisa", critical: true },
+            { name: "Limpeza interna", critical: false },
+            { name: "Limpeza externa", critical: false },
+            { name: "Ar condicionado (dianteiro)", critical: false },
+            { name: "Ar condicionado (traseiro)", critical: false },
+            { name: "Extintor de incêndio", critical: true },
+            { name: "Alarme de estacionamento", critical: false },
+            { name: "Alinhamento/Balanceamento", critical: false },
+            { name: "Cilindro de oxigênio fixo (01)", critical: true },
+            { name: "Cintos de segurança", critical: true },
+            { name: "Maca e cinto de segurança", critical: true },
+            { name: "Cadeira de rodas (se aplicável)", critical: false },
+            { name: "Prancha/Escada", critical: false },
+            { name: "Bateria, inversor, transformador", critical: true },
+            { name: "Bancos e capas", critical: false },
+            { name: "Pintura/Plotagem", critical: false },
+            { name: "Câmera de ré (se aplicável)", critical: false },
+            { name: "Chave de troca de oxigênio", critical: true },
+            { name: "Bala de oxigênio portátil", critical: true },
+            { name: "Desfibrilador", critical: true },
+            { name: "Monitor", critical: true },
+            { name: "Respirador", critical: true },
+            { name: "Oxímetro", critical: true },
+            { name: "Termômetro", critical: true },
+            { name: "Glicosímetro", critical: true },
+            { name: "Bolsa de medicação", critical: true },
+            { name: "Bolsa de entubação", critical: true },
+            { name: "Bolsa de ventilação", critical: true },
+            { name: "Bolsa via aérea", critical: true },
+            { name: "Armário do salão", critical: false },
+            { name: "Gavetas do salão", critical: false },
+            { name: "Baú do salão", critical: false },
+            { name: "Painel de controle do salão", critical: true }
         ];
+
+        // Variáveis globais
+        let autoSaveInterval;
+        let lastSaveTime = null;
 
         // Função para gerar a tabela de inspeção dinamicamente
         function generateInspectionTable() {
@@ -219,166 +398,92 @@
             
             inspectionItems.forEach((item, index) => {
                 const row = document.createElement('tr');
+                if (item.critical) {
+                    row.classList.add('critical-item');
+                }
                 row.innerHTML = `
                     <td>${(index + 1).toString().padStart(2, '0')}</td>
-                    <td>${item}</td>
-                    <td><select id="status-${index + 1}">${statusOptions}</select></td>
-                    <td><input type="text" id="obs-${index + 1}" style="width: 100%;"></td>
+                    <td>${item.name}</td>
+                    <td><select id="status-${index + 1}" class="status-select">${statusOptions}</select></td>
+                    <td><input type="text" id="obs-${index + 1}" style="width: 100%;" class="obs-input"></td>
                 `;
                 tableBody.appendChild(row);
             });
+
+            // Adicionar event listeners para os selects e inputs
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', updateStatusCounters);
+            });
+            
+            document.querySelectorAll('.obs-input').forEach(input => {
+                input.addEventListener('input', debounce(salvarDados, 1000));
+            });
         }
 
-        // Definir data atual ao carregar a página
-        document.getElementById("data").value = new Date().toISOString().split("T")[0];
-        // Gerar a tabela
-        generateInspectionTable();
-        
-        // Função para validar campos obrigatórios
-        function validateForm() {
-            const requiredFields = [
-                { id: "hospital", name: "Hospital" },
-                { id: "data", name: "Data" },
-                { id: "condutorPlantao", name: "Condutor de Plantão" },
-                { id: "placa", name: "Placa" },
-                { id: "kmAtual", name: "Km Atual" }
-            ];
+        // Função para atualizar os contadores de status
+        function updateStatusCounters() {
+            const counters = {
+                '✅ OK': 0,
+                '⚠️ Ruim': 0,
+                '🛠️ Quebrado': 0,
+                '❌ Faltando': 0,
+                '🛑 Parar Veículo': 0
+            };
             
-            let isValid = true;
-            let missingFields = [];
-            
-            // Limpa formatação anterior
-            document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
-            
-            requiredFields.forEach(field => {
-                const element = document.getElementById(field.id);
-                if (!element.value.trim()) {
-                    isValid = false;
-                    missingFields.push(field.name);
-                    element.classList.add("required-field");
+            document.querySelectorAll('.status-select').forEach(select => {
+                if (select.value && counters.hasOwnProperty(select.value)) {
+                    counters[select.value]++;
                 }
             });
             
-            if (!isValid) {
-                showNotification("Por favor, preencha os campos obrigatórios: " + missingFields.join(", "), "error");
-            }
-            
-            return isValid;
+            document.getElementById('count-ok').textContent = counters['✅ OK'];
+            document.getElementById('count-ruim').textContent = counters['⚠️ Ruim'];
+            document.getElementById('count-quebrado').textContent = counters['🛠️ Quebrado'];
+            document.getElementById('count-faltando').textContent = counters['❌ Faltando'];
+            document.getElementById('count-parar').textContent = counters['🛑 Parar Veículo'];
         }
-        
-        // Função para enviar por email usando mailto:
-        function enviarPorEmail() {
-            if (!validateForm()) {
-                return;
-            }
-            
-            // --- COLETA DE DADOS ---
-            const dadosCabecalho = {
-                hospital: document.getElementById("hospital").value,
-                data: new Date(document.getElementById("data").value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
-                horarioEntrada: document.getElementById("horarioEntrada").value,
-                horarioSaida: document.getElementById("horarioSaida").value,
-                condutorPlantao: document.getElementById("condutorPlantao").value,
-                recebendoDe: document.getElementById("recebendoDe").value
+
+        // Função para buscar itens na tabela
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', debounce(function() {
+                const searchText = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#inspection-table tbody tr');
+                
+                rows.forEach((row, index) => {
+                    const itemName = inspectionItems[index].name.toLowerCase();
+                    if (itemName.includes(searchText)) {
+                        row.style.display = '';
+                        row.classList.add('item-highlight');
+                        setTimeout(() => {
+                            row.classList.remove('item-highlight');
+                        }, 2000);
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }, 300));
+        }
+
+        // Função debounce para melhorar performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
             };
-            
-            const dadosViatura = {
-                placa: document.getElementById("placa").value.toUpperCase(),
-                kmAtual: document.getElementById("kmAtual").value,
-                nivelCombustivel: document.getElementById("nivelCombustivel").value,
-                crvValido: document.getElementById("crvValido").value,
-                proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
-                cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
-            };
-            
-            const itensInspecao = [];
-            for (let i = 1; i <= inspectionItems.length; i++) {
-                const status = document.getElementById(`status-${i}`).value;
-                const obs = document.getElementById(`obs-${i}`).value.trim();
-                if (status || obs) { // Apenas adiciona se tiver status ou observação
-                    itensInspecao.push({
-                        num: i.toString().padStart(2, '0'),
-                        item: inspectionItems[i-1],
-                        status: status || 'Não avaliado',
-                        obs: obs || '---'
-                    });
-                }
-            }
-
-            if (itensInspecao.length === 0) {
-                showNotification("Nenhum item de inspeção foi preenchido. Preencha ao menos um status.", "warning");
-                return;
-            }
-
-            const observacoesGerais = document.getElementById("observacoesAvarias").value;
-            
-            // --- MONTAGEM DO CORPO DO E-MAIL (HTML) ---
-            let corpoEmail = `
-                <div style="font-family: Arial, sans-serif; font-size: 14px;">
-                    <h2 style="color: #d90000;">Check-list Diário - Viatura ${dadosViatura.placa}</h2>
-                    <p><strong>Hospital:</strong> ${dadosCabecalho.hospital}<br>
-                    <strong>Condutor de Plantão:</strong> ${dadosCabecalho.condutorPlantao}<br>
-                                        <strong>Horário de Entrada:</strong> ${dadosCabecalho.horarioEntrada}<br>
-                    <strong>Horário de Saida:</strong> ${dadosCabecalho.horarioSaida}</p>
-                    <h3 style="color: #333;">Dados da Viatura</h3>
-                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
-                        <tr><td style="background-color: #f0f0f0;"><strong>Placa:</strong></td><td>${dadosViatura.placa}</td></tr>
-                        <tr><td style="background-color: #f0f0f0;"><strong>Km Atual:</strong></td><td>${dadosViatura.kmAtual} km</td></tr>
-                        <tr><td style="background-color: #f0f0f0;"><strong>Nível Combustível:</strong></td><td>${dadosViatura.nivelCombustivel}</td></tr>
-                        <tr><td style="background-color: #f0f0f0;"><strong>Cartão Abastecimento:</strong></td><td>${dadosViatura.cartaoStatus}</td></tr>
-                    </table>
-
-                    <h3 style="color: #333; margin-top: 20px;">Itens de Inspeção com Observações</h3>
-                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
-                        <tr style="background-color: #f0f0f0;">
-                            <th>#</th>
-                            <th>Item</th>
-                            <th>Status</th>
-                            <th>Observação</th>
-                        </tr>
-                        ${itensInspecao.map(item => `
-                            <tr>
-                                <td>${item.num}</td>
-                                <td>${item.item}</td>
-                                <td>${item.status}</td>
-                                <td>${item.obs}</td>
-                            </tr>
-                        `).join('')}
-                    </table>
-                    
-                    ${observacoesGerais ? `
-                        <h3 style="color: #333; margin-top: 20px;">Observações Gerais / Avarias</h3>
-                        <p style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">${observacoesGerais}</p>
-                    ` : ''}
-
-                    <p style="margin-top: 20px; font-size: 12px; color: #666;">E-mail gerado automaticamente pelo sistema de Check-list LEFE.</p>
-                </div>
-            `;
-            
-            // --- CRIAÇÃO DO LINK mailto: ---
-            const para = "email_destinatario@sua_empresa.com"; // <-- TROQUE PELO E-MAIL DE DESTINO
-            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
-            
-            // encodeURIComponent é crucial para garantir que caracteres especiais não quebrem o link
-            const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
-            
-            // Abre o cliente de e-mail do usuário
-            window.location.href = mailtoLink;
-
-            showNotification("Preparando e-mail... Verifique seu programa de e-mail.", "success");
         }
-        
-        // Função para mostrar notificações
-        function showNotification(message, type) {
-            const notification = document.getElementById("notification");
-            notification.textContent = message;
-            notification.className = "notification " + type;
-            notification.style.display = "block";
-            
-            setTimeout(() => {
-                notification.style.display = "none";
-            }, 6000); // Aumentei o tempo para 6 segundos
-        }
-    </script>
-</body>
-</html>
+
+        // Função para salvar dados no localStorage
+        function salvarDados() {
+            try {
+                const dados = {
+                    hospital: document.getElementById("hospital").value,
+                    data: document.getElementById("data").value,
+                    horarioEntrada: document.getElementById("horarioEntrada").value,
+                    horarioSaida: document.getElementById("horarioSaida").value,
+                    condutorPlantao: document.getElementById("condutorPlantao"
