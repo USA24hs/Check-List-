@@ -15,7 +15,7 @@
             max-width: 900px;
             margin: auto;
             background: white;
-            padding: 5px;
+            padding: 20px; /* Aumentado para melhor espaçamento */
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
@@ -29,8 +29,8 @@
             text-align: center;
         }
         h2 {
-            font-size: 16px;
-            margin-top: 5px;
+            font-size: 18px; /* Aumentado para melhor hierarquia */
+            margin-top: 20px;
         }
         table {
             width: 100%;
@@ -38,20 +38,23 @@
             margin: 10px 0;
         }
         th, td {
-            padding: 5px;
+            padding: 8px; /* Aumentado para melhor legibilidade */
             border: 1px solid #ccc;
             text-align: left;
         }
         th {
             background-color: #f0f0f0;
         }
-        .status {
-            text-align: center;
-            font-weight: bold;
+        input[type="text"], input[type="date"], input[type="time"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Garante que padding não afete a largura total */
         }
-        .ok { color: green; }
-        .atencao { color: orange; }
-        .erro { color: red; }
+        td input, td select {
+            width: auto; /* Ajusta o tamanho dos inputs na tabela */
+        }
         .signature {
             margin-top: 15px;
         }
@@ -66,7 +69,8 @@
             position: sticky;
             top: 0;
             z-index: 999;
-            background: transparent;
+            background: #f4f4f4;
+            padding: 10px 0;
             max-width: 900px;
             margin: 0 auto 5px;
             text-align: right;
@@ -75,12 +79,12 @@
             background: #d90000;
             color: #fff;
             border: none;
-            padding: 5px 14px;
+            padding: 10px 15px;
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.10);
-            margin-left: 5px;
+            margin-left: 10px;
         }
         .btn-print:hover, .btn-email:hover {
             background: #b80000;
@@ -95,21 +99,15 @@
             display: none;
             z-index: 1000;
             max-width: 300px;
+            font-size: 16px;
         }
-        .notification.success {
-            background: #4CAF50;
-            color: white;
-        }
-        .notification.error {
-            background: #f44336;
-            color: white;
-        }
-        .notification.warning {
-            background: #ff9800;
-            color: white;
-        }
+        .notification.success { background: #4CAF50; color: white; }
+        .notification.error { background: #f44336; color: white; }
+        .notification.warning { background: #ff9800; color: white; }
+
         .required-field {
-            border: 1px solid #d90000 !important;
+            border: 2px solid #d90000 !important;
+            background-color: #fff2f2;
         }
         @media print {
             .no-print, .no-print * {
@@ -125,7 +123,7 @@
     </style>
 </head>
 <body>
-    <!-- Botão de impressão e email -->
+    <!-- Barra de ferramentas flutuante -->
     <div class="toolbar no-print">
         <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
         <button class="btn-email" onclick="enviarPorEmail()">✉️ Enviar por E-mail</button>
@@ -134,98 +132,55 @@
     <div class="container">
         <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
         <h2> 📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
-        <p><strong>Hospital:</strong> <input type="text" id="hospital" value="Hospital HRL" style="width: 300px;"> &nbsp;
-        <strong>Data:</strong> <input type="date" id="data" style="width: 110px;"> <br>
-        <strong>Horário de Entrada:</strong> <input type="time" id="horarioEntrada" value="07:00" style="width: 80px;"> &nbsp;
-        <strong>Horário de Saída:</strong> <input type="time" id="horarioSaida" value="07:00" style="width: 80px;"> <br>
-        <strong>Condutor de Plantão:</strong> <input type="text" id="condutorPlantao" placeholder="Nome completo" style="width: 285px;"> &nbsp; 
-        <strong>Recebendo de:</strong> <input type="text" id="recebendoDe" placeholder="Nome do condutor anterior" style="width: 285px;"></p>
+        <table>
+            <tr><td><strong>Hospital:</strong></td><td><input type="text" id="hospital" value="Hospital HRL"></td></tr>
+            <tr><td><strong>Data:</strong></td><td><input type="date" id="data"></td></tr>
+            <tr><td><strong>Horário de Entrada:</strong></td><td><input type="time" id="horarioEntrada" value="07:00"></td></tr>
+            <tr><td><strong>Horário de Saída:</strong></td><td><input type="time" id="horarioSaida" value="19:00"></td></tr>
+            <tr><td><strong>Condutor de Plantão:</strong></td><td><input type="text" id="condutorPlantao" placeholder="Nome completo"></td></tr>
+            <tr><td><strong>Recebendo de:</strong></td><td><input type="text" id="recebendoDe" placeholder="Nome do condutor anterior"></td></tr>
+        </table>
+        
         <h2>🚑 DADOS DA VIATURA (USA)</h2>
         <table>
             <tr><th>Item</th><th>Informação</th></tr>
-            <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: RKU1F52" style="width: 100px;"></td></tr>
-            <tr><td><strong>Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847" style="width: 100px;"> </td></tr>
-            <tr><td><strong>Nível de Combustível</strong></td><td><input type="text" id="nivelCombustivel" placeholder="Ex: 5/10 traços" style="width: 100px;"></td></tr>
-            <tr><td><strong>CRV Válido até</strong></td><td><input type="number" id="crvValido" placeholder="Ano" style="width: 100px;"></td></tr>
-            <tr><td><strong>Próxima Troca de Óleo km</strong></td><td><input type="number" id="proximaTrocaOleo" placeholder="Km" style="width: 100px;"> </td></tr>
-            <tr><td><strong>Cartão de Abastecimento</strong></td><td><input type="checkbox" id="cartaoDisponivel"> Disponível <input type="checkbox" id="cartaoNaoDisponivel"> Não Disponível</td></tr>
+            <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: RKU1F52"></td></tr>
+            <tr><td><strong>Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847"></td></tr>
+            <tr><td><strong>Nível de Combustível</strong></td><td><input type="text" id="nivelCombustivel" placeholder="Ex: 5/10 traços ou 1/2 tanque"></td></tr>
+            <tr><td><strong>CRV Válido até</strong></td><td><input type="number" id="crvValido" placeholder="Ano (ex: 2024)"></td></tr>
+            <tr><td><strong>Próxima Troca de Óleo km</strong></td><td><input type="number" id="proximaTrocaOleo" placeholder="Km da próxima troca"></td></tr>
+            <tr>
+                <td><strong>Cartão de Abastecimento</strong></td>
+                <td>
+                    <input type="radio" id="cartaoDisponivel" name="cartaoStatus" value="Disponível"> <label for="cartaoDisponivel">Disponível</label>
+                    <input type="radio" id="cartaoNaoDisponivel" name="cartaoStatus" value="Não Disponível"> <label for="cartaoNaoDisponivel">Não Disponível</label>
+                </td>
+            </tr>
         </table>
-        <h2>🛠️ STATUS DE INSPEÇÃO</h2>
-        <p><em>Marque o status com: ✅ OK | ⚠️ Cuidado | 🛠️ Quebrado | ❌ Faltando | 🛑 Parar veículo</em></p>
-        <table>
-            <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th></tr>
-            <tr><td>01</td><td>Óleo do motor</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>02</td><td>Óleo hidráulico (caixa de direção)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>03</td><td>Fluido do radiador</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>04</td><td>Água do limpador de para-brisa</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>05</td><td>Correia do alternador</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>06</td><td>Correia dentada do motor</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>07</td><td>Retrovisores</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>08</td><td>Para-brisa</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>09</td><td>Caixa de marchas</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>10</td><td>Pisca dos retrovisores</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>11</td><td>Faróis dianteiros</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>12</td><td>Lanternas traseiras</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>13</td><td>Buzina e pisca de alerta</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>14</td><td>Botões dos vidros elétricos</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>15</td><td>Travamento das portas</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>16</td><td>Sinalizadores de emergência</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>17</td><td>Sirene</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>18</td><td>Luzes internas</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>19</td><td>Farol de embarque</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>20</td><td>Freio de estacionamento</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>21</td><td>Pastilhas de freio (dianteira/traseira)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>22</td><td>Pneus</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>23</td><td>Macaco, chave de roda, triângulo</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>24</td><td>Limpadores/palhetas do para-brisa</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>25</td><td>Limpeza interna</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>26</td><td>Limpeza externa</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>27</td><td>Ar condicionado (dianteiro)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>28</td><td>Ar condicionado (traseiro)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>29</td><td>Extintor de incêndio</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>30</td><td>Alarme de estacionamento</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>31</td><td>Alinhamento/Balanceamento</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>32</td><td>Cilindro de oxigênio fixo (01)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>33</td><td>Cintos de segurança</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>34</td><td>Maca e cinto de segurança</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>35</td><td>Cadeira de rodas (se aplicável)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>36</td><td>Prancha/Escada</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>37</td><td>Bateria, inversor, transformador</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>38</td><td>Bancos e capas</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>39</td><td>Pintura/Plotagem</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>40</td><td>Câmera de ré (se aplicável)</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>41</td><td>Chave de troca de oxigênio</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>42</td><td>Bala de oxigênio portátil</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>43</td><td>Desfibrilador</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>44</td><td>Monitor</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>45</td><td>Respirador</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>46</td><td>Oxímetro</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>47</td><td>Termômetro</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>48</td><td>Glicosímetro</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>49</td><td>Bolsa de medicação</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>50</td><td>Bolsa de entubação</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>51</td><td>Bolsa de ventilação</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>52</td><td>Bolsa via aérea</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>53</td><td>Armário do salão</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>54</td><td>Gavetas do salão</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>55</td><td>Baú do salão</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-            <tr><td>56</td><td>Painel de controle do salão</td><td><input type="text" size="5"></td><td><input type="text" style="width: 500px;"></td></tr>
-        </table>
-        <h2>🛠️ OBSERVAÇÕES DE AVARIAS</h2>
-        <textarea id="observacoesAvarias" rows="15" style="width: 100%;"></textarea>
         
-        <h2>✍️ ASSINATURAS</h2>
+        <h2>🛠️ STATUS DE INSPEÇÃO</h2>
+        <p><em>Selecione o status: ✅ OK | ⚠️ Ruim | 🛠️ Quebrado | ❌ Faltando | 🛑 Parar veículo</em></p>
+        <table id="inspection-table">
+            <thead>
+                <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th></tr>
+            </thead>
+            <tbody>
+                <!-- Os itens serão gerados via JavaScript para facilitar a manipulação -->
+            </tbody>
+        </table>
+        
+        <h2>🛠️ OBSERVAÇÕES GERAIS / AVARIAS</h2>
+        <textarea id="observacoesAvarias" rows="10" style="width: 100%;"></textarea>
+        
+        <h2>✍️ ASSINATURAS (PARA IMPRESSÃO)</h2>
         <div class="signature">
-            <p><strong>Condutor Recebendo o Plantão:</strong><br>
-            Nome: _________________________________________<br>
-            Assinatura: ___________________ &nbsp; Data: ___/___/____</p>
-            <p><strong>Condutor Entregando o Plantão:</strong><br>
-            Nome: _________________________________________<br>
-            Assinatura: ___________________ &nbsp; Data: ___/___/____</p>
+            <p><strong>Condutor Recebendo o Plantão:</strong> _________________________________________</p>
+            <p><strong>Condutor Entregando o Plantão:</strong> _________________________________________</p>
         </div>
+
         <div class="footer">
-            <p>📝Documento válido como registro de inspeção diária – LEFE<br>
-            🗂️ Arquivar após preenchimento.<br> Atualizado em 2025.</p>
+            <p>📝 Documento válido como registro de inspeção diária – LEFE<br>
+            🗂️ Arquivar após preenchimento.<br> Atualizado em 2024.</p>
         </div>
     </div>
     
@@ -233,16 +188,57 @@
     <div id="notification" class="notification"></div>
     
     <script>
-        // Definir data atual
+        // Lista de todos os itens do checklist
+        const inspectionItems = [
+            "Óleo do motor", "Óleo hidráulico (caixa de direção)", "Fluido do radiador", "Água do limpador de para-brisa",
+            "Correia do alternador", "Correia dentada do motor", "Retrovisores", "Para-brisa", "Caixa de marchas",
+            "Pisca dos retrovisores", "Faróis dianteiros", "Lanternas traseiras", "Buzina e pisca de alerta",
+            "Botões dos vidros elétricos", "Travamento das portas", "Sinalizadores de emergência", "Sirene",
+            "Luzes internas", "Farol de embarque", "Freio de estacionamento", "Pastilhas de freio (dianteira/traseira)",
+            "Pneus", "Macaco, chave de roda, triângulo", "Limpadores/palhetas do para-brisa", "Limpeza interna",
+            "Limpeza externa", "Ar condicionado (dianteiro)", "Ar condicionado (traseiro)", "Extintor de incêndio",
+            "Alarme de estacionamento", "Alinhamento/Balanceamento", "Cilindro de oxigênio fixo (01)",
+            "Cintos de segurança", "Maca e cinto de segurança", "Cadeira de rodas (se aplicável)", "Prancha/Escada",
+            "Bateria, inversor, transformador", "Bancos e capas", "Pintura/Plotagem", "Câmera de ré (se aplicável)",
+            "Chave de troca de oxigênio", "Bala de oxigênio portátil", "Desfibrilador", "Monitor", "Respirador",
+            "Oxímetro", "Termômetro", "Glicosímetro", "Bolsa de medicação", "Bolsa de entubação", "Bolsa de ventilação",
+            "Bolsa via aérea", "Armário do salão", "Gavetas do salão", "Baú do salão", "Painel de controle do salão"
+        ];
+
+        // Função para gerar a tabela de inspeção dinamicamente
+        function generateInspectionTable() {
+            const tableBody = document.querySelector("#inspection-table tbody");
+            const statusOptions = `
+                <option value=""></option>
+                <option value="✅ OK">✅ OK</option>
+                <option value="⚠️ Ruim">⚠️ Ruim</option>
+                <option value="🛠️ Quebrado">🛠️ Quebrado</option>
+                <option value="❌ Faltando">❌ Faltando</option>
+                <option value="🛑 Parar Veículo">🛑 Parar Veículo</option>
+            `;
+            
+            inspectionItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${(index + 1).toString().padStart(2, '0')}</td>
+                    <td>${item}</td>
+                    <td><select id="status-${index + 1}">${statusOptions}</select></td>
+                    <td><input type="text" id="obs-${index + 1}" style="width: 100%;"></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Definir data atual ao carregar a página
         document.getElementById("data").value = new Date().toISOString().split("T")[0];
+        // Gerar a tabela
+        generateInspectionTable();
         
         // Função para validar campos obrigatórios
         function validateForm() {
             const requiredFields = [
                 { id: "hospital", name: "Hospital" },
                 { id: "data", name: "Data" },
-                { id: "horarioEntrada", name: "Horário de Entrada" },
-                { id: "horarioSaida", name: "Horário de Saída" },
                 { id: "condutorPlantao", name: "Condutor de Plantão" },
                 { id: "placa", name: "Placa" },
                 { id: "kmAtual", name: "Km Atual" }
@@ -251,14 +247,15 @@
             let isValid = true;
             let missingFields = [];
             
+            // Limpa formatação anterior
+            document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
+            
             requiredFields.forEach(field => {
                 const element = document.getElementById(field.id);
                 if (!element.value.trim()) {
                     isValid = false;
                     missingFields.push(field.name);
                     element.classList.add("required-field");
-                } else {
-                    element.classList.remove("required-field");
                 }
             });
             
@@ -269,33 +266,105 @@
             return isValid;
         }
         
-        // Função para enviar por email
+        // Função para enviar por email usando mailto:
         function enviarPorEmail() {
             if (!validateForm()) {
                 return;
             }
             
-            // Coletar dados do formulário
-            const formData = {
+            // --- COLETA DE DADOS ---
+            const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
-                data: document.getElementById("data").value,
+                data: new Date(document.getElementById("data").value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
                 horarioEntrada: document.getElementById("horarioEntrada").value,
                 horarioSaida: document.getElementById("horarioSaida").value,
                 condutorPlantao: document.getElementById("condutorPlantao").value,
-                recebendoDe: document.getElementById("recebendoDe").value,
-                placa: document.getElementById("placa").value,
+                recebendoDe: document.getElementById("recebendoDe").value
+            };
+            
+            const dadosViatura = {
+                placa: document.getElementById("placa").value.toUpperCase(),
                 kmAtual: document.getElementById("kmAtual").value,
                 nivelCombustivel: document.getElementById("nivelCombustivel").value,
                 crvValido: document.getElementById("crvValido").value,
                 proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
-                cartaoDisponivel: document.getElementById("cartaoDisponivel").checked,
-                cartaoNaoDisponivel: document.getElementById("cartaoNaoDisponivel").checked,
-                observacoesAvarias: document.getElementById("observacoesAvarias").value
+                cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
             };
             
-            // Aqui você implementaria o envio do email
-            // Por enquanto, apenas mostramos uma notificação
-            showNotification("Check-list enviado com sucesso!", "success");
+            const itensInspecao = [];
+            for (let i = 1; i <= inspectionItems.length; i++) {
+                const status = document.getElementById(`status-${i}`).value;
+                const obs = document.getElementById(`obs-${i}`).value.trim();
+                if (status || obs) { // Apenas adiciona se tiver status ou observação
+                    itensInspecao.push({
+                        num: i.toString().padStart(2, '0'),
+                        item: inspectionItems[i-1],
+                        status: status || 'Não avaliado',
+                        obs: obs || '---'
+                    });
+                }
+            }
+
+            if (itensInspecao.length === 0) {
+                showNotification("Nenhum item de inspeção foi preenchido. Preencha ao menos um status.", "warning");
+                return;
+            }
+
+            const observacoesGerais = document.getElementById("observacoesAvarias").value;
+            
+            // --- MONTAGEM DO CORPO DO E-MAIL (HTML) ---
+            let corpoEmail = `
+                <div style="font-family: Arial, sans-serif; font-size: 14px;">
+                    <h2 style="color: #d90000;">Check-list Diário - Viatura ${dadosViatura.placa}</h2>
+                    <p><strong>Data:</strong> ${dadosCabecalho.data}</p>
+                    <p><strong>Condutor de Plantão:</strong> ${dadosCabecalho.condutorPlantao}</p>
+                    
+                    <h3 style="color: #333;">Dados da Viatura</h3>
+                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+                        <tr><td style="background-color: #f0f0f0;"><strong>Placa:</strong></td><td>${dadosViatura.placa}</td></tr>
+                        <tr><td style="background-color: #f0f0f0;"><strong>Km Atual:</strong></td><td>${dadosViatura.kmAtual} km</td></tr>
+                        <tr><td style="background-color: #f0f0f0;"><strong>Nível Combustível:</strong></td><td>${dadosViatura.nivelCombustivel}</td></tr>
+                        <tr><td style="background-color: #f0f0f0;"><strong>Cartão Abastecimento:</strong></td><td>${dadosViatura.cartaoStatus}</td></tr>
+                    </table>
+
+                    <h3 style="color: #333; margin-top: 20px;">Itens de Inspeção com Observações</h3>
+                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+                        <tr style="background-color: #f0f0f0;">
+                            <th>#</th>
+                            <th>Item</th>
+                            <th>Status</th>
+                            <th>Observação</th>
+                        </tr>
+                        ${itensInspecao.map(item => `
+                            <tr>
+                                <td>${item.num}</td>
+                                <td>${item.item}</td>
+                                <td>${item.status}</td>
+                                <td>${item.obs}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                    
+                    ${observacoesGerais ? `
+                        <h3 style="color: #333; margin-top: 20px;">Observações Gerais / Avarias</h3>
+                        <p style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">${observacoesGerais}</p>
+                    ` : ''}
+
+                    <p style="margin-top: 20px; font-size: 12px; color: #666;">E-mail gerado automaticamente pelo sistema de Check-list LEFE.</p>
+                </div>
+            `;
+            
+            // --- CRIAÇÃO DO LINK mailto: ---
+            const para = "email_destinatario@sua_empresa.com"; // <-- TROQUE PELO E-MAIL DE DESTINO
+            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
+            
+            // encodeURIComponent é crucial para garantir que caracteres especiais não quebrem o link
+            const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
+            
+            // Abre o cliente de e-mail do usuário
+            window.location.href = mailtoLink;
+
+            showNotification("Preparando e-mail... Verifique seu programa de e-mail.", "success");
         }
         
         // Função para mostrar notificações
@@ -307,8 +376,8 @@
             
             setTimeout(() => {
                 notification.style.display = "none";
-            }, 5000);
+            }, 6000); // Aumentei o tempo para 6 segundos
         }
     </script>
 </body>
-    </html>
+</html>
