@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-list Diário - LEFE</title>
+    <title>Check-list Diário - LEFE v2.0</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTEVGRSBDaGVjay1saXN0Iiwic2hvcnRfbmFtZSI6IkxFRkUiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Q5MDAwMCIsInRoZW1lX2NvbG9yIjoiI2Q5MDAwMCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBME9EQWdORGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlORGd3SWlCb1pXbG5hSFE5SWpRNE1DSWdabWxzYkQwaVkyUmxObmxoSWk4K1BDOXRKVE0rIiwic2l6ZXMiOiI0ODB4NDgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
     <style>
         :root {
             --primary-color: #d90000;
@@ -16,19 +17,34 @@
             --success: #4CAF50;
             --warning: #ff9800;
             --danger: #f44336;
+            --background: #ffffff;
+            --text: #333333;
+            --card-bg: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-gray: #2a2a2a;
+                --medium-gray: #555;
+                --dark-gray: #ffffff;
+                --background: #1a1a1a;
+                --text: #ffffff;
+                --card-bg: #2d2d2d;
+            }
         }
         
         body {
             font-family: Arial, sans-serif;
             background-color: var(--light-gray);
-            color: var(--dark-gray);
+            color: var(--text);
             margin: 5px;
             line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
         }
         .container {
             max-width: 900px;
             margin: auto;
-            background: white;
+            background: var(--card-bg);
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -57,7 +73,7 @@
             text-align: left;
         }
         th {
-            background-color: #f0f0f0;
+            background-color: var(--light-gray);
         }
         input[type="text"], input[type="date"], input[type="time"], input[type="number"], select, textarea {
             width: 100%;
@@ -65,6 +81,8 @@
             border: 1px solid var(--medium-gray);
             border-radius: 4px;
             box-sizing: border-box;
+            background-color: var(--card-bg);
+            color: var(--text);
         }
         td input, td select {
             width: auto;
@@ -78,6 +96,7 @@
             text-align: center;
             color: #666;
         }
+        
         /* Toolbar e botões */
         .toolbar {
             position: sticky;
@@ -106,24 +125,21 @@
             align-items: center;
             gap: 5px;
         }
-        .btn-print {
-            background: var(--primary-color);
-        }
-        .btn-print:hover {
-            background: var(--primary-dark);
-        }
-        .btn-email {
-            background: var(--secondary-color);
-        }
-        .btn-email:hover {
-            background: var(--secondary-dark);
-        }
-        .btn-save {
-            background: var(--success);
-        }
-        .btn-save:hover {
-            background: #3d8b40;
-        }
+        .btn-print { background: var(--primary-color); }
+        .btn-print:hover { background: var(--primary-dark); }
+        .btn-email { background: var(--secondary-color); }
+        .btn-email:hover { background: var(--secondary-dark); }
+        .btn-save { background: var(--success); }
+        .btn-save:hover { background: #3d8b40; }
+        .btn-clear { background: var(--danger); }
+        .btn-clear:hover { background: #c62828; }
+        .btn-export { background: #673AB7; }
+        .btn-export:hover { background: #5E35B1; }
+        .btn-history { background: #795548; }
+        .btn-history:hover { background: #6D4C41; }
+        .btn-qr { background: #FF5722; }
+        .btn-qr:hover { background: #E64A19; }
+
         .notification {
             position: fixed;
             bottom: 20px;
@@ -146,7 +162,7 @@
             background-color: #fff2f2;
         }
         
-        /* Novos estilos para melhorias */
+        /* Status counters */
         .status-counters {
             display: flex;
             justify-content: space-around;
@@ -189,9 +205,84 @@
             margin-left: 10px;
             font-style: italic;
         }
-        
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: var(--text); }
+
+        /* Assinatura digital */
+        #assinaturaCanvas {
+            border: 2px solid var(--medium-gray);
+            border-radius: 5px;
+            cursor: crosshair;
+            background-color: white;
+        }
+
+        /* Upload de fotos */
+        .photo-upload {
+            margin: 10px 0;
+        }
+        .photo-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        /* QR Code */
+        #qrcode {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Histórico */
+        .history-item {
+            padding: 10px;
+            border: 1px solid var(--medium-gray);
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: var(--light-gray);
+        }
+        .history-item:hover {
+            background-color: var(--medium-gray);
+        }
+
+        /* Localização */
+        .location-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
         .mobile-optimized select, .mobile-optimized input[type="text"] {
-            font-size: 16px; /* Previne zoom no iOS */
+            font-size: 16px;
         }
         
         @media (max-width: 768px) {
@@ -205,6 +296,10 @@
             }
             .status-counters {
                 flex-direction: column;
+            }
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
             }
         }
         
@@ -222,20 +317,43 @@
                 display: none;
             }
         }
+
+        /* Dashboard básico */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .dashboard-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        .dashboard-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
-    <!-- Barra de ferramentas flutuante -->
+    <!-- Barra de ferramentas melhorada -->
     <div class="toolbar no-print">
         <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
-        <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> Enviar por E-mail</button>
-        <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar Agora</button>
+        <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> E-mail</button>
+        <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar</button>
+        <button class="btn-export" onclick="exportarDados()"><span>📤</span> Exportar</button>
+        <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
+        <button class="btn-qr" onclick="gerarQRCode()"><span>📱</span> QR Code</button>
+        <button class="btn-clear" onclick="limparFormulario()"><span>🗑️</span> Limpar</button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
     
     <div class="container">
-        <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
-        <h2> 📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
+        <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS v2.0</h1>
+        <h2>📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
         
         <div class="status-counters no-print">
             <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
@@ -257,7 +375,7 @@
         <h2>🚑 DADOS DA VIATURA (USA)</h2>
         <table>
             <tr><th>Item</th><th>Informação</th></tr>
-            <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: RKU1F52"></td></tr>
+            <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: ABC1234 ou ABC1D23" onblur="validarPlaca()"></td></tr>
             <tr><td><strong>Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847"></td></tr>
             <tr><td><strong>Nível de Combustível</strong></td><td><input type="text" id="nivelCombustivel" placeholder="Ex: 5/10 traços ou 1/2 tanque"></td></tr>
             <tr><td><strong>CRV Válido até</strong></td><td><input type="number" id="crvValido" placeholder="Ano (ex: 2024)"></td></tr>
@@ -265,48 +383,93 @@
             <tr>
                 <td><strong>Cartão de Abastecimento</strong></td>
                 <td>
-                    <input type="radio" id="cartaoDisponivel" name="cartaoStatus" value="Disponível"> <label for="cartaoDisponivel">Disponível</label>
-                    <input type="radio" id="cartaoNaoDisponivel" name="cartaoStatus" value="Não Disponível"> <label for="cartaoNaoDisponivel">Não Disponível</label>
+                    <input type="radio" id="cartaoDisponivel" name="cartaoStatus" value="Disponível"> 
+                    <label for="cartaoDisponivel">Disponível</label>
+                    <input type="radio" id="cartaoNaoDisponivel" name="cartaoStatus" value="Não Disponível"> 
+                    <label for="cartaoNaoDisponivel">Não Disponível</label>
                 </td>
             </tr>
         </table>
+
+        <!-- Localização -->
+        <div id="localizacao" class="location-info no-print"></div>
         
         <h2>🛠️ STATUS DE INSPEÇÃO</h2>
         <p><em>Selecione o status: ✅ OK | ⚠️ Ruim | 🛠️ Quebrado | ❌ Faltando | 🚨 Parar VTR</em></p>
         <table id="inspection-table">
             <thead>
-                <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th></tr>
+                <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th><th class="no-print">📷</th></tr>
             </thead>
             <tbody>
-                <!-- Os itens serão gerados via JavaScript -->
+                <!-- Itens gerados via JS -->
             </tbody>
         </table>
         
         <h2>🛠️ OBSERVAÇÕES GERAIS / AVARIAS</h2>
-        <textarea id="observacoesAvarias" rows="10" style="width: 100%;" placeholder="Digite suas observações aqui. Use Enter para quebrar linhas."></textarea>
+        <textarea id="observacoesAvarias" rows="6" style="width: 100%;" placeholder="Digite suas observações aqui. Use Enter para quebrar linhas."></textarea>
         
-        <h2>✍️ ASSINATURAS (PARA IMPRESSÃO)</h2>
+        <!-- Upload de fotos gerais -->
+        <div class="photo-upload no-print">
+            <label for="fotosGerais"><strong>📷 Fotos Gerais (opcional):</strong></label>
+            <input type="file" id="fotosGerais" accept="image/*" multiple capture="camera">
+            <div id="previewFotosGerais"></div>
+        </div>
+        
+        <h2>✍️ ASSINATURAS</h2>
         <div class="signature">
-            <p><strong>Condutor Recebendo o Plantão:</strong> _________________________________________</p>
+            <p><strong>Assinatura Digital do Condutor:</strong></p>
+            <canvas id="assinaturaCanvas" width="400" height="150" class="no-print"></canvas>
+            <br>
+            <button onclick="limparAssinatura()" class="no-print">🗑️ Limpar Assinatura</button>
+            <button onclick="salvarAssinatura()" class="no-print">💾 Salvar Assinatura</button>
+            
+            <!-- Para impressão -->
+            <div id="assinaturaImpressa" style="display: none;">
+                <img id="assinaturaImg" style="max-width: 400px; border: 1px solid #ccc;">
+            </div>
+            
+            <p style="margin-top: 20px;"><strong>Condutor Recebendo o Plantão:</strong> _________________________________________</p>
             <p><strong>Condutor Entregando o Plantão:</strong> _________________________________________</p>
         </div>
 
         <div class="footer">
-            <p>📝 Documento válido como registro de inspeção diária – LEFE<br>
+            <p>📝 Documento válido como registro de inspeção diária – LEFE v2.0<br>
             🗂️ Arquivar após preenchimento.<br>⏳ Atualizado em 2025.</p>
+        </div>
+    </div>
+    
+    <!-- Modal do Histórico -->
+    <div id="modalHistorico" class="modal no-print">
+        <div class="modal-content">
+            <span class="close" onclick="fecharHistorico()">&times;</span>
+            <h2>📋 Histórico de Check-lists</h2>
+            <div id="listaHistorico"></div>
+        </div>
+    </div>
+
+    <!-- Modal do QR Code -->
+    <div id="modalQR" class="modal no-print">
+        <div class="modal-content">
+            <span class="close" onclick="fecharQRCode()">&times;</span>
+            <h2>📱 QR Code - Acesso Rápido</h2>
+            <div id="qrcode"></div>
+            <p style="text-align: center;">Escaneie para acessar rapidamente este check-list</p>
         </div>
     </div>
     
     <!-- Notificação -->
     <div id="notification" class="notification"></div>
     
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
     <script>
-        // Lista de todos os itens do checklist com identificação de itens críticos
+        // Lista de itens com críticos
         const inspectionItems = [
             { name: "Óleo do motor", critical: true },
             { name: "Óleo hidráulico (caixa de direção)", critical: true },
             { name: "Fluido do radiador", critical: true },
-            { name: "Fluido de freio", critical: true },  // NOVO ITEM ADICIONADO AQUI
+            { name: "Fluido de freio", critical: true },
             { name: "Água do limpador de para-brisa", critical: false },
             { name: "Correia do alternador", critical: true },
             { name: "Correia dentada do motor", critical: true },
@@ -362,11 +525,63 @@
             { name: "Painel de controle do salão", critical: true }
         ];
 
-        // Variáveis globais
         let autoSaveInterval;
         let lastSaveTime = null;
+        let assinaturaCanvas, assinaturaCtx;
+        let desenhandoAssinatura = false;
+        let coordenadasGPS = null;
 
-        // Função para gerar a tabela de inspeção dinamicamente
+        // Validação de placa brasileira
+        function validarPlaca() {
+            const placaInput = document.getElementById("placa");
+            const placa = placaInput.value.trim().toUpperCase();
+            
+            // Formatos: ABC-1234, ABC1234, ABC1D23
+            const regexAntigo = /^[A-Z]{3}-?\d{4}$/;
+            const regexNovo = /^[A-Z]{3}\d[A-Z]\d{2}$/;
+            
+            if (placa && !regexAntigo.test(placa) && !regexNovo.test(placa)) {
+                placaInput.classList.add('required-field');
+                showNotification("Formato de placa inválido. Use ABC1234 ou ABC1D23", "error");
+                return false;
+            } else {
+                placaInput.classList.remove('required-field');
+                // Formatar placa automaticamente
+                if (regexAntigo.test(placa.replace('-', ''))) {
+                    placaInput.value = placa.replace('-', '');
+                }
+                return true;
+            }
+        }
+
+        // Gera chave única: placa + data
+        function getStorageKey() {
+            const placa = document.getElementById("placa").value.trim().toUpperCase();
+            const data = document.getElementById("data").value;
+            return placa && data ? `checklist_${placa}_${data}` : null;
+        }
+
+        // Obter localização GPS
+        function obterLocalizacao() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        coordenadasGPS = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            timestamp: new Date().toISOString()
+                        };
+                        document.getElementById('localizacao').innerHTML = 
+                            `📍 Localização: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)} (${new Date(coordenadasGPS.timestamp).toLocaleTimeString()})`;
+                    },
+                    function(error) {
+                        console.log("Erro ao obter localização:", error);
+                        document.getElementById('localizacao').innerHTML = '📍 Localização não disponível';
+                    }
+                );
+            }
+        }
+
         function generateInspectionTable() {
             const tableBody = document.querySelector("#inspection-table tbody");
             const statusOptions = `
@@ -380,44 +595,51 @@
             
             inspectionItems.forEach((item, index) => {
                 const row = document.createElement('tr');
-                if (item.critical) {
-                    row.classList.add('critical-item');
-                }
+                if (item.critical) row.classList.add('critical-item');
                 row.innerHTML = `
                     <td>${(index + 1).toString().padStart(2, '0')}</td>
                     <td>${item.name}</td>
                     <td><select id="status-${index + 1}" class="status-select">${statusOptions}</select></td>
-                    <td><input type="text" id="obs-${index + 1}" style="width: 100%;" class="obs-input"></td>
+                    <td><input type="text" id="obs-${index + 1}" class="obs-input" style="width: 100%;"></td>
+                    <td class="no-print"><input type="file" id="foto-${index + 1}" accept="image/*" capture="camera" style="width: 60px; font-size: 12px;"></td>
                 `;
                 tableBody.appendChild(row);
             });
 
-            // Adicionar event listeners para os selects e inputs
             document.querySelectorAll('.status-select').forEach(select => {
                 select.addEventListener('change', updateStatusCounters);
             });
-            
             document.querySelectorAll('.obs-input').forEach(input => {
                 input.addEventListener('input', debounce(salvarDados, 1000));
             });
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.addEventListener('change', handleFileUpload);
+            });
         }
 
-        // Função para atualizar os contadores de status
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Salvar foto na localStorage (limitado pelo tamanho)
+                    try {
+                        const fotoData = e.target.result;
+                        localStorage.setItem(`foto_${event.target.id}`, fotoData);
+                        showNotification("Foto salva com sucesso!", "success");
+                    } catch (error) {
+                        showNotification("Erro ao salvar foto (muito grande)", "error");
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function updateStatusCounters() {
-            const counters = {
-                '✅ OK': 0,
-                '⚠️ Ruim': 0,
-                '🛠️ Quebrado': 0,
-                '❌ Faltando': 0,
-                '🚨 Parar VTR': 0
-            };
-            
+            const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️ Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
             document.querySelectorAll('.status-select').forEach(select => {
-                if (select.value && counters.hasOwnProperty(select.value)) {
-                    counters[select.value]++;
-                }
+                if (select.value && counters[select.value] !== undefined) counters[select.value]++;
             });
-            
             document.getElementById('count-ok').textContent = counters['✅ OK'];
             document.getElementById('count-ruim').textContent = counters['⚠️ Ruim'];
             document.getElementById('count-quebrado').textContent = counters['🛠️ Quebrado'];
@@ -425,7 +647,6 @@
             document.getElementById('count-parar').textContent = counters['🚨 Parar VTR'];
         }
 
-        // Função debounce para melhorar performance
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -438,9 +659,11 @@
             };
         }
 
-        // Função para salvar dados no localStorage
         function salvarDados() {
             try {
+                const key = getStorageKey();
+                if (!key) return false;
+
                 const dados = {
                     hospital: document.getElementById("hospital").value,
                     data: document.getElementById("data").value,
@@ -453,40 +676,42 @@
                     nivelCombustivel: document.getElementById("nivelCombustivel").value,
                     crvValido: document.getElementById("crvValido").value,
                     proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
-                    cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value,
+                    cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || '',
                     observacoesAvarias: document.getElementById("observacoesAvarias").value,
+                    coordenadasGPS: coordenadasGPS,
+                    timestamp: new Date().toISOString(),
                     itens: []
                 };
-                
-                // Salvar status e observações de cada item
+
                 for (let i = 1; i <= inspectionItems.length; i++) {
                     dados.itens.push({
                         status: document.getElementById(`status-${i}`).value,
                         obs: document.getElementById(`obs-${i}`).value
                     });
                 }
-                
-                localStorage.setItem('checklistLEFE', JSON.stringify(dados));
+
+                localStorage.setItem(key, JSON.stringify(dados));
                 lastSaveTime = new Date();
-                document.getElementById('saveIndicator').textContent = `Último salvamento: ${lastSaveTime.toLocaleTimeString()}`;
-                
+                document.getElementById('saveIndicator').textContent = `Salvo: ${lastSaveTime.toLocaleTimeString()}`;
+                showNotification("Salvo localmente.", "success");
                 return true;
             } catch (e) {
-                console.error("Erro ao salvar dados:", e);
-                showNotification("Erro ao salvar dados localmente.", "error");
+                console.error("Erro ao salvar:", e);
+                showNotification("Falha ao salvar.", "error");
                 return false;
             }
         }
 
-        // Função para carregar dados do localStorage
         function carregarDados() {
             try {
-                const dadosSalvos = localStorage.getItem('checklistLEFE');
+                const key = getStorageKey();
+                if (!key) return false;
+
+                const dadosSalvos = localStorage.getItem(key);
                 if (!dadosSalvos) return false;
-                
+
                 const dados = JSON.parse(dadosSalvos);
-                
-                // Preencher campos básicos
+
                 document.getElementById("hospital").value = dados.hospital || '';
                 document.getElementById("data").value = dados.data || '';
                 document.getElementById("horarioEntrada").value = dados.horarioEntrada || '';
@@ -499,55 +724,257 @@
                 document.getElementById("crvValido").value = dados.crvValido || '';
                 document.getElementById("proximaTrocaOleo").value = dados.proximaTrocaOleo || '';
                 document.getElementById("observacoesAvarias").value = dados.observacoesAvarias || '';
-                
-                // Preencher status do cartão
+
                 if (dados.cartaoStatus) {
-                    document.querySelector(`input[name="cartaoStatus"][value="${dados.cartaoStatus}"]`).checked = true;
+                    const radio = document.querySelector(`input[name="cartaoStatus"][value="${dados.cartaoStatus}"]`);
+                    if (radio) radio.checked = true;
                 }
-                
-                // Preencher itens de inspeção
+
+                if (dados.coordenadasGPS) {
+                    coordenadasGPS = dados.coordenadasGPS;
+                    document.getElementById('localizacao').innerHTML = 
+                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
+                }
+
                 if (dados.itens && dados.itens.length === inspectionItems.length) {
                     for (let i = 0; i < dados.itens.length; i++) {
                         document.getElementById(`status-${i+1}`).value = dados.itens[i].status || '';
                         document.getElementById(`obs-${i+1}`).value = dados.itens[i].obs || '';
                     }
                 }
-                
+
                 updateStatusCounters();
-                showNotification("Dados anteriores carregados com sucesso.", "success");
                 return true;
             } catch (e) {
-                console.error("Erro ao carregar dados:", e);
+                console.error("Erro ao carregar:", e);
                 return false;
             }
         }
 
-        // Função para validar campos obrigatórios
-        function validateForm() {
-            const requiredFields = [
-                { id: "hospital", name: "Hospital" },
-                { id: "data", name: "Data" },
-                { id: "condutorPlantao", name: "Condutor de Plantão" },
-                { id: "placa", name: "Placa" },
-                { id: "kmAtual", name: "Km Atual" }
-            ];
+        // Exportar dados
+        function exportarDados() {
+            if (!validateForm()) return;
+
+            const key = getStorageKey();
+            if (!key) {
+                showNotification("Preencha placa e data para exportar", "error");
+                return;
+            }
+
+            const dados = localStorage.getItem(key);
+            if (!dados) {
+                showNotification("Nenhum dado para exportar", "error");
+                return;
+            }
+
+            const blob = new Blob([dados], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${key}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             
-            let isValid = true;
-            let missingFields = [];
+            showNotification("Dados exportados com sucesso!", "success");
+        }
+
+        // Histórico
+        function abrirHistorico() {
+            const modal = document.getElementById('modalHistorico');
+            const lista = document.getElementById('listaHistorico');
+            lista.innerHTML = '';
+
+            const historico = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('checklist_')) {
+                    try {
+                        const dados = JSON.parse(localStorage.getItem(key));
+                        historico.push({ key, dados });
+                    } catch (e) {
+                        console.error('Erro ao carregar histórico:', e);
+                    }
+                }
+            }
+
+            historico.sort((a, b) => new Date(b.dados.timestamp || 0) - new Date(a.dados.timestamp || 0));
+
+            if (historico.length === 0) {
+                lista.innerHTML = '<p>Nenhum check-list encontrado no histórico.</p>';
+            } else {
+                historico.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <strong>Placa:</strong> ${item.dados.placa}<br>
+                        <strong>Data:</strong> ${item.dados.data}<br>
+                        <strong>Condutor:</strong> ${item.dados.condutorPlantao}<br>
+                        <small>Salvo em: ${new Date(item.dados.timestamp || 0).toLocaleString()}</small>
+                    `;
+                    div.onclick = () => carregarDoHistorico(item.key);
+                    lista.appendChild(div);
+                });
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function carregarDoHistorico(key) {
+            try {
+                const dados = JSON.parse(localStorage.getItem(key));
+                
+                // Carregar todos os campos
+                Object.keys(dados).forEach(campo => {
+                    const elemento = document.getElementById(campo);
+                    if (elemento && campo !== 'itens' && campo !== 'coordenadasGPS') {
+                        elemento.value = dados[campo];
+                    }
+                });
+
+                // Carregar itens
+                if (dados.itens) {
+                    dados.itens.forEach((item, index) => {
+                        const statusEl = document.getElementById(`status-${index+1}`);
+                        const obsEl = document.getElementById(`obs-${index+1}`);
+                        if (statusEl) statusEl.value = item.status || '';
+                        if (obsEl) obsEl.value = item.obs || '';
+                    });
+                }
+
+                // Carregar coordenadas
+                if (dados.coordenadasGPS) {
+                    coordenadasGPS = dados.coordenadasGPS;
+                    document.getElementById('localizacao').innerHTML = 
+                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
+                }
+
+                updateStatusCounters();
+                fecharHistorico();
+                showNotification("Check-list carregado do histórico!", "success");
+            } catch (e) {
+                showNotification("Erro ao carregar do histórico", "error");
+            }
+        }
+
+        function fecharHistorico() {
+            document.getElementById('modalHistorico').style.display = 'none';
+        }
+
+        // QR Code
+        function gerarQRCode() {
+            const placa = document.getElementById("placa").value.trim();
+            const data = document.getElementById("data").value;
             
-            // Limpa formatação anterior
-            document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
+            if (!placa || !data) {
+                showNotification("Preencha placa e data para gerar QR Code", "error");
+                return;
+            }
+
+            const url = `${window.location.href.split('?')[0]}?placa=${encodeURIComponent(placa)}&data=${data}`;
             
-            requiredFields.forEach(field => {
-                const element = document.getElementById(field.id);
-                if (!element.value.trim()) {
-                    isValid = false;
-                    missingFields.push(field.name);
-                    element.classList.add("required-field");
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            QRCode.toCanvas(qrContainer, url, { width: 256 }, function (error) {
+                if (error) {
+                    showNotification("Erro ao gerar QR Code", "error");
+                } else {
+                    document.getElementById('modalQR').style.display = 'block';
                 }
             });
+        }
+
+        function fecharQRCode() {
+            document.getElementById('modalQR').style.display = 'none';
+        }
+
+        // Assinatura digital
+        function initAssinatura() {
+            assinaturaCanvas = document.getElementById('assinaturaCanvas');
+            assinaturaCtx = assinaturaCanvas.getContext('2d');
             
-            // Verificar se há itens críticos com problemas
+            assinaturaCanvas.addEventListener('mousedown', startDrawing);
+            assinaturaCanvas.addEventListener('mousemove', draw);
+            assinaturaCanvas.addEventListener('mouseup', stopDrawing);
+            assinaturaCanvas.addEventListener('touchstart', startDrawing);
+            assinaturaCanvas.addEventListener('touchmove', draw);
+            assinaturaCanvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function startDrawing(e) {
+            desenhandoAssinatura = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!desenhandoAssinatura) return;
+            
+            const rect = assinaturaCanvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            
+            assinaturaCtx.lineWidth = 2;
+            assinaturaCtx.lineCap = 'round';
+            assinaturaCtx.strokeStyle = '#000';
+            
+            assinaturaCtx.lineTo(x, y);
+            assinaturaCtx.stroke();
+            assinaturaCtx.beginPath();
+            assinaturaCtx.moveTo(x, y);
+            
+            e.preventDefault();
+        }
+
+        function stopDrawing() {
+            if (desenhandoAssinatura) {
+                desenhandoAssinatura = false;
+                assinaturaCtx.beginPath();
+            }
+        }
+
+        function limparAssinatura() {
+            assinaturaCtx.clearRect(0, 0, assinaturaCanvas.width, assinaturaCanvas.height);
+        }
+
+        function salvarAssinatura() {
+            const assinaturaDataURL = assinaturaCanvas.toDataURL();
+            const key = getStorageKey();
+            if (key) {
+                localStorage.setItem(`${key}_assinatura`, assinaturaDataURL);
+                showNotification("Assinatura salva!", "success");
+            }
+        }
+
+        function validateForm() {
+            const required = ["hospital", "data", "condutorPlantao", "placa", "kmAtual"];
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dataInput = document.getElementById("data").value;
+            const dataCheck = new Date(dataInput);
+            dataCheck.setHours(0, 0, 0, 0);
+
+            if (dataCheck > today) {
+                showNotification("A data não pode ser futura.", "error");
+                return false;
+            }
+
+            if (!validarPlaca()) {
+                return false;
+            }
+
+            let isValid = true;
+            document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
+
+            required.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value.trim()) {
+                    isValid = false;
+                    el.classList.add("required-field");
+                }
+            });
+
             const criticalIssues = [];
             inspectionItems.forEach((item, index) => {
                 if (item.critical) {
@@ -557,34 +984,34 @@
                     }
                 }
             });
-            
+
             if (criticalIssues.length > 0) {
-                showNotification(`Atenção: Itens críticos com problemas: ${criticalIssues.join(", ")}`, "warning");
+                showNotification(`❗ Itens críticos com problemas: ${criticalIssues.slice(0, 3).join(", ")}${criticalIssues.length > 3 ? "..." : ""}`, "warning");
             }
-            
+
             if (!isValid) {
-                showNotification("Por favor, preencha os campos obrigatórios: " + missingFields.join(", "), "error");
+                showNotification("Preencha os campos obrigatórios.", "error");
             }
-            
+
             return isValid;
         }
-        
-        // Função para enviar por email usando mailto:
+
         function enviarPorEmail() {
-            if (!validateForm()) {
-                return;
-            }
-            
-            // --- COLETA DE DADOS ---
+            if (!validateForm()) return;
+
+            const dataValue = document.getElementById("data").value;
+            const [y, m, d] = dataValue.split('-');
+            const dataFormatada = `${d}/${m}/${y}`;
+
             const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
-                data: new Date(document.getElementById("data").value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
+                data: dataFormatada,
                 horarioEntrada: document.getElementById("horarioEntrada").value,
                 horarioSaida: document.getElementById("horarioSaida").value,
                 condutorPlantao: document.getElementById("condutorPlantao").value,
                 recebendoDe: document.getElementById("recebendoDe").value
             };
-            
+
             const dadosViatura = {
                 placa: document.getElementById("placa").value.toUpperCase(),
                 kmAtual: document.getElementById("kmAtual").value,
@@ -593,7 +1020,7 @@
                 proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
                 cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
             };
-            
+
             const itensInspecao = [];
             for (let i = 1; i <= inspectionItems.length; i++) {
                 const status = document.getElementById(`status-${i}`).value;
@@ -609,107 +1036,114 @@
             }
 
             if (itensInspecao.length === 0) {
-                showNotification("Nenhum item de inspeção foi preenchido. Preencha ao menos um status.", "warning");
+                showNotification("Preencha ao menos um item de inspeção.", "warning");
                 return;
             }
 
             const observacoesGerais = document.getElementById("observacoesAvarias").value;
-            
-            // --- MONTAGEM DO CORPO DO E-MAIL (HTML) ---
+            const localizacaoInfo = coordenadasGPS ? 
+                `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 
+                'Localização não disponível';
+
             let corpoEmail = `
-                <div style="font-family: Arial, sans-serif; font-size: 14px;">
-                    <h2 style="color: #d90000;">Check-list Diário - Viatura ${dadosViatura.placa}</h2>
-                    <p><strong>Hospital:</strong> ${dadosCabecalho.hospital}<br>
-                    <strong>Condutor de Plantão:</strong> ${dadosCabecalho.condutorPlantao}<br>
-                    <strong>Data:</strong> ${dadosCabecalho.data}<br>
-                    <strong>Horário de Entrada:</strong> ${dadosCabecalho.horarioEntrada}<br>
-                    <strong>Horário de Saída:</strong> ${dadosCabecalho.horarioSaida}</p>
-                    <h3 style="color: #333;">Dados da Viatura</h3>
-                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
-                        <tr><td style="background-color: #f0f0f0;"><strong>Placa:</strong></td><td>${dadosViatura.placa}</td></tr>
-                        <tr><td style="background-color: #f0f0f0;"><strong>Km Atual:</strong></td><td>${dadosViatura.kmAtual} km</td></tr>
-                        <tr><td style="background-color: #f0f0f0;"><strong>Nível Combustível:</strong></td><td>${dadosViatura.nivelCombustivel}</td></tr>
-                        <tr><td style="background-color: #f0f0f0;"><strong>Cartão Abastecimento:</strong></td><td>${dadosViatura.cartaoStatus}</td></tr>
-                    </table>
+Check-list Diário v2.0 - Viatura ${dadosViatura.placa}
+================================================
 
-                    <h3 style="color: #333; margin-top: 20px;">Itens de Inspeção com Observações</h3>
-                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
-                        <tr style="background-color: #f0f0f0;">
-                            <th>#</th>
-                            <th>Item</th>
-                            <th>Status</th>
-                            <th>Observação</th>
-                        </tr>
-                        ${itensInspecao.map(item => `
-                            <tr>
-                                <td>${item.num}</td>
-                                <td>${item.item}</td>
-                                <td>${item.status}</td>
-                                <td>${item.obs}</td>
-                            </tr>
-                        `).join('')}
-                    </table>
-                    
-                    ${observacoesGerais ? `
-                        <h3 style="color: #333; margin-top: 20px;">Observações Gerais / Avarias</h3>
-                        <p style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">${observacoesGerais}</p>
-                    ` : ''}
+HOSPITAL: ${dadosCabecalho.hospital}
+CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
+DATA: ${dadosCabecalho.data}
+HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
+HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
+${localizacaoInfo}
 
-                    <p style="margin-top: 20px; font-size: 12px; color: #666;">E-mail gerado automaticamente pelo sistema de Check-list LEFE.</p>
-                </div>
-            `;
-            
-            // --- CRIAÇÃO DO LINK mailto: ---
-            const para = "email_destinatario@sua_empresa.com"; // <-- TROQUE PELO E-MAIL DE DESTINO
-            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
-            
-            // encodeURIComponent é crucial para garantir que caracteres especiais não quebrem o link
-            const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
-            
-            // Abre o cliente de e-mail do usuário
+--- DADOS DA VIATURA ---
+Placa: ${dadosViatura.placa}
+Km Atual: ${dadosViatura.kmAtual} km
+Nível de Combustível: ${dadosViatura.nivelCombustivel}
+Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
+
+--- ITENS DE INSPEÇÃO ---
+${itensInspecao.map(i => `${i.num}. ${i.item}
+   Status: ${i.status}
+   Obs: ${i.obs}`).join('\n\n')}
+
+${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
+
+E-mail gerado automaticamente pelo sistema LEFE v2.0.
+            `.trim();
+
+            const assunto = `Check-list v2.0 Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
+            const destinatario = "manutencao@lefe.org.br";
+
+            const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
-
-            showNotification("Preparando e-mail... Verifique seu programa de e-mail.", "success");
+            showNotification("Abrindo e-mail...", "success");
         }
-        
-        // Função para mostrar notificações
+
+        function limparFormulario() {
+            if (confirm("Deseja realmente limpar todos os campos?")) {
+                const key = getStorageKey();
+                if (key) {
+                    localStorage.removeItem(key);
+                    localStorage.removeItem(`${key}_assinatura`);
+                }
+                location.reload();
+            }
+        }
+
         function showNotification(message, type) {
             const notification = document.getElementById("notification");
             notification.textContent = message;
-            notification.className = "notification " + type;
+            notification.className = `notification ${type}`;
             notification.style.display = "block";
-            
-            setTimeout(() => {
-                notification.style.display = "none";
-            }, 6000);
+            setTimeout(() => notification.style.display = "none", 6000);
         }
 
-        // Inicialização quando a página carrega
-        document.addEventListener('DOMContentLoaded', function() {
-            // Definir data atual ao carregar a página
-            document.getElementById("data").value = new Date().toISOString().split("T")[0];
+        // Carregar parâmetros da URL (QR Code)
+        function carregarParametrosURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const placa = urlParams.get('placa');
+            const data = urlParams.get('data');
             
-            // Gerar a tabela
-            generateInspectionTable();
+            if (placa) document.getElementById('placa').value = placa;
+            if (data) document.getElementById('data').value = data;
             
-            // Tentar carregar dados salvos
-            if (carregarDados()) {
-                showNotification("Dados anteriores carregados.", "info");
+            if (placa && data) {
+                carregarDados();
+                showNotification("Check-list carregado via QR Code!", "info");
             }
+        }
+
+        // Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVFX05BTUUgPSAnbGVmZS1jaGVja2xpc3QtdjEuMCc7DQpjb25zdCB1cmxzVG9DYWNoZSA9IFsNCiAgJy8nLA0KICAnL2luZGV4Lmh0bWwnDQpdOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2luc3RhbGwnLCBldmVudCA9PiB7DQogIGV2ZW50LndhaXRVbnRpbCgNCiAgICBjYWNoZXMub3BlbihDQUNIRV9OQU1FKQ0KICAgICAgLnRoZW4oY2FjaGUgPT4gY2FjaGUuYWRkQWxsKHVybHNUb0NhY2hlKSkNCiAgKTsNCn0pOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gew0KICBldmVudC5yZXNwb25kV2l0aCgNCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkNCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQ0KICA7DQp9KTs=');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("data").value = new Date().toISOString().split("T")[0];
+            generateInspectionTable();
+            initAssinatura();
+            carregarParametrosURL();
+            obterLocalizacao();
+            carregarDados();
             
-            // Configurar auto-salvamento
-            autoSaveInterval = setInterval(salvarDados, 30000); // Salva a cada 30 segundos
+            autoSaveInterval = setInterval(salvarDados, 30000);
+            window.addEventListener('beforeunload', salvarDados);
+
+            // Event listeners
+            document.getElementById("placa").addEventListener("change", carregarDados);
+            document.getElementById("data").addEventListener("change", carregarDados);
             
-            // Adicionar event listeners para campos de entrada
-            const inputFields = document.querySelectorAll('input, select, textarea');
-            inputFields.forEach(field => {
-                field.addEventListener('input', debounce(salvarDados, 1000));
-            });
-            
-            // Adicionar listener para salvar antes de sair da página
-            window.addEventListener('beforeunload', function(e) {
-                salvarDados();
-            });
+            // Fechar modais clicando fora
+            window.onclick = function(event) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            };
         });
     </script>
 </body>
