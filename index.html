@@ -486,4 +486,274 @@
                     data: document.getElementById("data").value,
                     horarioEntrada: document.getElementById("horarioEntrada").value,
                     horarioSaida: document.getElementById("horarioSaida").value,
-                    condutorPlantao: document.getElementById("condutorPlantao"
+                    condutorPlantao: document.getElementById("condutorPlantao").value,
+                    recebendoDe: document.getElementById("recebendoDe").value,
+                    placa: document.getElementById("placa").value,
+                    kmAtual: document.getElementById("kmAtual").value,
+                    nivelCombustivel: document.getElementById("nivelCombustivel").value,
+                    crvValido: document.getElementById("crvValido").value,
+                    proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
+                    cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value,
+                    observacoesAvarias: document.getElementById("observacoesAvarias").value,
+                    itens: []
+                };
+                
+                // Salvar status e observações de cada item
+                for (let i = 1; i <= inspectionItems.length; i++) {
+                    dados.itens.push({
+                        status: document.getElementById(`status-${i}`).value,
+                        obs: document.getElementById(`obs-${i}`).value
+                    });
+                }
+                
+                localStorage.setItem('checklistLEFE', JSON.stringify(dados));
+                lastSaveTime = new Date();
+                document.getElementById('saveIndicator').textContent = `Último salvamento: ${lastSaveTime.toLocaleTimeString()}`;
+                
+                return true;
+            } catch (e) {
+                console.error("Erro ao salvar dados:", e);
+                showNotification("Erro ao salvar dados localmente.", "error");
+                return false;
+            }
+        }
+
+        // Função para carregar dados do localStorage
+        function carregarDados() {
+            try {
+                const dadosSalvos = localStorage.getItem('checklistLEFE');
+                if (!dadosSalvos) return false;
+                
+                const dados = JSON.parse(dadosSalvos);
+                
+                // Preencher campos básicos
+                document.getElementById("hospital").value = dados.hospital || '';
+                document.getElementById("data").value = dados.data || '';
+                document.getElementById("horarioEntrada").value = dados.horarioEntrada || '';
+                document.getElementById("horarioSaida").value = dados.horarioSaida || '';
+                document.getElementById("condutorPlantao").value = dados.condutorPlantao || '';
+                document.getElementById("recebendoDe").value = dados.recebendoDe || '';
+                document.getElementById("placa").value = dados.placa || '';
+                document.getElementById("kmAtual").value = dados.kmAtual || '';
+                document.getElementById("nivelCombustivel").value = dados.nivelCombustivel || '';
+                document.getElementById("crvValido").value = dados.crvValido || '';
+                document.getElementById("proximaTrocaOleo").value = dados.proximaTrocaOleo || '';
+                document.getElementById("observacoesAvarias").value = dados.observacoesAvarias || '';
+                
+                // Preencher status do cartão
+                if (dados.cartaoStatus) {
+                    document.querySelector(`input[name="cartaoStatus"][value="${dados.cartaoStatus}"]`).checked = true;
+                }
+                
+                // Preencher itens de inspeção
+                if (dados.itens && dados.itens.length === inspectionItems.length) {
+                    for (let i = 0; i < dados.itens.length; i++) {
+                        document.getElementById(`status-${i+1}`).value = dados.itens[i].status || '';
+                        document.getElementById(`obs-${i+1}`).value = dados.itens[i].obs || '';
+                    }
+                }
+                
+                updateStatusCounters();
+                showNotification("Dados anteriores carregados com sucesso.", "success");
+                return true;
+            } catch (e) {
+                console.error("Erro ao carregar dados:", e);
+                return false;
+            }
+        }
+
+        // Função para validar campos obrigatórios
+        function validateForm() {
+            const requiredFields = [
+                { id: "hospital", name: "Hospital" },
+                { id: "data", name: "Data" },
+                { id: "condutorPlantao", name: "Condutor de Plantão" },
+                { id: "placa", name: "Placa" },
+                { id: "kmAtual", name: "Km Atual" }
+            ];
+            
+            let isValid = true;
+            let missingFields = [];
+            
+            // Limpa formatação anterior
+            document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
+            
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (!element.value.trim()) {
+                    isValid = false;
+                    missingFields.push(field.name);
+                    element.classList.add("required-field");
+                }
+            });
+            
+            // Verificar se há itens críticos com problemas
+            const criticalIssues = [];
+            inspectionItems.forEach((item, index) => {
+                if (item.critical) {
+                    const status = document.getElementById(`status-${index+1}`).value;
+                    if (status && status !== "✅ OK") {
+                        criticalIssues.push(item.name);
+                    }
+                }
+            });
+            
+            if (criticalIssues.length > 0) {
+                showNotification(`Atenção: Itens críticos com problemas: ${criticalIssues.join(", ")}`, "warning");
+            }
+            
+            if (!isValid) {
+                showNotification("Por favor, preencha os campos obrigatórios: " + missingFields.join(", "), "error");
+            }
+            
+            return isValid;
+        }
+        
+        // Função para enviar por email usando mailto:
+        function enviarPorEmail() {
+            if (!validateForm()) {
+                return;
+            }
+            
+            // --- COLETA DE DADOS ---
+            const dadosCabecalho = {
+                hospital: document.getElementById("hospital").value,
+                data: new Date(document.getElementById("data").value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
+                horarioEntrada: document.getElementById("horarioEntrada").value,
+                horarioSaida: document.getElementById("horarioSaida").value,
+                condutorPlantao: document.getElementById("condutorPlantao").value,
+                recebendoDe: document.getElementById("recebendoDe").value
+            };
+            
+            const dadosViatura = {
+                placa: document.getElementById("placa").value.toUpperCase(),
+                kmAtual: document.getElementById("kmAtual").value,
+                nivelCombustivel: document.getElementById("nivelCombustivel").value,
+                crvValido: document.getElementById("crvValido").value,
+                proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
+                cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
+            };
+            
+            const itensInspecao = [];
+            for (let i = 1; i <= inspectionItems.length; i++) {
+                const status = document.getElementById(`status-${i}`).value;
+                const obs = document.getElementById(`obs-${i}`).value.trim();
+                if (status || obs) {
+                    itensInspecao.push({
+                        num: i.toString().padStart(2, '0'),
+                        item: inspectionItems[i-1].name,
+                        status: status || 'Não avaliado',
+                        obs: obs || '---'
+                    });
+                }
+            }
+
+            if (itensInspecao.length === 0) {
+                showNotification("Nenhum item de inspeção foi preenchido. Preencha ao menos um status.", "warning");
+                return;
+            }
+
+            const observacoesGerais = document.getElementById("observacoesAvarias").value;
+            
+            // --- MONTAGEM DO CORPO DO E-MAIL (HTML) ---
+            let corpoEmail = `
+                <div style="font-family: Arial, sans-serif; font-size: 14px;">
+                    <h2 style="color: #d90000;">Check-list Diário - Viatura ${dadosViatura.placa}</h2>
+                    <p><strong>Hospital:</strong> ${dadosCabecalho.hospital}<br>
+                    <strong>Condutor de Plantão:</strong> ${dadosCabecalho.condutorPlantao}<br>
+                    <strong>Data:</strong> ${dadosCabecalho.data}<br>
+                    <strong>Horário de Entrada:</strong> ${dadosCabecalho.horarioEntrada}<br>
+                    <strong>Horário de Saída:</strong> ${dadosCabecalho.horarioSaida}</p>
+                    <h3 style="color: #333;">Dados da Viatura</h3>
+                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+                        <tr><td style="background-color: #f0f0f0;"><strong>Placa:</strong></td><td>${dadosViatura.placa}</td></tr>
+                        <tr><td style="background-color: #f0f0f0;"><strong>Km Atual:</strong></td><td>${dadosViatura.kmAtual} km</td></tr>
+                        <tr><td style="background-color: #f0f0f0;"><strong>Nível Combustível:</strong></td><td>${dadosViatura.nivelCombustivel}</td></tr>
+                        <tr><td style="background-color: #f0f0f0;"><strong>Cartão Abastecimento:</strong></td><td>${dadosViatura.cartaoStatus}</td></tr>
+                    </table>
+
+                    <h3 style="color: #333; margin-top: 20px;">Itens de Inspeção com Observações</h3>
+                    <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+                        <tr style="background-color: #f0f0f0;">
+                            <th>#</th>
+                            <th>Item</th>
+                            <th>Status</th>
+                            <th>Observação</th>
+                        </tr>
+                        ${itensInspecao.map(item => `
+                            <tr>
+                                <td>${item.num}</td>
+                                <td>${item.item}</td>
+                                <td>${item.status}</td>
+                                <td>${item.obs}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                    
+                    ${observacoesGerais ? `
+                        <h3 style="color: #333; margin-top: 20px;">Observações Gerais / Avarias</h3>
+                        <p style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">${observacoesGerais}</p>
+                    ` : ''}
+
+                    <p style="margin-top: 20px; font-size: 12px; color: #666;">E-mail gerado automaticamente pelo sistema de Check-list LEFE.</p>
+                </div>
+            `;
+            
+            // --- CRIAÇÃO DO LINK mailto: ---
+            const para = "email_destinatario@sua_empresa.com"; // <-- TROQUE PELO E-MAIL DE DESTINO
+            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
+            
+            // encodeURIComponent é crucial para garantir que caracteres especiais não quebrem o link
+            const mailtoLink = `mailto:${para}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
+            
+            // Abre o cliente de e-mail do usuário
+            window.location.href = mailtoLink;
+
+            showNotification("Preparando e-mail... Verifique seu programa de e-mail.", "success");
+        }
+        
+        // Função para mostrar notificações
+        function showNotification(message, type) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.className = "notification " + type;
+            notification.style.display = "block";
+            
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 6000);
+        }
+
+        // Inicialização quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data atual ao carregar a página
+            document.getElementById("data").value = new Date().toISOString().split("T")[0];
+            
+            // Gerar a tabela
+            generateInspectionTable();
+            
+            // Configurar busca
+            setupSearch();
+            
+            // Tentar carregar dados salvos
+            if (carregarDados()) {
+                showNotification("Dados anteriores carregados.", "info");
+            }
+            
+            // Configurar auto-salvamento
+            autoSaveInterval = setInterval(salvarDados, 30000); // Salva a cada 30 segundos
+            
+            // Adicionar event listeners para campos de entrada
+            const inputFields = document.querySelectorAll('input, select, textarea');
+            inputFields.forEach(field => {
+                field.addEventListener('input', debounce(salvarDados, 1000));
+            });
+            
+            // Adicionar listener para salvar antes de sair da página
+            window.addEventListener('beforeunload', function(e) {
+                salvarDados();
+            });
+        });
+    </script>
+</body>
+</html>
