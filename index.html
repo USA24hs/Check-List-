@@ -21,7 +21,6 @@
             --text: #333333;
             --card-bg: #ffffff;
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
                 --light-gray: #2a2a2a;
@@ -139,7 +138,6 @@
         .btn-history:hover { background: #6D4C41; }
         .btn-qr { background: #FF5722; }
         .btn-qr:hover { background: #E64A19; }
-
         .notification {
             position: fixed;
             bottom: 20px;
@@ -156,7 +154,6 @@
         .notification.error { background: var(--danger); color: white; }
         .notification.warning { background: var(--warning); color: white; }
         .notification.info { background: var(--secondary-color); color: white; }
-
         .required-field {
             border: 2px solid var(--primary-color) !important;
             background-color: #fff2f2;
@@ -205,7 +202,6 @@
             margin-left: 10px;
             font-style: italic;
         }
-
         /* Modal styles */
         .modal {
             display: none;
@@ -216,6 +212,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
         .modal-content {
             background-color: var(--card-bg);
@@ -235,7 +232,52 @@
             cursor: pointer;
         }
         .close:hover { color: var(--text); }
-
+        
+        /* Modal de boas-vindas */
+        .welcome-modal .modal-content {
+            max-width: 800px;
+        }
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .welcome-header h1 {
+            font-size: 28px;
+            color: var(--primary-color);
+            border: none;
+        }
+        .welcome-section {
+            margin-bottom: 20px;
+        }
+        .welcome-section h2 {
+            font-size: 20px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .welcome-section ul {
+            padding-left: 20px;
+        }
+        .welcome-section li {
+            margin-bottom: 8px;
+        }
+        .welcome-footer {
+            text-align: center;
+            margin-top: 25px;
+        }
+        .btn-welcome {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-welcome:hover {
+            background: var(--primary-dark);
+        }
+        
         /* Assinatura digital */
         #assinaturaCanvas {
             border: 2px solid var(--medium-gray);
@@ -243,7 +285,6 @@
             cursor: crosshair;
             background-color: white;
         }
-
         /* Upload de fotos */
         .photo-upload {
             margin: 10px 0;
@@ -254,13 +295,11 @@
             margin: 5px;
             border-radius: 5px;
         }
-
         /* QR Code */
         #qrcode {
             text-align: center;
             margin: 20px 0;
         }
-
         /* Histórico */
         .history-item {
             padding: 10px;
@@ -273,14 +312,12 @@
         .history-item:hover {
             background-color: var(--medium-gray);
         }
-
         /* Localização */
         .location-info {
             font-size: 12px;
             color: #666;
             margin-top: 5px;
         }
-
         .mobile-optimized select, .mobile-optimized input[type="text"] {
             font-size: 16px;
         }
@@ -301,6 +338,16 @@
                 width: 95%;
                 margin: 2% auto;
             }
+            .welcome-modal .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            .welcome-header h1 {
+                font-size: 24px;
+            }
+            .welcome-section h2 {
+                font-size: 18px;
+            }
         }
         
         @media print {
@@ -317,7 +364,6 @@
                 display: none;
             }
         }
-
         /* Dashboard básico */
         .dashboard {
             display: grid;
@@ -339,6 +385,74 @@
     </style>
 </head>
 <body>
+    <!-- Modal de Boas-vindas -->
+    <div id="welcomeModal" class="modal welcome-modal">
+        <div class="modal-content">
+            <div class="welcome-header">
+                <h1>🏥 Check-list Diário - LEFE</h1>
+                <p>🚨 Este é um aplicativo web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>A aplicação oferece uma interface intuitiva e responsiva para registrar o estado dos veículos de emergência.</p>
+            </div>
+            
+            <div class="welcome-section">
+                <h2>Funcionalidades Principais</h2>
+                <h3>📝 Registro de Dados</h3>
+                <ul>
+                    <li>Informações básicas (hospital, data, horários, condutores)</li>
+                    <li>Dados da viatura (placa, quilometragem, combustível, etc.)</li>
+                    <li>Validação automática de placa brasileira (formatos antigo e novo)</li>
+                </ul>
+                
+                <h3>✅ Check-list de Inspeção</h3>
+                <ul>
+                    <li>Lista completa de itens para inspeção (óleo, freio, pneus, etc.)</li>
+                    <li>Status para cada item: OK, Ruim, Quebrado, Faltando, Parar VTR</li>
+                    <li>Itens críticos destacados visualmente</li>
+                    <li>Campos para observações e fotos para cada item</li>
+                </ul>
+                
+                <h3>🛠️ Recursos Avançados</h3>
+                <ul>
+                    <li>Localização GPS: Obtém e armazena coordenadas geográficas</li>
+                    <li>Assinatura digital: Canvas para assinatura digital</li>
+                    <li>Upload de fotos: Possibilidade de anexar fotos aos itens</li>
+                    <li>Armazenamento local: Salva dados no navegador</li>
+                    <li>Histórico: Visualização e carregamento de check-lists anteriores</li>
+                    <li>QR Code: Geração de QR Code para acesso rápido</li>
+                </ul>
+                
+                <h3>📤 Exportação e Compartilhamento</h3>
+                <ul>
+                    <li>Exportação de dados: Exportação em formato JSON</li>
+                    <li>Envio por e-mail: Gera e-mail formatado com os dados</li>
+                    <li>Impressão: Layout otimizado para impressão</li>
+                </ul>
+                
+                <h3>📱 Design Responsivo</h3>
+                <ul>
+                    <li>Layout adaptável para diferentes tamanhos de tela</li>
+                    <li>Suporte para modo escuro/claro</li>
+                    <li>Interface otimizada para dispositivos móveis</li>
+                </ul>
+            </div>
+            
+            <div class="welcome-section">
+                <h2>🙋🏻 Como Utilizar</h2>
+                <ol>
+                    <li>Preencha os campos básicos (hospital, data, condutores)</li>
+                    <li>Informe os dados da viatura (placa, quilometragem, etc.)</li>
+                    <li>Selecione o status para cada item de inspeção</li>
+                    <li>Adicione observações e fotos se necessário</li>
+                    <li>Assine digitalmente o documento</li>
+                    <li>Salve, exporte ou envie por e-mail os dados</li>
+                </ol>
+            </div>
+            
+            <div class="welcome-footer">
+                <button class="btn-welcome" onclick="fecharBoasVindas()">Começar a usar o aplicativo</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Barra de ferramentas melhorada -->
     <div class="toolbar no-print">
         <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
@@ -390,7 +504,6 @@
                 </td>
             </tr>
         </table>
-
         <!-- Localização -->
         <div id="localizacao" class="location-info no-print"></div>
         
@@ -431,7 +544,6 @@
             <p style="margin-top: 20px;"><strong>Condutor Recebendo o Plantão:</strong> _________________________________________</p>
             <p><strong>Condutor Entregando o Plantão:</strong> _________________________________________</p>
         </div>
-
         <div class="footer">
             <p>📝 Documento válido como registro de inspeção diária – LEFE<br>
             🗂️ Arquivar após preenchimento.<br>⏳ Atualizado em 2025.</p>
@@ -446,7 +558,6 @@
             <div id="listaHistorico"></div>
         </div>
     </div>
-
     <!-- Modal do QR Code -->
     <div id="modalQR" class="modal no-print">
         <div class="modal-content">
@@ -524,13 +635,26 @@
             { name: "Baú do salão", critical: false },
             { name: "Painel de controle do salão", critical: true }
         ];
-
         let autoSaveInterval;
         let lastSaveTime = null;
         let assinaturaCanvas, assinaturaCtx;
         let desenhandoAssinatura = false;
         let coordenadasGPS = null;
-
+        
+        // Verificar se é a primeira visita e mostrar boas-vindas
+        function verificarPrimeiraVisita() {
+            const primeiraVisita = localStorage.getItem('lefePrimeiraVisita');
+            if (!primeiraVisita) {
+                document.getElementById('welcomeModal').style.display = 'block';
+                localStorage.setItem('lefePrimeiraVisita', 'false');
+            }
+        }
+        
+        // Fechar modal de boas-vindas
+        function fecharBoasVindas() {
+            document.getElementById('welcomeModal').style.display = 'none';
+        }
+        
         // Validação de placa brasileira
         function validarPlaca() {
             const placaInput = document.getElementById("placa");
@@ -553,14 +677,12 @@
                 return true;
             }
         }
-
         // Gera chave única: placa + data
         function getStorageKey() {
             const placa = document.getElementById("placa").value.trim().toUpperCase();
             const data = document.getElementById("data").value;
             return placa && data ? `checklist_${placa}_${data}` : null;
         }
-
         // Obter localização GPS
         function obterLocalizacao() {
             if (navigator.geolocation) {
@@ -581,7 +703,6 @@
                 );
             }
         }
-
         function generateInspectionTable() {
             const tableBody = document.querySelector("#inspection-table tbody");
             const statusOptions = `
@@ -605,7 +726,6 @@
                 `;
                 tableBody.appendChild(row);
             });
-
             document.querySelectorAll('.status-select').forEach(select => {
                 select.addEventListener('change', updateStatusCounters);
             });
@@ -616,7 +736,6 @@
                 input.addEventListener('change', handleFileUpload);
             });
         }
-
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -634,7 +753,6 @@
                 reader.readAsDataURL(file);
             }
         }
-
         function updateStatusCounters() {
             const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️ Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
             document.querySelectorAll('.status-select').forEach(select => {
@@ -646,7 +764,6 @@
             document.getElementById('count-faltando').textContent = counters['❌ Faltando'];
             document.getElementById('count-parar').textContent = counters['🚨 Parar VTR'];
         }
-
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -658,12 +775,10 @@
                 timeout = setTimeout(later, wait);
             };
         }
-
         function salvarDados() {
             try {
                 const key = getStorageKey();
                 if (!key) return false;
-
                 const dados = {
                     hospital: document.getElementById("hospital").value,
                     data: document.getElementById("data").value,
@@ -682,14 +797,12 @@
                     timestamp: new Date().toISOString(),
                     itens: []
                 };
-
                 for (let i = 1; i <= inspectionItems.length; i++) {
                     dados.itens.push({
                         status: document.getElementById(`status-${i}`).value,
                         obs: document.getElementById(`obs-${i}`).value
                     });
                 }
-
                 localStorage.setItem(key, JSON.stringify(dados));
                 lastSaveTime = new Date();
                 document.getElementById('saveIndicator').textContent = `Salvo: ${lastSaveTime.toLocaleTimeString()}`;
@@ -701,17 +814,13 @@
                 return false;
             }
         }
-
         function carregarDados() {
             try {
                 const key = getStorageKey();
                 if (!key) return false;
-
                 const dadosSalvos = localStorage.getItem(key);
                 if (!dadosSalvos) return false;
-
                 const dados = JSON.parse(dadosSalvos);
-
                 document.getElementById("hospital").value = dados.hospital || '';
                 document.getElementById("data").value = dados.data || '';
                 document.getElementById("horarioEntrada").value = dados.horarioEntrada || '';
@@ -724,25 +833,21 @@
                 document.getElementById("crvValido").value = dados.crvValido || '';
                 document.getElementById("proximaTrocaOleo").value = dados.proximaTrocaOleo || '';
                 document.getElementById("observacoesAvarias").value = dados.observacoesAvarias || '';
-
                 if (dados.cartaoStatus) {
                     const radio = document.querySelector(`input[name="cartaoStatus"][value="${dados.cartaoStatus}"]`);
                     if (radio) radio.checked = true;
                 }
-
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
                     document.getElementById('localizacao').innerHTML = 
                         `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
                 }
-
                 if (dados.itens && dados.itens.length === inspectionItems.length) {
                     for (let i = 0; i < dados.itens.length; i++) {
                         document.getElementById(`status-${i+1}`).value = dados.itens[i].status || '';
                         document.getElementById(`obs-${i+1}`).value = dados.itens[i].obs || '';
                     }
                 }
-
                 updateStatusCounters();
                 return true;
             } catch (e) {
@@ -750,23 +855,19 @@
                 return false;
             }
         }
-
         // Exportar dados
         function exportarDados() {
             if (!validateForm()) return;
-
             const key = getStorageKey();
             if (!key) {
                 showNotification("Preencha placa e data para exportar", "error");
                 return;
             }
-
             const dados = localStorage.getItem(key);
             if (!dados) {
                 showNotification("Nenhum dado para exportar", "error");
                 return;
             }
-
             const blob = new Blob([dados], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -779,13 +880,11 @@
             
             showNotification("Dados exportados com sucesso!", "success");
         }
-
         // Histórico
         function abrirHistorico() {
             const modal = document.getElementById('modalHistorico');
             const lista = document.getElementById('listaHistorico');
             lista.innerHTML = '';
-
             const historico = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -798,9 +897,7 @@
                     }
                 }
             }
-
             historico.sort((a, b) => new Date(b.dados.timestamp || 0) - new Date(a.dados.timestamp || 0));
-
             if (historico.length === 0) {
                 lista.innerHTML = '<p>Nenhum check-list encontrado no histórico.</p>';
             } else {
@@ -817,10 +914,8 @@
                     lista.appendChild(div);
                 });
             }
-
             modal.style.display = 'block';
         }
-
         function carregarDoHistorico(key) {
             try {
                 const dados = JSON.parse(localStorage.getItem(key));
@@ -832,7 +927,6 @@
                         elemento.value = dados[campo];
                     }
                 });
-
                 // Carregar itens
                 if (dados.itens) {
                     dados.itens.forEach((item, index) => {
@@ -842,14 +936,12 @@
                         if (obsEl) obsEl.value = item.obs || '';
                     });
                 }
-
                 // Carregar coordenadas
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
                     document.getElementById('localizacao').innerHTML = 
                         `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
                 }
-
                 updateStatusCounters();
                 fecharHistorico();
                 showNotification("Check-list carregado do histórico!", "success");
@@ -857,11 +949,9 @@
                 showNotification("Erro ao carregar do histórico", "error");
             }
         }
-
         function fecharHistorico() {
             document.getElementById('modalHistorico').style.display = 'none';
         }
-
         // QR Code
         function gerarQRCode() {
             const placa = document.getElementById("placa").value.trim();
@@ -871,7 +961,6 @@
                 showNotification("Preencha placa e data para gerar QR Code", "error");
                 return;
             }
-
             const url = `${window.location.href.split('?')[0]}?placa=${encodeURIComponent(placa)}&data=${data}`;
             
             const qrContainer = document.getElementById('qrcode');
@@ -885,11 +974,9 @@
                 }
             });
         }
-
         function fecharQRCode() {
             document.getElementById('modalQR').style.display = 'none';
         }
-
         // Assinatura digital
         function initAssinatura() {
             assinaturaCanvas = document.getElementById('assinaturaCanvas');
@@ -902,12 +989,10 @@
             assinaturaCanvas.addEventListener('touchmove', draw);
             assinaturaCanvas.addEventListener('touchend', stopDrawing);
         }
-
         function startDrawing(e) {
             desenhandoAssinatura = true;
             draw(e);
         }
-
         function draw(e) {
             if (!desenhandoAssinatura) return;
             
@@ -926,18 +1011,15 @@
             
             e.preventDefault();
         }
-
         function stopDrawing() {
             if (desenhandoAssinatura) {
                 desenhandoAssinatura = false;
                 assinaturaCtx.beginPath();
             }
         }
-
         function limparAssinatura() {
             assinaturaCtx.clearRect(0, 0, assinaturaCanvas.width, assinaturaCanvas.height);
         }
-
         function salvarAssinatura() {
             const assinaturaDataURL = assinaturaCanvas.toDataURL();
             const key = getStorageKey();
@@ -946,7 +1028,6 @@
                 showNotification("Assinatura salva!", "success");
             }
         }
-
         function validateForm() {
             const required = ["hospital", "data", "condutorPlantao", "placa", "kmAtual"];
             const today = new Date();
@@ -954,19 +1035,15 @@
             const dataInput = document.getElementById("data").value;
             const dataCheck = new Date(dataInput);
             dataCheck.setHours(0, 0, 0, 0);
-
             if (dataCheck > today) {
                 showNotification("A data não pode ser futura.", "error");
                 return false;
             }
-
             if (!validarPlaca()) {
                 return false;
             }
-
             let isValid = true;
             document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
-
             required.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el.value.trim()) {
@@ -974,7 +1051,6 @@
                     el.classList.add("required-field");
                 }
             });
-
             const criticalIssues = [];
             inspectionItems.forEach((item, index) => {
                 if (item.critical) {
@@ -984,25 +1060,19 @@
                     }
                 }
             });
-
             if (criticalIssues.length > 0) {
                 showNotification(`❗ Itens críticos com problemas: ${criticalIssues.slice(0, 3).join(", ")}${criticalIssues.length > 3 ? "..." : ""}`, "warning");
             }
-
             if (!isValid) {
                 showNotification("Preencha os campos obrigatórios.", "error");
             }
-
             return isValid;
         }
-
         function enviarPorEmail() {
             if (!validateForm()) return;
-
             const dataValue = document.getElementById("data").value;
             const [y, m, d] = dataValue.split('-');
             const dataFormatada = `${d}/${m}/${y}`;
-
             const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
                 data: dataFormatada,
@@ -1011,7 +1081,6 @@
                 condutorPlantao: document.getElementById("condutorPlantao").value,
                 recebendoDe: document.getElementById("recebendoDe").value
             };
-
             const dadosViatura = {
                 placa: document.getElementById("placa").value.toUpperCase(),
                 kmAtual: document.getElementById("kmAtual").value,
@@ -1020,7 +1089,6 @@
                 proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
                 cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
             };
-
             const itensInspecao = [];
             for (let i = 1; i <= inspectionItems.length; i++) {
                 const status = document.getElementById(`status-${i}`).value;
@@ -1034,52 +1102,41 @@
                     });
                 }
             }
-
             if (itensInspecao.length === 0) {
                 showNotification("Preencha ao menos um item de inspeção.", "warning");
                 return;
             }
-
             const observacoesGerais = document.getElementById("observacoesAvarias").value;
             const localizacaoInfo = coordenadasGPS ? 
                 `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 
                 'Localização não disponível';
-
             let corpoEmail = `
 Check-list Diário v2.0 - Viatura ${dadosViatura.placa}
 ================================================
-
 HOSPITAL: ${dadosCabecalho.hospital}
 CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
 DATA: ${dadosCabecalho.data}
 HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
 HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
 ${localizacaoInfo}
-
 --- DADOS DA VIATURA ---
 Placa: ${dadosViatura.placa}
 Km Atual: ${dadosViatura.kmAtual} km
 Nível de Combustível: ${dadosViatura.nivelCombustivel}
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
-
 --- ITENS DE INSPEÇÃO ---
 ${itensInspecao.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
-
 ${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
-
 E-mail gerado automaticamente pelo sistema LEFE.
             `.trim();
-
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             const destinatario = "manutencao@lefe.org.br";
-
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
         }
-
         function limparFormulario() {
             if (confirm("Deseja realmente limpar todos os campos?")) {
                 const key = getStorageKey();
@@ -1090,7 +1147,6 @@ E-mail gerado automaticamente pelo sistema LEFE.
                 location.reload();
             }
         }
-
         function showNotification(message, type) {
             const notification = document.getElementById("notification");
             notification.textContent = message;
@@ -1098,7 +1154,6 @@ E-mail gerado automaticamente pelo sistema LEFE.
             notification.style.display = "block";
             setTimeout(() => notification.style.display = "none", 6000);
         }
-
         // Carregar parâmetros da URL (QR Code)
         function carregarParametrosURL() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1113,14 +1168,15 @@ E-mail gerado automaticamente pelo sistema LEFE.
                 showNotification("Check-list carregado via QR Code!", "info");
             }
         }
-
         // Service Worker para PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVFX05BTUUgPSAnbGVmZS1jaGVja2xpc3QtdjEuMCc7DQpjb25zdCB1cmxzVG9DYWNoZSA9IFsNCiAgJy8nLA0KICAnL2luZGV4Lmh0bWwnDQpdOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2luc3RhbGwnLCBldmVudCA9PiB7DQogIGV2ZW50LndhaXRVbnRpbCgNCiAgICBjYWNoZXMub3BlbihDQUNIRV9OQU1FKQ0KICAgICAgLnRoZW4oY2FjaGUgPT4gY2FjaGUuYWRkQWxsKHVybHNUb0NhY2hlKSkNCiAgKTsNCn0pOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gew0KICBldmVudC5yZXNwb25kV2l0aCgNCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkNCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQ0KICA7DQp9KTs=');
         }
-
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Verificar primeira visita e mostrar boas-vindas
+            verificarPrimeiraVisita();
+            
             document.getElementById("data").value = new Date().toISOString().split("T")[0];
             generateInspectionTable();
             initAssinatura();
@@ -1130,7 +1186,6 @@ E-mail gerado automaticamente pelo sistema LEFE.
             
             autoSaveInterval = setInterval(salvarDados, 30000);
             window.addEventListener('beforeunload', salvarDados);
-
             // Event listeners
             document.getElementById("placa").addEventListener("change", carregarDados);
             document.getElementById("data").addEventListener("change", carregarDados);
