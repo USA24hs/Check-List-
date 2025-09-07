@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-list Diário - LEFE v2.0</title>
+    <title>Check-list Diário - LEFE</title>
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTEVGRSBDaGVjay1saXN0Iiwic2hvcnRfbmFtZSI6IkxFRkUiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Q5MDAwMCIsInRoZW1lX2NvbG9yIjoiI2Q5MDAwMCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBME9EQWdORGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlORGd3SWlCb1pXbG5hSFE5SWpRNE1DSWdabWxzYkQwaVkyUmxObmxoSWk4K1BDOXRKVE0rIiwic2l6ZXMiOiI0ODB4NDgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
     <style>
         :root {
@@ -433,7 +433,7 @@
         </div>
 
         <div class="footer">
-            <p>📝 Documento válido como registro de inspeção diária – LEFE v2.0<br>
+            <p>📝 Documento válido como registro de inspeção diária – LEFE<br>
             🗂️ Arquivar após preenchimento.<br>⏳ Atualizado em 2025.</p>
         </div>
     </div>
@@ -1069,10 +1069,10 @@ ${itensInspecao.map(i => `${i.num}. ${i.item}
 
 ${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
 
-E-mail gerado automaticamente pelo sistema LEFE v2.0.
+E-mail gerado automaticamente pelo sistema LEFE.
             `.trim();
 
-            const assunto = `Check-list v2.0 Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
+            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             const destinatario = "manutencao@lefe.org.br";
 
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
