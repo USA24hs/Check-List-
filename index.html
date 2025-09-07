@@ -168,20 +168,6 @@
         .status-faltando { background-color: #9c27b0; }
         .status-parar { background-color: var(--danger); }
         
-        .search-box {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            border: 1px solid var(--medium-gray);
-        }
-        .search-box input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--medium-gray);
-            border-radius: 4px;
-        }
-        
         .critical-item {
             background-color: #fff2f2 !important;
             font-weight: bold;
@@ -232,7 +218,7 @@
                 box-shadow: none;
                 border-radius: 0;
             }
-            .status-counters, .search-box {
+            .status-counters {
                 display: none;
             }
         }
@@ -250,10 +236,6 @@
     <div class="container">
         <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
         <h2> 📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
-        
-        <div class="search-box no-print">
-            <input type="text" id="searchInput" placeholder="Buscar item...">
-        </div>
         
         <div class="status-counters no-print">
             <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
@@ -301,7 +283,7 @@
         </table>
         
         <h2>🛠️ OBSERVAÇÕES GERAIS / AVARIAS</h2>
-        <textarea id="observacoesAvarias" rows="10" style="width: 100%;"></textarea>
+        <textarea id="observacoesAvarias" rows="10" style="width: 100%;" placeholder="Digite suas observações aqui. Use Enter para quebrar linhas."></textarea>
         
         <h2>✍️ ASSINATURAS (PARA IMPRESSÃO)</h2>
         <div class="signature">
@@ -324,7 +306,7 @@
             { name: "Óleo do motor", critical: true },
             { name: "Óleo hidráulico (caixa de direção)", critical: true },
             { name: "Fluido do radiador", critical: true },
-            { name: "Fluido de freio", critical: true },  <!-- NOVO ITEM ADICIONADO AQUI -->
+            { name: "Fluido de freio", critical: true },  // NOVO ITEM ADICIONADO AQUI
             { name: "Água do limpador de para-brisa", critical: false },
             { name: "Correia do alternador", critical: true },
             { name: "Correia dentada do motor", critical: true },
@@ -441,28 +423,6 @@
             document.getElementById('count-quebrado').textContent = counters['🛠️ Quebrado'];
             document.getElementById('count-faltando').textContent = counters['❌ Faltando'];
             document.getElementById('count-parar').textContent = counters['🚨 Parar VTR'];
-        }
-
-        // Função para buscar itens na tabela
-        function setupSearch() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', debounce(function() {
-                const searchText = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#inspection-table tbody tr');
-                
-                rows.forEach((row, index) => {
-                    const itemName = inspectionItems[index].name.toLowerCase();
-                    if (itemName.includes(searchText)) {
-                        row.style.display = '';
-                        row.classList.add('item-highlight');
-                        setTimeout(() => {
-                            row.classList.remove('item-highlight');
-                        }, 2000);
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            }, 300));
         }
 
         // Função debounce para melhorar performance
@@ -732,9 +692,6 @@
             // Gerar a tabela
             generateInspectionTable();
             
-            // Configurar busca
-            setupSearch();
-            
             // Tentar carregar dados salvos
             if (carregarDados()) {
                 showNotification("Dados anteriores carregados.", "info");
@@ -752,7 +709,7 @@
             // Adicionar listener para salvar antes de sair da página
             window.addEventListener('beforeunload', function(e) {
                 salvarDados();
-            });r
+            });
         });
     </script>
 </body>
