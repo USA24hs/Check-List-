@@ -260,7 +260,7 @@
             <div class="status-counter status-ruim">⚠️ Ruim: <span id="count-ruim">0</span></div>
             <div class="status-counter status-quebrado">🛠️ Quebrado: <span id="count-quebrado">0</span></div>
             <div class="status-counter status-faltando">❌ Faltando: <span id="count-faltando">0</span></div>
-            <div class="status-counter status-parar">🛑 Parar: <span id="count-parar">0</span></div>
+            <div class="status-counter status-parar">🚨 Parar VTR: <span id="count-parar">0</span></div>
         </div>
         
         <table>
@@ -290,7 +290,7 @@
         </table>
         
         <h2>🛠️ STATUS DE INSPEÇÃO</h2>
-        <p><em>Selecione o status: ✅ OK | ⚠️ Ruim | 🛠️ Quebrado | ❌ Faltando | 🛑 Parar veículo</em></p>
+        <p><em>Selecione o status: ✅ OK | ⚠️ Ruim | 🛠️ Quebrado | ❌ Faltando | 🚨 Parar VTR</em></p>
         <table id="inspection-table">
             <thead>
                 <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th></tr>
@@ -393,7 +393,7 @@
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
                 <option value="🛠️ Quebrado">🛠️ Quebrado</option>
                 <option value="❌ Faltando">❌ Faltando</option>
-                <option value="🛑 Parar Veículo">🛑 Parar Veículo</option>
+                <option value="🚨 Parar VTR">🚨 Parar VTR</option>
             `;
             
             inspectionItems.forEach((item, index) => {
@@ -427,7 +427,7 @@
                 '⚠️ Ruim': 0,
                 '🛠️ Quebrado': 0,
                 '❌ Faltando': 0,
-                '🛑 Parar Veículo': 0
+                '🚨 Parar VTR': 0
             };
             
             document.querySelectorAll('.status-select').forEach(select => {
@@ -440,7 +440,7 @@
             document.getElementById('count-ruim').textContent = counters['⚠️ Ruim'];
             document.getElementById('count-quebrado').textContent = counters['🛠️ Quebrado'];
             document.getElementById('count-faltando').textContent = counters['❌ Faltando'];
-            document.getElementById('count-parar').textContent = counters['🛑 Parar Veículo'];
+            document.getElementById('count-parar').textContent = counters['🚨 Parar VTR'];
         }
 
         // Função para buscar itens na tabela
@@ -752,7 +752,7 @@
             // Adicionar listener para salvar antes de sair da página
             window.addEventListener('beforeunload', function(e) {
                 salvarDados();
-            });
+            });r
         });
     </script>
 </body>
