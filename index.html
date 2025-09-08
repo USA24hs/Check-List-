@@ -138,6 +138,14 @@
         .btn-history:hover { background: #6D4C41; }
         .btn-qr { background: #FF5722; }
         .btn-qr:hover { background: #E64A19; }
+        .btn-edit { 
+            background: #80FF00; 
+            color: black;
+        }
+        .btn-edit:hover { 
+            background: #66CC00; 
+            color: black;
+        }
         .notification {
             position: fixed;
             bottom: 20px;
@@ -437,7 +445,7 @@
         <div class="modal-content">
             <div class="welcome-header">
                 <h1>🏥 Check-list Diário - LEFE</h1>
-                <p>🚨 Este é um aplicativo web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>A aplicação oferece uma interface intuitiva e responsiva para registrar o estado dos veículos de emergência.</p>
+                <p>🚨 Este é um aplicativo web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>A aplicação oferece uma interface intuitiva và responsiva para registrar o estado dos veículos de emergência.</p>
             </div>
             
             <div class="welcome-section">
@@ -1316,7 +1324,7 @@
                 'Localização não disponível';
             
             let corpoEmail = `
-Check-list Diário - Viatura ${dadosViatura.placa}
+Check-list Diário  - Viatura ${dadosViatura.placa}
 ================================================
 HOSPITAL: ${dadosCabecalho.hospital}
 CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
@@ -1581,7 +1589,7 @@ E-mail gerado automaticamente pelo sistema LEFE.
         
         // Service Worker para PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVFX05BTUUgPSAnbGVmZS1jaGVja2xpc3QtdjEuMCc7DQpjb25zdCB1cmxzVG9DYWNoZSA9IFsNCiAgJy8nLA0KICAnL2luZGV4Lmh0bWwnDQpdOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2luc3RhbGwnLCBldmVudCA9PiB7DQogIGV2ZW50LndhaXRVbnRpbCgNCiAgICBjYWNoZXMub3BlbihDQUNIRV9OQU1FKQ0KICAgICAgLnRoZW4oY2FjaGUgPT4gY2FjaGUuYWRkQWxsKHVybHNUb0NhY2hlKSkNCiAgKTsNCn0pOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gew0KICBldmVudC5yZXNwb25kV2l0aCgNCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkNCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQ0KICA7DQp9KTs=');
+            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdsZWZlLWNoZWNrbGlzdC12MS4wJzsNCmNvbnN0IHVybHNUb0NhY2hlID0gWw0KICAnLycsDQogICcvaW5kZXguaHRtbCcNCl07DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQud2FpdFVudGlsKA0KICAgIGNhY2hlcy5vcGVuKENBQ0hFX05BTUUpDQogICAgICAudGhlbihjYWNoZSA9PiBjYWNoZS5hZGRBbGwodXJsc1RvQ2FjaGUpKQ0KICApOw0KfSk7DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignZmV0Y2gnLCBldmVudCA9PiB7DQogIGV2ZW50LnJlc3BvbmRXaXRoKA0KICAgIGNhY2hlcy5tYXRjaChldmVudC5yZXF1ZXN0KQ0KICAgICAgLnRoZW4ocmVzcG9uc2UgPT4gcmVzcG9uc2UgfHwgZmV0Y2goZXZlbnQucmVxdWVzdCkpDQogIDsNCn0pOw==');
         }
         
         // Inicialização
