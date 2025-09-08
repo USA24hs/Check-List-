@@ -322,6 +322,65 @@
             font-size: 16px;
         }
         
+        /* Novos estilos para melhorias */
+        .search-box {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+        }
+        .batch-edit {
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--light-gray);
+            border-radius: 5px;
+            display: none;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .dashboard-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .dashboard-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        .dashboard-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .lazy-load {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .lazy-load.loaded {
+            opacity: 1;
+        }
+        .keyboard-shortcuts {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-size: 12px;
+            display: none;
+        }
+        .keyboard-shortcuts.show {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
             .toolbar {
                 flex-direction: column;
@@ -348,6 +407,9 @@
             .welcome-section h2 {
                 font-size: 18px;
             }
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
         }
         
         @media print {
@@ -363,24 +425,9 @@
             .status-counters {
                 display: none;
             }
-        }
-        /* Dashboard básico */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .dashboard-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-left: 4px solid var(--primary-color);
-        }
-        .dashboard-card h3 {
-            margin-top: 0;
-            color: var(--primary-color);
+            .dashboard {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -462,12 +509,33 @@
         <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
         <button class="btn-qr" onclick="gerarQRCode()"><span>📱</span> QR Code</button>
         <button class="btn-clear" onclick="limparFormulario()"><span>🗑️</span> Limpar</button>
+        <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()"><span>📝</span> Edição em Lote</button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
     
     <div class="container">
         <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
         <h2>📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
+        
+        <!-- Dashboard de estatísticas -->
+        <div class="dashboard no-print">
+            <div class="dashboard-card">
+                <h3>✅ Itens OK</h3>
+                <div class="value" id="dashboard-ok">0</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>⚠️ Itens com Problemas</h3>
+                <div class="value" id="dashboard-problems">0</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>🚨 Itens Críticos</h3>
+                <div class="value" id="dashboard-critical">0</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>📊 Preenchimento</h3>
+                <div class="value" id="dashboard-completion">0%</div>
+            </div>
+        </div>
         
         <div class="status-counters no-print">
             <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
@@ -476,6 +544,26 @@
             <div class="status-counter status-faltando">❌ Faltando: <span id="count-faltando">0</span></div>
             <div class="status-counter status-parar">🚨 Parar VTR: <span id="count-parar">0</span></div>
         </div>
+        
+        <!-- Modo de edição em lote -->
+        <div id="batchEdit" class="batch-edit no-print">
+            <h3>📝 Edição em Lote</h3>
+            <p>Selecione o status que deseja aplicar a vários itens:</p>
+            <select id="batchStatus">
+                <option value=""></option>
+                <option value="✅ OK">✅ OK</option>
+                <option value="⚠️ Ruim">⚠️ Ruim</option>
+                <option value="🛠️ Quebrado">🛠️ Quebrado</option>
+                <option value="❌ Faltando">❌ Faltando</option>
+                <option value="🚨 Parar VTR">🚨 Parar VTR</option>
+            </select>
+            <button onclick="aplicarEdicaoEmLote()">Aplicar aos itens selecionados</button>
+            <button onclick="selecionarTodosItens()">Selecionar todos</button>
+            <button onclick="desselecionarTodosItens()">Desselecionar todos</button>
+        </div>
+        
+        <!-- Busca -->
+        <input type="text" id="searchInput" class="search-box no-print" placeholder="🔍 Buscar item..." oninput="filtrarItens()">
         
         <table>
             <tr><td><strong>Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima"></td></tr>
@@ -511,7 +599,7 @@
         <p><em>Selecione o status: ✅ OK | ⚠️ Ruim | 🛠️ Quebrado | ❌ Faltando | 🚨 Parar VTR</em></p>
         <table id="inspection-table">
             <thead>
-                <tr><th>#</th><th>Item</th><th>Status</th><th>Observação</th><th class="no-print">📷</th></tr>
+                <tr><th class="no-print"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th><th>#</th><th>Item</th><th>Status</th><th>Observação</th><th class="no-print">📷</th></tr>
             </thead>
             <tbody>
                 <!-- Itens gerados via JS -->
@@ -568,8 +656,30 @@
         </div>
     </div>
     
+    <!-- Modal de Backup -->
+    <div id="modalBackup" class="modal no-print">
+        <div class="modal-content">
+            <span class="close" onclick="fecharBackup()">&times;</span>
+            <h2>☁️ Backup de Dados</h2>
+            <p>Faça backup dos seus check-lists para não perder seus dados.</p>
+            <button onclick="fazerBackup()">📦 Fazer Backup</button>
+            <button onclick="restaurarBackup()">🔄 Restaurar Backup</button>
+            <div id="statusBackup"></div>
+        </div>
+    </div>
+    
     <!-- Notificação -->
     <div id="notification" class="notification"></div>
+    
+    <!-- Atalhos de teclado -->
+    <div id="keyboardShortcuts" class="keyboard-shortcuts">
+        <strong>Atalhos de teclado:</strong><br>
+        Ctrl+S - Salvar<br>
+        Ctrl+E - Enviar por e-mail<br>
+        Ctrl+P - Imprimir<br>
+        Ctrl+F - Buscar<br>
+        Esc - Fechar modais
+    </div>
     
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -590,7 +700,7 @@
             { name: "Pisca dos retrovisores", critical: false },
             { name: "Faróis dianteiros", critical: true },
             { name: "Lanternas traseiras", critical: true },
-            { name: "Buzina e pisca de alerta", critical: false },
+            { name: "Buzina và pisca de alerta", critical: false },
             { name: "Botões dos vidros elétricos", critical: false },
             { name: "Travamento das portas", critical: true },
             { name: "Sinalizadores de emergência", critical: true },
@@ -635,11 +745,13 @@
             { name: "Baú do salão", critical: false },
             { name: "Painel de controle do salão", critical: true }
         ];
+        
         let autoSaveInterval;
         let lastSaveTime = null;
         let assinaturaCanvas, assinaturaCtx;
         let desenhandoAssinatura = false;
         let coordenadasGPS = null;
+        let filteredItems = [];
         
         // Verificar se é a primeira visita e mostrar boas-vindas
         function verificarPrimeiraVisita() {
@@ -677,12 +789,14 @@
                 return true;
             }
         }
+        
         // Gera chave única: placa + data
         function getStorageKey() {
             const placa = document.getElementById("placa").value.trim().toUpperCase();
             const data = document.getElementById("data").value;
             return placa && data ? `checklist_${placa}_${data}` : null;
         }
+        
         // Obter localização GPS
         function obterLocalizacao() {
             if (navigator.geolocation) {
@@ -703,6 +817,7 @@
                 );
             }
         }
+        
         function generateInspectionTable() {
             const tableBody = document.querySelector("#inspection-table tbody");
             const statusOptions = `
@@ -718,6 +833,7 @@
                 const row = document.createElement('tr');
                 if (item.critical) row.classList.add('critical-item');
                 row.innerHTML = `
+                    <td class="no-print"><input type="checkbox" class="item-selector" data-id="${index + 1}"></td>
                     <td>${(index + 1).toString().padStart(2, '0')}</td>
                     <td>${item.name}</td>
                     <td><select id="status-${index + 1}" class="status-select">${statusOptions}</select></td>
@@ -726,16 +842,26 @@
                 `;
                 tableBody.appendChild(row);
             });
+            
+            filteredItems = [...inspectionItems];
+            
             document.querySelectorAll('.status-select').forEach(select => {
-                select.addEventListener('change', updateStatusCounters);
+                select.addEventListener('change', function() {
+                    updateStatusCounters();
+                    updateDashboard();
+                    salvarDados();
+                });
             });
+            
             document.querySelectorAll('.obs-input').forEach(input => {
                 input.addEventListener('input', debounce(salvarDados, 1000));
             });
+            
             document.querySelectorAll('input[type="file"]').forEach(input => {
                 input.addEventListener('change', handleFileUpload);
             });
         }
+        
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -753,17 +879,40 @@
                 reader.readAsDataURL(file);
             }
         }
+        
         function updateStatusCounters() {
             const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️ Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
             document.querySelectorAll('.status-select').forEach(select => {
                 if (select.value && counters[select.value] !== undefined) counters[select.value]++;
             });
+            
             document.getElementById('count-ok').textContent = counters['✅ OK'];
             document.getElementById('count-ruim').textContent = counters['⚠️ Ruim'];
             document.getElementById('count-quebrado').textContent = counters['🛠️ Quebrado'];
             document.getElementById('count-faltando').textContent = counters['❌ Faltando'];
             document.getElementById('count-parar').textContent = counters['🚨 Parar VTR'];
         }
+        
+        function updateDashboard() {
+            const totalItems = inspectionItems.length;
+            let completedItems = 0;
+            let problemItems = 0;
+            let criticalItems = 0;
+            
+            document.querySelectorAll('.status-select').forEach((select, index) => {
+                if (select.value) completedItems++;
+                if (select.value && select.value !== "✅ OK") problemItems++;
+                if (inspectionItems[index].critical && select.value && select.value !== "✅ OK") criticalItems++;
+            });
+            
+            const completionRate = Math.round((completedItems / totalItems) * 100);
+            
+            document.getElementById('dashboard-ok').textContent = completedItems;
+            document.getElementById('dashboard-problems').textContent = problemItems;
+            document.getElementById('dashboard-critical').textContent = criticalItems;
+            document.getElementById('dashboard-completion').textContent = `${completionRate}%`;
+        }
+        
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -775,10 +924,12 @@
                 timeout = setTimeout(later, wait);
             };
         }
+        
         function salvarDados() {
             try {
                 const key = getStorageKey();
                 if (!key) return false;
+                
                 const dados = {
                     hospital: document.getElementById("hospital").value,
                     data: document.getElementById("data").value,
@@ -797,12 +948,14 @@
                     timestamp: new Date().toISOString(),
                     itens: []
                 };
+                
                 for (let i = 1; i <= inspectionItems.length; i++) {
                     dados.itens.push({
                         status: document.getElementById(`status-${i}`).value,
                         obs: document.getElementById(`obs-${i}`).value
                     });
                 }
+                
                 localStorage.setItem(key, JSON.stringify(dados));
                 lastSaveTime = new Date();
                 document.getElementById('saveIndicator').textContent = `Salvo: ${lastSaveTime.toLocaleTimeString()}`;
@@ -814,13 +967,17 @@
                 return false;
             }
         }
+        
         function carregarDados() {
             try {
                 const key = getStorageKey();
                 if (!key) return false;
+                
                 const dadosSalvos = localStorage.getItem(key);
                 if (!dadosSalvos) return false;
+                
                 const dados = JSON.parse(dadosSalvos);
+                
                 document.getElementById("hospital").value = dados.hospital || '';
                 document.getElementById("data").value = dados.data || '';
                 document.getElementById("horarioEntrada").value = dados.horarioEntrada || '';
@@ -833,41 +990,50 @@
                 document.getElementById("crvValido").value = dados.crvValido || '';
                 document.getElementById("proximaTrocaOleo").value = dados.proximaTrocaOleo || '';
                 document.getElementById("observacoesAvarias").value = dados.observacoesAvarias || '';
+                
                 if (dados.cartaoStatus) {
                     const radio = document.querySelector(`input[name="cartaoStatus"][value="${dados.cartaoStatus}"]`);
                     if (radio) radio.checked = true;
                 }
+                
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
                     document.getElementById('localizacao').innerHTML = 
                         `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
                 }
+                
                 if (dados.itens && dados.itens.length === inspectionItems.length) {
                     for (let i = 0; i < dados.itens.length; i++) {
                         document.getElementById(`status-${i+1}`).value = dados.itens[i].status || '';
                         document.getElementById(`obs-${i+1}`).value = dados.itens[i].obs || '';
                     }
                 }
+                
                 updateStatusCounters();
+                updateDashboard();
                 return true;
             } catch (e) {
                 console.error("Erro ao carregar:", e);
                 return false;
             }
         }
+        
         // Exportar dados
         function exportarDados() {
             if (!validateForm()) return;
+            
             const key = getStorageKey();
             if (!key) {
                 showNotification("Preencha placa e data para exportar", "error");
                 return;
             }
+            
             const dados = localStorage.getItem(key);
             if (!dados) {
                 showNotification("Nenhum dado para exportar", "error");
                 return;
             }
+            
             const blob = new Blob([dados], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -880,11 +1046,13 @@
             
             showNotification("Dados exportados com sucesso!", "success");
         }
+        
         // Histórico
         function abrirHistorico() {
             const modal = document.getElementById('modalHistorico');
             const lista = document.getElementById('listaHistorico');
             lista.innerHTML = '';
+            
             const historico = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -897,7 +1065,9 @@
                     }
                 }
             }
+            
             historico.sort((a, b) => new Date(b.dados.timestamp || 0) - new Date(a.dados.timestamp || 0));
+            
             if (historico.length === 0) {
                 lista.innerHTML = '<p>Nenhum check-list encontrado no histórico.</p>';
             } else {
@@ -914,8 +1084,10 @@
                     lista.appendChild(div);
                 });
             }
+            
             modal.style.display = 'block';
         }
+        
         function carregarDoHistorico(key) {
             try {
                 const dados = JSON.parse(localStorage.getItem(key));
@@ -927,6 +1099,7 @@
                         elemento.value = dados[campo];
                     }
                 });
+                
                 // Carregar itens
                 if (dados.itens) {
                     dados.itens.forEach((item, index) => {
@@ -936,22 +1109,27 @@
                         if (obsEl) obsEl.value = item.obs || '';
                     });
                 }
+                
                 // Carregar coordenadas
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
                     document.getElementById('localizacao').innerHTML = 
                         `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
                 }
+                
                 updateStatusCounters();
+                updateDashboard();
                 fecharHistorico();
                 showNotification("Check-list carregado do histórico!", "success");
             } catch (e) {
                 showNotification("Erro ao carregar do histórico", "error");
             }
         }
+        
         function fecharHistorico() {
             document.getElementById('modalHistorico').style.display = 'none';
         }
+        
         // QR Code
         function gerarQRCode() {
             const placa = document.getElementById("placa").value.trim();
@@ -961,6 +1139,7 @@
                 showNotification("Preencha placa e data para gerar QR Code", "error");
                 return;
             }
+            
             const url = `${window.location.href.split('?')[0]}?placa=${encodeURIComponent(placa)}&data=${data}`;
             
             const qrContainer = document.getElementById('qrcode');
@@ -974,9 +1153,11 @@
                 }
             });
         }
+        
         function fecharQRCode() {
             document.getElementById('modalQR').style.display = 'none';
         }
+        
         // Assinatura digital
         function initAssinatura() {
             assinaturaCanvas = document.getElementById('assinaturaCanvas');
@@ -989,10 +1170,12 @@
             assinaturaCanvas.addEventListener('touchmove', draw);
             assinaturaCanvas.addEventListener('touchend', stopDrawing);
         }
+        
         function startDrawing(e) {
             desenhandoAssinatura = true;
             draw(e);
         }
+        
         function draw(e) {
             if (!desenhandoAssinatura) return;
             
@@ -1011,15 +1194,18 @@
             
             e.preventDefault();
         }
+        
         function stopDrawing() {
             if (desenhandoAssinatura) {
                 desenhandoAssinatura = false;
                 assinaturaCtx.beginPath();
             }
         }
+        
         function limparAssinatura() {
             assinaturaCtx.clearRect(0, 0, assinaturaCanvas.width, assinaturaCanvas.height);
         }
+        
         function salvarAssinatura() {
             const assinaturaDataURL = assinaturaCanvas.toDataURL();
             const key = getStorageKey();
@@ -1028,22 +1214,28 @@
                 showNotification("Assinatura salva!", "success");
             }
         }
+        
         function validateForm() {
             const required = ["hospital", "data", "condutorPlantao", "placa", "kmAtual"];
+            
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const dataInput = document.getElementById("data").value;
             const dataCheck = new Date(dataInput);
             dataCheck.setHours(0, 0, 0, 0);
+            
             if (dataCheck > today) {
                 showNotification("A data não pode ser futura.", "error");
                 return false;
             }
+            
             if (!validarPlaca()) {
                 return false;
             }
+            
             let isValid = true;
             document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
+            
             required.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el.value.trim()) {
@@ -1051,6 +1243,7 @@
                     el.classList.add("required-field");
                 }
             });
+            
             const criticalIssues = [];
             inspectionItems.forEach((item, index) => {
                 if (item.critical) {
@@ -1060,19 +1253,25 @@
                     }
                 }
             });
+            
             if (criticalIssues.length > 0) {
                 showNotification(`❗ Itens críticos com problemas: ${criticalIssues.slice(0, 3).join(", ")}${criticalIssues.length > 3 ? "..." : ""}`, "warning");
             }
+            
             if (!isValid) {
                 showNotification("Preencha os campos obrigatórios.", "error");
             }
+            
             return isValid;
         }
+        
         function enviarPorEmail() {
             if (!validateForm()) return;
+            
             const dataValue = document.getElementById("data").value;
             const [y, m, d] = dataValue.split('-');
             const dataFormatada = `${d}/${m}/${y}`;
+            
             const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
                 data: dataFormatada,
@@ -1081,6 +1280,7 @@
                 condutorPlantao: document.getElementById("condutorPlantao").value,
                 recebendoDe: document.getElementById("recebendoDe").value
             };
+            
             const dadosViatura = {
                 placa: document.getElementById("placa").value.toUpperCase(),
                 kmAtual: document.getElementById("kmAtual").value,
@@ -1089,10 +1289,12 @@
                 proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
                 cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
             };
+            
             const itensInspecao = [];
             for (let i = 1; i <= inspectionItems.length; i++) {
                 const status = document.getElementById(`status-${i}`).value;
                 const obs = document.getElementById(`obs-${i}`).value.trim();
+                
                 if (status || obs) {
                     itensInspecao.push({
                         num: i.toString().padStart(2, '0'),
@@ -1102,14 +1304,17 @@
                     });
                 }
             }
+            
             if (itensInspecao.length === 0) {
                 showNotification("Preencha ao menos um item de inspeção.", "warning");
                 return;
             }
+            
             const observacoesGerais = document.getElementById("observacoesAvarias").value;
             const localizacaoInfo = coordenadasGPS ? 
                 `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 
                 'Localização não disponível';
+            
             let corpoEmail = `
 Check-list Diário v2.0 - Viatura ${dadosViatura.placa}
 ================================================
@@ -1119,24 +1324,31 @@ DATA: ${dadosCabecalho.data}
 HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
 HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
 ${localizacaoInfo}
+
 --- DADOS DA VIATURA ---
 Placa: ${dadosViatura.placa}
 Km Atual: ${dadosViatura.kmAtual} km
 Nível de Combustível: ${dadosViatura.nivelCombustivel}
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
+
 --- ITENS DE INSPEÇÃO ---
 ${itensInspecao.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
+
 ${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
+
 E-mail gerado automaticamente pelo sistema LEFE.
             `.trim();
+            
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             const destinatario = "manutencao@lefe.org.br";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
+            
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
         }
+        
         function limparFormulario() {
             if (confirm("Deseja realmente limpar todos os campos?")) {
                 const key = getStorageKey();
@@ -1144,16 +1356,25 @@ E-mail gerado automaticamente pelo sistema LEFE.
                     localStorage.removeItem(key);
                     localStorage.removeItem(`${key}_assinatura`);
                 }
+                
+                // Limpar checkboxes de seleção
+                document.querySelectorAll('.item-selector').forEach(cb => {
+                    cb.checked = false;
+                });
+                
                 location.reload();
             }
         }
+        
         function showNotification(message, type) {
             const notification = document.getElementById("notification");
             notification.textContent = message;
             notification.className = `notification ${type}`;
             notification.style.display = "block";
+            
             setTimeout(() => notification.style.display = "none", 6000);
         }
+        
         // Carregar parâmetros da URL (QR Code)
         function carregarParametrosURL() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1168,10 +1389,201 @@ E-mail gerado automaticamente pelo sistema LEFE.
                 showNotification("Check-list carregado via QR Code!", "info");
             }
         }
+        
+        // Novas funcionalidades
+        
+        // 1. Busca/filtro de itens
+        function filtrarItens() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#inspection-table tbody tr');
+            
+            filteredItems = [];
+            
+            rows.forEach((row, index) => {
+                const itemName = inspectionItems[index].name.toLowerCase();
+                const statusSelect = row.querySelector('.status-select');
+                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
+                const obsInput = row.querySelector('.obs-input');
+                const obs = obsInput ? obsInput.value.toLowerCase() : '';
+                
+                if (itemName.includes(searchTerm) || status.includes(searchTerm) || obs.includes(searchTerm)) {
+                    row.style.display = '';
+                    filteredItems.push(inspectionItems[index]);
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // 2. Edição em lote
+        function toggleBatchEdit() {
+            const batchEdit = document.getElementById('batchEdit');
+            batchEdit.style.display = batchEdit.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.item-selector');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+        }
+        
+        function selecionarTodosItens() {
+            const checkboxes = document.querySelectorAll('.item-selector');
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+            });
+        }
+        
+        function desselecionarTodosItens() {
+            const checkboxes = document.querySelectorAll('.item-selector');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+            });
+        }
+        
+        function aplicarEdicaoEmLote() {
+            const status = document.getElementById('batchStatus').value;
+            if (!status) {
+                showNotification("Selecione um status para aplicar", "error");
+                return;
+            }
+            
+            const checkboxes = document.querySelectorAll('.item-selector:checked');
+            if (checkboxes.length === 0) {
+                showNotification("Selecione pelo menos um item", "error");
+                return;
+            }
+            
+            checkboxes.forEach(cb => {
+                const itemId = cb.getAttribute('data-id');
+                document.getElementById(`status-${itemId}`).value = status;
+            });
+            
+            updateStatusCounters();
+            updateDashboard();
+            salvarDados();
+            showNotification(`Status aplicado a ${checkboxes.length} itens`, "success");
+        }
+        
+        // 3. Atalhos de teclado
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+S - Salvar
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    salvarDados();
+                }
+                
+                // Ctrl+E - Enviar por email
+                if (e.ctrlKey && e.key === 'e') {
+                    e.preventDefault();
+                    enviarPorEmail();
+                }
+                
+                // Ctrl+P - Imprimir
+                if (e.ctrlKey && e.key === 'p') {
+                    e.preventDefault();
+                    window.print();
+                }
+                
+                // Ctrl+F - Buscar
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+                
+                // Esc - Fechar modais
+                if (e.key === 'Escape') {
+                    fecharHistorico();
+                    fecharQRCode();
+                    fecharBackup();
+                }
+                
+                // Mostrar atalhos com Ctrl+/
+                if (e.ctrlKey && e.key === '/') {
+                    e.preventDefault();
+                    document.getElementById('keyboardShortcuts').classList.toggle('show');
+                }
+            });
+        }
+        
+        // 4. Backup de dados
+        function fazerBackup() {
+            const backupData = {};
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('checklist_') || key.endsWith('_assinatura')) {
+                    backupData[key] = localStorage.getItem(key);
+                }
+            }
+            
+            const dataStr = JSON.stringify(backupData);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `lefe_backup_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification("Backup criado com sucesso!", "success");
+        }
+        
+        function restaurarBackup() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const backupData = JSON.parse(e.target.result);
+                        
+                        // Limpar dados existentes primeiro
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            if (key.startsWith('checklist_') || key.endsWith('_assinatura')) {
+                                localStorage.removeItem(key);
+                            }
+                        }
+                        
+                        // Restaurar dados do backup
+                        Object.keys(backupData).forEach(key => {
+                            localStorage.setItem(key, backupData[key]);
+                        });
+                        
+                        showNotification("Backup restaurado com sucesso! Recarregando...", "success");
+                        setTimeout(() => location.reload(), 2000);
+                    } catch (error) {
+                        showNotification("Erro ao restaurar backup: arquivo inválido", "error");
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        function abrirBackup() {
+            document.getElementById('modalBackup').style.display = 'block';
+        }
+        
+        function fecharBackup() {
+            document.getElementById('modalBackup').style.display = 'none';
+        }
+        
         // Service Worker para PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVFX05BTUUgPSAnbGVmZS1jaGVja2xpc3QtdjEuMCc7DQpjb25zdCB1cmxzVG9DYWNoZSA9IFsNCiAgJy8nLA0KICAnL2luZGV4Lmh0bWwnDQpdOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2luc3RhbGwnLCBldmVudCA9PiB7DQogIGV2ZW50LndhaXRVbnRpbCgNCiAgICBjYWNoZXMub3BlbihDQUNIRV9OQU1FKQ0KICAgICAgLnRoZW4oY2FjaGUgPT4gY2FjaGUuYWRkQWxsKHVybHNUb0NhY2hlKSkNCiAgKTsNCn0pOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gew0KICBldmVudC5yZXNwb25kV2l0aCgNCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkNCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQ0KICA7DQp9KTs=');
         }
+        
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar primeira visita e mostrar boas-vindas
@@ -1183,9 +1595,11 @@ E-mail gerado automaticamente pelo sistema LEFE.
             carregarParametrosURL();
             obterLocalizacao();
             carregarDados();
+            setupKeyboardShortcuts();
             
             autoSaveInterval = setInterval(salvarDados, 30000);
             window.addEventListener('beforeunload', salvarDados);
+            
             // Event listeners
             document.getElementById("placa").addEventListener("change", carregarDados);
             document.getElementById("data").addEventListener("change", carregarDados);
