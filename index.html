@@ -50,11 +50,12 @@
         }
         
         body {
-            font-family: Arial, sans-serif;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            font-size: 15px;
             background-color: var(--light-gray);
             color: var(--text);
             margin: 5px;
-            line-height: 1.6;
+            line-height: 1.55;
             transition: background-color 0.3s, color 0.3s;
         }
         .container {
@@ -73,10 +74,12 @@
         h1 {
             font-size: 24px;
             text-align: center;
+            letter-spacing: .2px;
         }
         h2 {
             font-size: 18px;
             margin-top: 20px;
+            letter-spacing: .2px;
         }
         table {
             width: 100%;
@@ -99,13 +102,10 @@
             box-sizing: border-box;
             background-color: var(--card-bg);
             color: var(--text);
+            font-size: 14px;
         }
-        td input, td select {
-            width: auto;
-        }
-        .signature {
-            margin-top: 15px;
-        }
+        td input, td select { width: auto; }
+        .signature { margin-top: 15px; }
         .footer {
             margin-top: 15px;
             font-size: 12px;
@@ -132,14 +132,15 @@
         .toolbar button {
             color: #fff;
             border: none;
-            padding: 10px 15px;
+            padding: 10px 14px;
             border-radius: 5px;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.10);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         .btn-print { background: var(--primary-color); }
         .btn-print:hover { background: var(--primary-dark); }
@@ -162,13 +163,13 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 15px;
+            padding: 14px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             display: none;
             z-index: 1000;
-            max-width: 300px;
-            font-size: 16px;
+            max-width: 320px;
+            font-size: 14px;
         }
         .notification.success { background: var(--success); color: white; }
         .notification.error { background: var(--danger); color: white; }
@@ -201,46 +202,21 @@
         .status-faltando { background-color: #9c27b0; }
         .status-parar { background-color: var(--danger); }
 
-        /* Compactar contadores de status */
+        /* Contadores compactos */
         .status-counters .status-counter {
             padding: 6px 8px;
             min-width: 90px;
             font-size: 13px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         
-        .critical-item {
-            background-color: #fff2f2 !important;
-            font-weight: bold;
-        }
-        
-        .item-highlight {
-            animation: highlight 2s ease;
-            background-color: #ffffd0;
-        }
-        
-        @keyframes highlight {
-            0% { background-color: #ffffd0; }
-            100% { background-color: transparent; }
-        }
-        
-        .save-indicator {
-            font-size: 12px;
-            color: #666;
-            margin-left: 10px;
-            font-style: italic;
-        }
+        .critical-item { background-color: #fff2f2 !important; font-weight: bold; }
+        .item-highlight { animation: highlight 2s ease; background-color: #ffffd0; }
+        @keyframes highlight { 0% { background-color: #ffffd0; } 100% { background-color: transparent; } }
+        .save-indicator { font-size: 12px; color: #666; margin-left: 10px; font-style: italic; }
+
         /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            overflow-y: auto;
-        }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
         .modal-content {
             background-color: var(--card-bg);
             margin: 5% auto;
@@ -251,91 +227,30 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
         .close:hover { color: var(--text); }
         
         /* Modal de boas-vindas */
-        .welcome-modal .modal-content {
-            max-width: 800px;
-        }
-        .welcome-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .welcome-header h1 {
-            font-size: 28px;
-            color: var(--primary-color);
-            border: none;
-        }
-        .welcome-section {
-            margin-bottom: 20px;
-        }
-        .welcome-section h2 {
-            font-size: 20px;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-        .welcome-section ul {
-            padding-left: 20px;
-        }
-        .welcome-section li {
-            margin-bottom: 8px;
-        }
-        .welcome-footer {
-            text-align: center;
-            margin-top: 25px;
-        }
-        .btn-welcome {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-welcome:hover {
-            background: var(--primary-dark);
-        }
+        .welcome-modal .modal-content { max-width: 800px; }
+        .welcome-header { text-align: center; margin-bottom: 20px; }
+        .welcome-header h1 { font-size: 28px; color: var(--primary-color); border: none; }
+        .welcome-section { margin-bottom: 20px; }
+        .welcome-section h2 { font-size: 20px; margin-top: 15px; margin-bottom: 10px; }
+        .welcome-section ul { padding-left: 20px; }
+        .welcome-section li { margin-bottom: 8px; }
+        .welcome-footer { text-align: center; margin-top: 25px; }
+        .btn-welcome { background: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-welcome:hover { background: var(--primary-dark); }
         
         /* Upload de fotos (gerais) */
-        .photo-upload {
-            margin: 10px 0;
-        }
-        .photo-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin: 5px;
-            border-radius: 5px;
-        }
+        .photo-upload { margin: 10px 0; }
+        .photo-preview { max-width: 200px; max-height: 200px; margin: 5px; border-radius: 5px; }
         /* Histórico */
-        .history-item {
-            padding: 10px;
-            border: 1px solid var(--medium-gray);
-            margin: 5px 0;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: var(--light-gray);
-        }
-        .history-item:hover {
-            background-color: var(--medium-gray);
-        }
+        .history-item { padding: 10px; border: 1px solid var(--medium-gray); margin: 5px 0; border-radius: 5px; cursor: pointer; background-color: var(--light-gray); }
+        .history-item:hover { background-color: var(--medium-gray); }
         /* Localização */
-        .location-info {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .mobile-optimized select, .mobile-optimized input[type="text"] {
-            font-size: 16px;
-        }
+        .location-info { font-size: 12px; color: #666; margin-top: 5px; }
+        .mobile-optimized select, .mobile-optimized input[type="text"] { font-size: 16px; }
         
         /* Novos estilos para melhorias */
         .search-box {
@@ -344,6 +259,7 @@
             width: 100%;
             border: 1px solid var(--medium-gray);
             border-radius: 4px;
+            font-size: 14px;
         }
         .batch-edit {
             margin: 10px 0;
@@ -351,139 +267,65 @@
             background: var(--light-gray);
             border-radius: 5px;
             display: none;
-        }
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .dashboard-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .dashboard-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-        }
-        .dashboard-card .value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        .lazy-load {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .lazy-load.loaded {
-            opacity: 1;
-        }
-        .keyboard-shortcuts {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-size: 12px;
-            display: none;
-        }
-        .keyboard-shortcuts.show {
-            display: block;
-        }
-
-        /* Compactar a tabela de STATUS DE INSPEÇÃO */
-        #inspection-table {
             font-size: 14px;
         }
-        #inspection-table th, #inspection-table td {
-            padding: 2px 4px; /* bem compacto */
-            line-height: 1.3;
-        }
-        /* Colunas mais estreitas: seleção e número */
-        #inspection-table th:nth-child(1),
-        #inspection-table td:nth-child(1) { /* checkbox */
-            width: 24px;
-        }
-        #inspection-table th:nth-child(2),
-        #inspection-table td:nth-child(2) { /* # */
-            width: 32px;
-            text-align: center;
-        }
-        /* Coluna Status mais compacta */
-        #inspection-table th:nth-child(4),
-        #inspection-table td:nth-child(4) {
-            width: 120px;
-            padding: 2px 3px;
-        }
-        /* Select do Status compacto */
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .dashboard-card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .dashboard-card h3 { margin: 0 0 10px 0; font-size: 15px; font-weight: 600; }
+        .dashboard-card .value { font-size: 22px; font-weight: 700; color: var(--primary-color); }
+        .lazy-load { opacity: 0; transition: opacity 0.3s; }
+        .lazy-load.loaded { opacity: 1; }
+        .keyboard-shortcuts { position: fixed; bottom: 10px; left: 10px; background: var(--card-bg); padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 12px; display: none; }
+        .keyboard-shortcuts.show { display: block; }
+
+        /* Compactar a tabela de STATUS DE INSPEÇÃO */
+        #inspection-table { font-size: 13px; }
+        #inspection-table th, #inspection-table td { padding: 2px 4px; line-height: 1.3; }
+        #inspection-table th:nth-child(1), #inspection-table td:nth-child(1) { width: 24px; } /* checkbox */
+        #inspection-table th:nth-child(2), #inspection-table td:nth-child(2) { width: 32px; text-align: center; } /* # */
+        #inspection-table th:nth-child(4), #inspection-table td:nth-child(4) { width: 120px; padding: 2px 3px; } /* Status */
         #inspection-table select.status-select {
-            padding: 2px 4px;
-            height: 24px;
-            line-height: 1.1;
-            font-size: 13px;
-            min-width: 0;
-            width: 112px; /* acompanha largura da coluna */
-            box-sizing: border-box;
+            padding: 2px 4px; height: 24px; line-height: 1.1;
+            font-size: 13px; min-width: 0; width: 112px; box-sizing: border-box;
         }
-        /* Campo de Observação compacto */
-        #inspection-table input.obs-input {
-            padding: 2px 4px;
+        #inspection-table input.obs-input { padding: 2px 4px; font-size: 13px; box-sizing: border-box; }
+
+        /* Compactar outras tabelas (Dados básicos e Dados da Viatura) */
+        .compact-table { font-size: 13px; }
+        .compact-table th, .compact-table td { padding: 2px 4px; line-height: 1.3; }
+        .compact-table th { white-space: nowrap; }
+        .compact-table input[type="text"],
+        .compact-table input[type="date"],
+        .compact-table input[type="time"],
+        .compact-table input[type="number"],
+        .compact-table select,
+        .compact-table textarea {
             font-size: 13px;
-            box-sizing: border-box;
+            padding: 4px 6px;
+            height: 28px;
         }
+        .compact-table input[type="radio"] { margin-right: 4px; }
+        .compact-table input[type="radio"] + label { margin-right: 10px; font-size: 13px; }
+
+        /* Área de observações */
+        #observacoesAvarias { font-size: 13px; }
         
         @media (max-width: 768px) {
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .toolbar button {
-                width: 100%;
-                justify-content: center;
-            }
-            .status-counters {
-                flex-direction: column;
-            }
-            .modal-content {
-                width: 95%;
-                margin: 2% auto;
-            }
-            .welcome-modal .modal-content {
-                width: 95%;
-                padding: 15px;
-            }
-            .welcome-header h1 {
-                font-size: 24px;
-            }
-            .welcome-section h2 {
-                font-size: 18px;
-            }
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar button { width: 100%; justify-content: center; }
+            .status-counters { flex-direction: column; }
+            .modal-content { width: 95%; margin: 2% auto; }
+            .welcome-modal .modal-content { width: 95%; padding: 15px; }
+            .welcome-header h1 { font-size: 22px; }
+            .welcome-section h2 { font-size: 17px; }
+            .dashboard { grid-template-columns: 1fr; }
         }
         
         @media print {
-            .no-print, .no-print * {
-                display: none !important;
-            }
-            body, .container {
-                margin: 0;
-                padding: 0;
-                box-shadow: none;
-                border-radius: 0;
-            }
-            .status-counters {
-                display: none;
-            }
-            .dashboard {
-                display: none;
-            }
+            .no-print, .no-print * { display: none !important; }
+            body, .container { margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+            .status-counters { display: none; }
+            .dashboard { display: none; }
         }
     </style>
 </head>
@@ -553,7 +395,7 @@
         </div>
     </div>
     
-    <!-- Barra de ferramentas melhorada -->
+    <!-- Barra de ferramentas -->
     <div class="toolbar no-print">
         <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
         <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> E-mail</button>
@@ -570,55 +412,8 @@
         <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
         <h2>📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
         
-        <!-- Dashboard de estatísticas -->
-        <div class="dashboard no-print">
-            <div class="dashboard-card">
-                <h3>✅ Itens OK</h3>
-                <div class="value" id="dashboard-ok">0</div>
-            </div>
-            <div class="dashboard-card">
-                <h3>⚠️ Itens com Problemas</h3>
-                <div class="value" id="dashboard-problems">0</div>
-            </div>
-            <div class="dashboard-card">
-                <h3>🚨 Itens Críticos</h3>
-                <div class="value" id="dashboard-critical">0</div>
-            </div>
-            <div class="dashboard-card">
-                <h3>📊 Preenchimento</h3>
-                <div class="value" id="dashboard-completion">0%</div>
-            </div>
-        </div>
-        
-        <div class="status-counters no-print">
-            <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
-            <div class="status-counter status-ruim">⚠️ Ruim: <span id="count-ruim">0</span></div>
-            <div class="status-counter status-quebrado">🛠️ Quebrado: <span id="count-quebrado">0</span></div>
-            <div class="status-counter status-faltando">❌ Faltando: <span id="count-faltando">0</span></div>
-            <div class="status-counter status-parar">🚨 Parar VTR: <span id="count-parar">0</span></div>
-        </div>
-        
-        <!-- Modo de edição em lote -->
-        <div id="batchEdit" class="batch-edit no-print">
-            <h3>📝 Edição em Lote</h3>
-            <p>Selecione o status que deseja aplicar a vários itens:</p>
-            <select id="batchStatus">
-                <option value=""></option>
-                <option value="✅ OK">✅ OK</option>
-                <option value="⚠️ Ruim">⚠️ Ruim</option>
-                <option value="🛠️ Quebrado">🛠️ Quebrado</option>
-                <option value="❌ Faltando">❌ Faltando</option>
-                <option value="🚨 Parar VTR">🚨 Parar VTR</option>
-            </select>
-            <button onclick="aplicarEdicaoEmLote()">Aplicar aos itens selecionados</button>
-            <button onclick="selecionarTodosItens()">Selecionar todos</button>
-            <button onclick="desselecionarTodosItens()">Desselecionar todos</button>
-        </div>
-        
-        <!-- Busca -->
-        <input type="text" id="searchInput" class="search-box no-print" placeholder="🔍 Buscar item..." oninput="filtrarItens()">
-        
-        <table>
+        <!-- Tabela Dados Básicos -->
+        <table class="compact-table">
             <tr><td><strong>Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima"></td></tr>
             <tr><td><strong>Data:</strong></td><td><input type="date" id="data"></td></tr>
             <tr><td><strong>Horário de Entrada:</strong></td><td><input type="time" id="horarioEntrada" value="07:00"></td></tr>
@@ -628,7 +423,7 @@
         </table>
         
         <h2>🚑 DADOS DA VIATURA (USA)</h2>
-        <table>
+        <table class="compact-table">
             <tr><th>Item</th><th>Informação</th></tr>
             <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: ABC1234 ou ABC1D23" onblur="validarPlaca()"></td></tr>
             <tr><td><strong>Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847"></td></tr>
@@ -813,7 +608,6 @@
             }
         }
         
-        // Fechar modal de boas-vindas
         function fecharBoasVindas() {
             document.getElementById('welcomeModal').style.display = 'none';
         }
@@ -943,10 +737,7 @@
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
+                const later = () => { clearTimeout(timeout); func(...args); };
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
             };
@@ -1045,22 +836,12 @@
             }
         }
         
-        // Exportar dados
         function exportarDados() {
             if (!validateForm()) return;
-            
             const key = getStorageKey();
-            if (!key) {
-                showNotification("Preencha placa e data para exportar", "error");
-                return;
-            }
-            
+            if (!key) return showNotification("Preencha placa e data para exportar", "error");
             const dados = localStorage.getItem(key);
-            if (!dados) {
-                showNotification("Nenhum dado para exportar", "error");
-                return;
-            }
-            
+            if (!dados) return showNotification("Nenhum dado para exportar", "error");
             const blob = new Blob([dados], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1070,31 +851,22 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
             showNotification("Dados exportados com sucesso!", "success");
         }
         
-        // Histórico
         function abrirHistorico() {
             const modal = document.getElementById('modalHistorico');
             const lista = document.getElementById('listaHistorico');
             lista.innerHTML = '';
-            
             const historico = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('checklist_')) {
-                    try {
-                        const dados = JSON.parse(localStorage.getItem(key));
-                        historico.push({ key, dados });
-                    } catch (e) {
-                        console.error('Erro ao carregar histórico:', e);
-                    }
+                    try { historico.push({ key, dados: JSON.parse(localStorage.getItem(key)) }); }
+                    catch (e) { console.error('Erro ao carregar histórico:', e); }
                 }
             }
-            
             historico.sort((a, b) => new Date(b.dados.timestamp || 0) - new Date(a.dados.timestamp || 0));
-            
             if (historico.length === 0) {
                 lista.innerHTML = '<p>Nenhum check-list encontrado no histórico.</p>';
             } else {
@@ -1111,39 +883,29 @@
                     lista.appendChild(div);
                 });
             }
-            
             modal.style.display = 'block';
         }
         
         function carregarDoHistorico(key) {
             try {
                 const dados = JSON.parse(localStorage.getItem(key));
-                
-                // Carregar todos os campos
                 Object.keys(dados).forEach(campo => {
-                    const elemento = document.getElementById(campo);
-                    if (elemento && campo !== 'itens' && campo !== 'coordenadasGPS') {
-                        elemento.value = dados[campo];
-                    }
+                    const el = document.getElementById(campo);
+                    if (el && campo !== 'itens' && campo !== 'coordenadasGPS') el.value = dados[campo];
                 });
-                
-                // Carregar itens
                 if (dados.itens) {
-                    dados.itens.forEach((item, index) => {
-                        const statusEl = document.getElementById(`status-${index+1}`);
-                        const obsEl = document.getElementById(`obs-${index+1}`);
-                        if (statusEl) statusEl.value = item.status || '';
-                        if (obsEl) obsEl.value = item.obs || '';
+                    dados.itens.forEach((item, i) => {
+                        const s = document.getElementById(`status-${i+1}`);
+                        const o = document.getElementById(`obs-${i+1}`);
+                        if (s) s.value = item.status || '';
+                        if (o) o.value = item.obs || '';
                     });
                 }
-                
-                // Carregar coordenadas
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
                     document.getElementById('localizacao').innerHTML = 
                         `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
                 }
-                
                 updateStatusCounters();
                 updateDashboard();
                 fecharHistorico();
@@ -1153,68 +915,41 @@
             }
         }
         
-        function fecharHistorico() {
-            document.getElementById('modalHistorico').style.display = 'none';
-        }
+        function fecharHistorico() { document.getElementById('modalHistorico').style.display = 'none'; }
         
         function validateForm() {
             const required = ["hospital", "data", "condutorPlantao", "placa", "kmAtual"];
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const today = new Date(); today.setHours(0,0,0,0);
             const dataInput = document.getElementById("data").value;
-            const dataCheck = new Date(dataInput);
-            dataCheck.setHours(0, 0, 0, 0);
-            
-            if (dataCheck > today) {
-                showNotification("A data não pode ser futura.", "error");
-                return false;
-            }
-            
-            if (!validarPlaca()) {
-                return false;
-            }
-            
+            const dataCheck = new Date(dataInput); dataCheck.setHours(0,0,0,0);
+            if (dataCheck > today) { showNotification("A data não pode ser futura.", "error"); return false; }
+            if (!validarPlaca()) return false;
             let isValid = true;
             document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
-            
             required.forEach(id => {
                 const el = document.getElementById(id);
-                if (!el.value.trim()) {
-                    isValid = false;
-                    el.classList.add("required-field");
-                }
+                if (!el.value.trim()) { isValid = false; el.classList.add("required-field"); }
             });
-            
             const criticalIssues = [];
-            inspectionItems.forEach((item, index) => {
+            inspectionItems.forEach((item, i) => {
                 if (item.critical) {
-                    const status = document.getElementById(`status-${index+1}`).value;
-                    if (status && status !== "✅ OK") {
-                        criticalIssues.push(item.name);
-                    }
+                    const status = document.getElementById(`status-${i+1}`).value;
+                    if (status && status !== "✅ OK") criticalIssues.push(item.name);
                 }
             });
-            
             if (criticalIssues.length > 0) {
                 showNotification(`❗ Itens críticos com problemas: ${criticalIssues.slice(0, 3).join(", ")}${criticalIssues.length > 3 ? "..." : ""}`, "warning");
             }
-            
-            if (!isValid) {
-                showNotification("Preencha os campos obrigatórios.", "error");
-            }
-            
+            if (!isValid) showNotification("Preencha os campos obrigatórios.", "error");
             return isValid;
         }
         
         function enviarPorEmail() {
             if (!validateForm()) return;
-            
             const dataValue = document.getElementById("data").value;
             const [y, m, d] = dataValue.split('-');
             const dataFormatada = `${d}/${m}/${y}`;
-            
-            const dadosCabecalho = {
+            const cab = {
                 hospital: document.getElementById("hospital").value,
                 data: dataFormatada,
                 horarioEntrada: document.getElementById("horarioEntrada").value,
@@ -1222,8 +957,7 @@
                 condutorPlantao: document.getElementById("condutorPlantao").value,
                 recebendoDe: document.getElementById("recebendoDe").value
             };
-            
-            const dadosViatura = {
+            const vtr = {
                 placa: document.getElementById("placa").value.toUpperCase(),
                 kmAtual: document.getElementById("kmAtual").value,
                 nivelCombustivel: document.getElementById("nivelCombustivel").value,
@@ -1231,62 +965,44 @@
                 proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
                 cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
             };
-            
-            const itensInspecao = [];
+            const itens = [];
             for (let i = 1; i <= inspectionItems.length; i++) {
                 const status = document.getElementById(`status-${i}`).value;
                 const obs = document.getElementById(`obs-${i}`).value.trim();
-                
                 if (status || obs) {
-                    itensInspecao.push({
-                        num: i.toString().padStart(2, '0'),
-                        item: inspectionItems[i-1].name,
-                        status: status || 'Não avaliado',
-                        obs: obs || '---'
-                    });
+                    itens.push({ num: i.toString().padStart(2, '0'), item: inspectionItems[i-1].name, status: status || 'Não avaliado', obs: obs || '---' });
                 }
             }
-            
-            if (itensInspecao.length === 0) {
-                showNotification("Preencha ao menos um item de inspeção.", "warning");
-                return;
-            }
-            
-            const observacoesGerais = document.getElementById("observacoesAvarias").value;
-            const localizacaoInfo = coordenadasGPS ? 
-                `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 
-                'Localização não disponível';
-            
-            let corpoEmail = `
-Check-list Diário  - Viatura ${dadosViatura.placa}
+            if (itens.length === 0) return showNotification("Preencha ao menos um item de inspeção.", "warning");
+            const obsGerais = document.getElementById("observacoesAvarias").value;
+            const loc = coordenadasGPS ? `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 'Localização não disponível';
+            const corpoEmail = `
+Check-list Diário  - Viatura ${vtr.placa}
 ================================================
-HOSPITAL: ${dadosCabecalho.hospital}
-CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
-DATA: ${dadosCabecalho.data}
-HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
-HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
-${localizacaoInfo}
+HOSPITAL: ${cab.hospital}
+CONDUTOR DE PLANTÃO: ${cab.condutorPlantao}
+DATA: ${cab.data}
+HORÁRIO DE ENTRADA: ${cab.horarioEntrada}
+HORÁRIO DE SAÍDA: ${cab.horarioSaida}
+${loc}
 
 --- DADOS DA VIATURA ---
-Placa: ${dadosViatura.placa}
-Km Atual: ${dadosViatura.kmAtual} km
-Nível de Combustível: ${dadosViatura.nivelCombustivel}
-Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
+Placa: ${vtr.placa}
+Km Atual: ${vtr.kmAtual} km
+Nível de Combustível: ${vtr.nivelCombustivel}
+Cartão de Abastecimento: ${vtr.cartaoStatus}
 
 --- ITENS DE INSPEÇÃO ---
-${itensInspecao.map(i => `${i.num}. ${i.item}
+${itens.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
 
-${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
+${obsGerais ? `OBSERVAÇÕES GERAIS:\n${obsGerais}` : ''}
 
-E-mail gerado automaticamente pelo sistema LEFE.
-            `.trim();
-            
-            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
+E-mail gerado automaticamente pelo sistema LEFE.`.trim();
+            const assunto = `Check-list Viatura ${vtr.placa} - ${cab.data}`;
             const destinatario = "manutencao@lefe.org.br";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
-            
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
         }
@@ -1294,14 +1010,8 @@ E-mail gerado automaticamente pelo sistema LEFE.
         function limparFormulario() {
             if (confirm("Deseja realmente limpar todos os campos?")) {
                 const key = getStorageKey();
-                if (key) {
-                    localStorage.removeItem(key);
-                }
-                
-                document.querySelectorAll('.item-selector').forEach(cb => {
-                    cb.checked = false;
-                });
-                
+                if (key) localStorage.removeItem(key);
+                document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
                 location.reload();
             }
         }
@@ -1314,21 +1024,16 @@ E-mail gerado automaticamente pelo sistema LEFE.
             setTimeout(() => notification.style.display = "none", 6000);
         }
         
-        // 1. Busca/filtro de itens
+        // Busca/filtro
         function filtrarItens() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const term = document.getElementById('searchInput').value.toLowerCase();
             const rows = document.querySelectorAll('#inspection-table tbody tr');
-            
             filteredItems = [];
-            
             rows.forEach((row, index) => {
                 const itemName = inspectionItems[index].name.toLowerCase();
-                const statusSelect = row.querySelector('.status-select');
-                const status = statusSelect ? statusSelect.value.toLowerCase() : '';
-                const obsInput = row.querySelector('.obs-input');
-                const obs = obsInput ? obsInput.value.toLowerCase() : '';
-                
-                if (itemName.includes(searchTerm) || status.includes(searchTerm) || obs.includes(searchTerm)) {
+                const status = (row.querySelector('.status-select')?.value || '').toLowerCase();
+                const obs = (row.querySelector('.obs-input')?.value || '').toLowerCase();
+                if (itemName.includes(term) || status.includes(term) || obs.includes(term)) {
                     row.style.display = '';
                     filteredItems.push(inspectionItems[index]);
                 } else {
@@ -1337,85 +1042,42 @@ E-mail gerado automaticamente pelo sistema LEFE.
             });
         }
         
-        // 2. Edição em lote
+        // Edição em lote
         function toggleBatchEdit() {
-            const batchEdit = document.getElementById('batchEdit');
-            batchEdit.style.display = batchEdit.style.display === 'block' ? 'none' : 'block';
+            const el = document.getElementById('batchEdit');
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
         }
-        
         function toggleSelectAll(checkbox) {
-            const checkboxes = document.querySelectorAll('.item-selector');
-            checkboxes.forEach(cb => { cb.checked = checkbox.checked; });
+            document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = checkbox.checked; });
         }
-        
         function selecionarTodosItens() {
-            const checkboxes = document.querySelectorAll('.item-selector');
-            checkboxes.forEach(cb => { cb.checked = true; });
+            document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = true; });
         }
-        
         function desselecionarTodosItens() {
-            const checkboxes = document.querySelectorAll('.item-selector');
-            checkboxes.forEach(cb => { cb.checked = false; });
+            document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
         }
-        
         function aplicarEdicaoEmLote() {
             const status = document.getElementById('batchStatus').value;
-            if (!status) {
-                showNotification("Selecione um status para aplicar", "error");
-                return;
-            }
-            
-            const checkboxes = document.querySelectorAll('.item-selector:checked');
-            if (checkboxes.length === 0) {
-                showNotification("Selecione pelo menos um item", "error");
-                return;
-            }
-            
-            checkboxes.forEach(cb => {
-                const itemId = cb.getAttribute('data-id');
-                document.getElementById(`status-${itemId}`).value = status;
+            if (!status) return showNotification("Selecione um status para aplicar", "error");
+            const cbs = document.querySelectorAll('.item-selector:checked');
+            if (cbs.length === 0) return showNotification("Selecione pelo menos um item", "error");
+            cbs.forEach(cb => {
+                const id = cb.getAttribute('data-id');
+                document.getElementById(`status-${id}`).value = status;
             });
-            
-            updateStatusCounters();
-            updateDashboard();
-            salvarDados();
-            showNotification(`Status aplicado a ${checkboxes.length} itens`, "success");
+            updateStatusCounters(); updateDashboard(); salvarDados();
+            showNotification(`Status aplicado a ${cbs.length} itens`, "success");
         }
         
-        // 3. Atalhos de teclado
+        // Atalhos
         function setupKeyboardShortcuts() {
             document.addEventListener('keydown', function(e) {
-                // Ctrl+S - Salvar
-                if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    salvarDados();
-                }
-                // Ctrl+E - Enviar por email
-                if (e.ctrlKey && e.key === 'e') {
-                    e.preventDefault();
-                    enviarPorEmail();
-                }
-                // Ctrl+P - Imprimir
-                if (e.ctrlKey && e.key === 'p') {
-                    e.preventDefault();
-                    window.print();
-                }
-                // Ctrl+F - Buscar
-                if (e.ctrlKey && e.key === 'f') {
-                    e.preventDefault();
-                    document.getElementById('searchInput').focus();
-                }
-                // Ctrl+D - Alternar tema
-                if (e.ctrlKey && e.key.toLowerCase() === 'd') {
-                    e.preventDefault();
-                    toggleTheme();
-                }
-                // Esc - Fechar modais
-                if (e.key === 'Escape') {
-                    fecharHistorico();
-                    fecharBackup();
-                }
-                // Mostrar atalhos com Ctrl+/
+                if (e.ctrlKey && e.key === 's') { e.preventDefault(); salvarDados(); }
+                if (e.ctrlKey && e.key === 'e') { e.preventDefault(); enviarPorEmail(); }
+                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
+                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+                if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleTheme(); }
+                if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); }
                 if (e.ctrlKey && e.key === '/') {
                     e.preventDefault();
                     document.getElementById('keyboardShortcuts').classList.toggle('show');
@@ -1423,14 +1085,12 @@ E-mail gerado automaticamente pelo sistema LEFE.
             });
         }
         
-        // 4. Backup de dados (apenas chaves checklist_)
+        // Backup (apenas chaves checklist_)
         function fazerBackup() {
             const backupData = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key.startsWith('checklist_')) {
-                    backupData[key] = localStorage.getItem(key);
-                }
+                if (key.startsWith('checklist_')) backupData[key] = localStorage.getItem(key);
             }
             const dataStr = JSON.stringify(backupData);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -1444,27 +1104,20 @@ E-mail gerado automaticamente pelo sistema LEFE.
         
         function restaurarBackup() {
             const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
+            input.type = 'file'; input.accept = '.json';
             input.onchange = e => {
                 const file = e.target.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
                         const backupData = JSON.parse(e.target.result);
-                        // Limpar dados existentes primeiro (somente checklist_)
                         const keysToRemove = [];
                         for (let i = 0; i < localStorage.length; i++) {
                             const key = localStorage.key(i);
-                            if (key.startsWith('checklist_')) {
-                                keysToRemove.push(key);
-                            }
+                            if (key.startsWith('checklist_')) keysToRemove.push(key);
                         }
                         keysToRemove.forEach(k => localStorage.removeItem(k));
-                        // Restaurar dados do backup
-                        Object.keys(backupData).forEach(key => {
-                            localStorage.setItem(key, backupData[key]);
-                        });
+                        Object.keys(backupData).forEach(key => { localStorage.setItem(key, backupData[key]); });
                         showNotification("Backup restaurado com sucesso! Recarregando...", "success");
                         setTimeout(() => location.reload(), 2000);
                     } catch (error) {
@@ -1476,15 +1129,10 @@ E-mail gerado automaticamente pelo sistema LEFE.
             input.click();
         }
         
-        function abrirBackup() {
-            document.getElementById('modalBackup').style.display = 'block';
-        }
-        
-        function fecharBackup() {
-            document.getElementById('modalBackup').style.display = 'none';
-        }
+        function abrirBackup() { document.getElementById('modalBackup').style.display = 'block'; }
+        function fecharBackup() { document.getElementById('modalBackup').style.display = 'none'; }
 
-        // Preview de fotos gerais (opcional)
+        // Preview de fotos gerais
         function setupFotosGeraisPreview() {
             const input = document.getElementById('fotosGerais');
             const preview = document.getElementById('previewFotosGerais');
@@ -1512,11 +1160,8 @@ E-mail gerado automaticamente pelo sistema LEFE.
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Tema inicial
             const savedTheme = localStorage.getItem(THEME_KEY);
             applyTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-
-            // Verificar primeira visita e mostrar boas-vindas
             verificarPrimeiraVisita();
             
             document.getElementById("data").value = new Date().toISOString().split("T")[0];
@@ -1530,17 +1175,13 @@ E-mail gerado automaticamente pelo sistema LEFE.
             autoSaveInterval = setInterval(salvarDados, 30000);
             window.addEventListener('beforeunload', salvarDados);
             
-            // Event listeners
             document.getElementById("placa").addEventListener("change", carregarDados);
             document.getElementById("data").addEventListener("change", carregarDados);
             
-            // Fechar modais clicando fora
             window.onclick = function(event) {
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';
-                    }
+                    if (event.target === modal) modal.style.display = 'none';
                 });
             };
         });
