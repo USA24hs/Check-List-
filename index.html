@@ -20,6 +20,7 @@
             --background: #ffffff;
             --text: #333333;
             --card-bg: #ffffff;
+            --edit-color: #00796B; /* Nova cor para o botão de edição */
         }
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -125,8 +126,8 @@
         .btn-export:hover { background: #5E35B1; }
         .btn-history { background: #795548; }
         .btn-history:hover { background: #6D4C41; }
-        .btn-edit { background: #80FF00; color: black; }
-        .btn-edit:hover { background: #66CC00; color: black; }
+        .btn-edit { background: var(--edit-color); } /* Cor alterada para o botão de edição */
+        .btn-edit:hover { background: #00695C; } /* Cor de hover alterada */
         .btn-trends { background: #009688; }
         .btn-trends:hover { background: #00796B; }
         /* Botão flutuante para alternar a barra */
@@ -520,6 +521,22 @@
         #observacoesAvarias {
             min-height: 120px;
             line-height: 1.4;
+        }
+        
+        /* Estilo para o botão de Google Maps */
+        .btn-maps {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-maps:hover {
+            background-color: #3367D6;
         }
     </style>
 </head>
@@ -917,14 +934,29 @@
                             longitude: position.coords.longitude,
                             timestamp: new Date().toISOString()
                         };
-                        document.getElementById('localizacao').innerHTML = 
-                            `📍 Localização: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)} (${new Date(coordenadasGPS.timestamp).toLocaleTimeString()})`;
+                        
+                        const localizacaoElement = document.getElementById('localizacao');
+                        localizacaoElement.innerHTML = 
+                            `📍 Localização: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)} (${new Date(coordenadasGPS.timestamp).toLocaleTimeString()}) 
+                             <button onclick="mostrarLocalizacaoNoMapa()" class="btn-maps">Ver no Maps</button>`;
                     },
                     function(error) {
                         console.log("Erro ao obter localização:", error);
                         document.getElementById('localizacao').innerHTML = '📍 Localização não disponível';
                     }
                 );
+            }
+        }
+        
+        // Função para abrir o Google Maps com as coordenadas atuais
+        function mostrarLocalizacaoNoMapa() {
+            if (coordenadasGPS && coordenadasGPS.latitude && coordenadasGPS.longitude) {
+                const lat = coordenadasGPS.latitude.toFixed(6);
+                const lon = coordenadasGPS.longitude.toFixed(6);
+                const googleMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
+                window.open(googleMapsUrl, '_blank');
+            } else {
+                showNotification("Localização não disponível. Verifique se o GPS está ativado.", "warning");
             }
         }
         
@@ -1099,8 +1131,10 @@
                 
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
-                    document.getElementById('localizacao').innerHTML = 
-                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
+                    const localizacaoElement = document.getElementById('localizacao');
+                    localizacaoElement.innerHTML = 
+                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()}) 
+                         <button onclick="mostrarLocalizacaoNoMapa()" class="btn-maps">Ver no Maps</button>`;
                 }
                 
                 if (dados.itens && dados.itens.length === inspectionItems.length) {
@@ -1196,8 +1230,10 @@
                 }
                 if (dados.coordenadasGPS) {
                     coordenadasGPS = dados.coordenadasGPS;
-                    document.getElementById('localizacao').innerHTML = 
-                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()})`;
+                    const localizacaoElement = document.getElementById('localizacao');
+                    localizacaoElement.innerHTML = 
+                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()}) 
+                         <button onclick="mostrarLocalizacaoNoMapa()" class="btn-maps">Ver no Maps</button>`;
                 }
                 updateStatusCounters();
                 updateDashboard();
@@ -1276,36 +1312,111 @@
                 return;
             }
             const observacoesGerais = document.getElementById("observacoesAvarias").value;
-            const localizacaoInfo = coordenadasGPS ? 
-                `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 
-                'Localização não disponível';
+            
+            // Gerar link do Google Maps se houver coordenadas
+            let localizacaoInfo = 'Localização não disponível';
+            if (coordenadasGPS && coordenadasGPS.latitude && coordenadasGPS.longitude) {
+                const lat = coordenadasGPS.latitude.toFixed(6);
+                const lon = coordenadasGPS.longitude.toFixed(6);
+                const googleMapsLink = `https://maps.google.com/?q=${lat},${lon}`;
+                localizacaoInfo = `LOCALIZAÇÃO: ${lat}, ${lon}\nGoogle Maps: ${googleMapsLink}`;
+            }
+            
+            // Agrupar itens por status para melhor visualização
+            const itensAgrupados = {
+                '✅ OK': [],
+                '⚠️ Ruim': [],
+                '🛠️ Quebrado': [],
+                '❌ Faltando': [],
+                '🚨 Parar VTR': []
+            };
+            
+            itensInspecao.forEach(item => {
+                if (itensAgrupados[item.status]) {
+                    itensAgrupados[item.status].push(item);
+                }
+            });
+            
             const corpoEmail = `
-Check-list Diário  - Viatura ${dadosViatura.placa}
-================================================
-HOSPITAL: ${dadosCabecalho.hospital}
-CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
-RECEBENDODE: ${dadosCabecalho.recebendoDe}
-DATA: ${dadosCabecalho.data}
-HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
-HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
-${localizacaoInfo}
---- DADOS DA VIATURA ---
+================================================================================
+                            CHECK-LIST DIÁRIO - LEFE
+================================================================================
+                                VIATURA: ${dadosViatura.placa}
+                                DATA: ${dadosCabecalho.data}
+================================================================================
+INFORMAÇÕES BÁSICAS
+================================================================================
+
+Hospital: ${dadosCabecalho.hospital}
+Condutor de Plantão: ${dadosCabecalho.condutorPlantao}
+Recebendo de: ${dadosCabecalho.recebendoDe}
+Horário de Entrada: ${dadosCabecalho.horarioEntrada}
+Horário de Saída: ${dadosCabecalho.horarioSaida}
+Localização: ${localizacaoInfo}
+
+DADOS DA VIATURA
+================================================================================
 Placa: ${dadosViatura.placa}
 Km Atual: ${dadosViatura.kmAtual} km
 Nível de Combustível: ${dadosViatura.nivelCombustivel}
+CRV Válido até: ${dadosViatura.crvValido}
+Próxima Troca de Óleo: ${dadosViatura.proximaTrocaOleo} km
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
---- ITENS DE INSPEÇÃO ---
-${itensInspecao.map(i => `${i.num}. ${i.item}
-   Status: ${i.status}
-   Obs: ${i.obs}`).join('\n\n')}
-   
-${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
-E-mail gerado automaticamente pelo sistema LEFE.`.trim();
+
+ITENS DE INSPEÇÃO
+================================================================================
+
+ITENS COM STATUS ✅ OK (${itensAgrupados['✅ OK'].length} itens)
+
+${itensAgrupados['✅ OK'].map(item => `• ${item.num}. ${item.item}`).join('\n')}
+
+${itensAgrupados['⚠️ Ruim'].length > 0 ? `
+ITENS COM STATUS ⚠️ RUIM (${itensAgrupados['⚠️ Ruim'].length} itens)
+
+${itensAgrupados['⚠️ Ruim'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+` : ''}
+
+${itensAgrupados['🛠️ Quebrado'].length > 0 ? `
+ITENS COM STATUS 🛠️ QUEBRADO (${itensAgrupados['🛠️ Quebrado'].length} itens)
+
+${itensAgrupados['🛠️ Quebrado'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+` : ''}
+
+${itensAgrupados['❌ Faltando'].length > 0 ? `
+ITENS COM STATUS ❌ FALTANDO (${itensAgrupados['❌ Faltando'].length} itens)
+${itensAgrupados['❌ Faltando'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+` : ''}
+
+${itensAgrupados['🚨 Parar VTR'].length > 0 ? `
+ITENS COM STATUS 🚨 PARAR VTR (${itensAgrupados['🚨 Parar VTR'].length} itens)
+
+${itensAgrupados['🚨 Parar VTR'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+` : ''}
+
+${observacoesGerais ? `
+OBSERVAÇÕES GERAIS / AVARIAS
+================================================================================
+
+${observacoesGerais}
+` : ''}
+
+================================================================================
+E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()}
+================================================================================`.trim();
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             const destinatario = "lefechecklist@.gmail.com";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
+        }
+        
+        function limparFormulario() {
+            if (confirm("Deseja realmente limpar todos os campos?")) {
+                const key = getStorageKey();
+                if (key) { localStorage.removeItem(key); }
+                document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
+                location.reload();
+            }
         }
         
         function showNotification(message, type) {
