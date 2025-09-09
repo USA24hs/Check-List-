@@ -341,7 +341,7 @@
             .modal-content { width: 95%; margin: 2% auto; }
             .welcome-modal .modal-content { width: 95%; padding: 15px; }
             .welcome-header h1 { font-size: 22px; }
-            .welcome-section h2 { font-size: 17px; }
+            .welcome-section h2 { font-size: 14px; }
             .dashboard { grid-template-columns: 1fr; }
         }
         
@@ -352,6 +352,50 @@
             .status-counters { display: none; }
             .dashboard { display: none; }
         }
+
+        /* ===== Ajuste pedido: mais espaço para "Observação" e menos para "Item" ===== */
+        #inspection-table {
+            width: 100%;
+            table-layout: fixed; /* respeita larguras de colunas definidas */
+        }
+        /* Coluna 3 = Item: mais estreita e sem quebra (reticências) */
+        #inspection-table th:nth-child(3),
+        #inspection-table td:nth-child(3) {
+            width: 30%;                 /* ajuste: 20–30% conforme seu gosto */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Coluna 5 = Observação: mais larga */
+        #inspection-table th:nth-child(5),
+        #inspection-table td:nth-child(5) {
+            width: 58%;                 /* ganha mais espaço horizontal */
+        }
+        /* Campo de observação ocupa 100% da coluna */
+        #inspection-table input.obs-input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* Em telas pequenas, não corta o nome do item */
+        @media (max-width: 768px) {
+            #inspection-table { table-layout: auto; }
+            #inspection-table th:nth-child(3),
+            #inspection-table td:nth-child(3) {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+            }
+        }
+        /* Na impressão, mostre o nome completo do item */
+        @media print {
+            #inspection-table th:nth-child(3),
+            #inspection-table td:nth-child(3) {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+            }
+        }
+        /* ===== Fim do ajuste ===== */
     </style>
 </head>
 <body>
@@ -1150,12 +1194,14 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             const rows = document.querySelectorAll('#inspection-table tbody tr');
             filteredItems = [];
             rows.forEach((row, index) => {
-                const itemName = inspectionItems[index].name.toLowerCase();
+                const itemName = inspectionItems[index]?.name?.toLowerCase?.() || '';
                 const status = (row.querySelector('.status-select')?.value || '').toLowerCase();
                 const obs = (row.querySelector('.obs-input')?.value || '').toLowerCase();
                 if (itemName.includes(term) || status.includes(term) || obs.includes(term)) {
                     row.style.display = '';
-                    filteredItems.push(inspectionItems[index]);
+                    if (!filteredItems.includes(inspectionItems[index])) {
+                        filteredItems.push(inspectionItems[index]);
+                    }
                 } else {
                     row.style.display = 'none';
                 }
