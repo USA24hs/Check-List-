@@ -121,8 +121,6 @@
         .btn-email:hover { background: var(--secondary-dark); }
         .btn-save { background: var(--success); }
         .btn-save:hover { background: #3d8b40; }
-        .btn-clear { background: var(--danger); }
-        .btn-clear:hover { background: #c62828; }
         .btn-export { background: #673AB7; }
         .btn-export:hover { background: #5E35B1; }
         .btn-history { background: #795548; }
@@ -536,7 +534,7 @@
         <div class="modal-content">
             <div class="welcome-header">
                 <h1>🏥 Check-list Diário - LEFE</h1>
-                <p>🚨 Este é um aplicativo web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>A aplicação oferece uma interface intuitiva và responsiva para registrar o estado dos veículos de emergência.</p>
+                <p>🚨 Este é um sistema web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>O sistema oferece uma interface intuitiva và responsiva para registrar o estado dos veículos de emergência.</p>
             </div>
             
             <div class="welcome-section">
@@ -544,13 +542,13 @@
                 <h3>📝 Registro de Dados</h3>
                 <ul>
                     <li>Informações básicas (hospital, data, horários, condutores)</li>
-                    <li>Dados da viatura (placa, quilometragem, combustível, etc.)</li>
+                    <li>Dados da viatura (placa, quilometragem, combustível, etc..)</li>
                     <li>Validação automática de placa brasileira (formatos antigo e novo)</li>
                 </ul>
                 
                 <h3>✅ Check-list de Inspeção</h3>
                 <ul>
-                    <li>Lista completa de itens para inspeção (óleo, freio, pneus, etc.)</li>
+                    <li>Lista completa de itens para inspeção (óleo, freio, pneus, etc..)</li>
                     <li>Status para cada item: OK, Ruim, Quebrado, Faltando, Parar VTR</li>
                     <li>Itens críticos destacados visualmente</li>
                     <li>Campos para observações por item</li>
@@ -558,17 +556,16 @@
                 
                 <h3>🛠️ Recursos Avançados</h3>
                 <ul>
-                    <li>Localização GPS: Obtém e armazena coordenadas geográficas</li>
                     <li>Upload de fotos gerais (opcional)</li>
                     <li>Armazenamento local: Salva dados no navegador</li>
                     <li>Histórico: Visualização e carregamento de check-lists anteriores</li>
-                    <li>Relatórios de tendência: Identifica itens com mais problemas</li>
+                    <li>Relatórios de tendência: Identifica itens com mais problemas para possíveis reparos </li>
                     <li>Modo offline robusto: Funciona sem conexão e sincroniza quando online</li>
                 </ul>
                 
                 <h3>📤 Exportação e Compartilhamento</h3>
                 <ul>
-                    <li>Exportação de dados: Exportação em formato JSON</li>
+                    <li>Exportação de dados: Exportação em formato PDF</li>
                     <li>Envio por e-mail: Gera e-mail formatado com os dados</li>
                     <li>Impressão: Layout otimizado para impressão</li>
                 </ul>
@@ -593,7 +590,7 @@
             </div>
             
             <div class="welcome-footer">
-                <button class="btn-welcome" onclick="fecharBoasVindas()">Começar a usar o aplicativo</button>
+                <button class="btn-welcome" onclick="fecharBoasVindas()">Começar a usar o sistema</button>
             </div>
         </div>
     </div>
@@ -606,7 +603,6 @@
         <button class="btn-export" onclick="exportarDados()"><span>📤</span> Exportar</button>
         <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
         <button class="btn-trends" onclick="abrirRelatorioTendencia()"><span>📈</span> Tendências</button>
-        <button class="btn-clear" onclick="limparFormulario()"><span>🗑️</span> Limpar</button>
         <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()"><span>📝</span> Edição em Lote</button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
@@ -1293,35 +1289,23 @@ DATA: ${dadosCabecalho.data}
 HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
 HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
 ${localizacaoInfo}
-
 --- DADOS DA VIATURA ---
 Placa: ${dadosViatura.placa}
 Km Atual: ${dadosViatura.kmAtual} km
 Nível de Combustível: ${dadosViatura.nivelCombustivel}
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
-
 --- ITENS DE INSPEÇÃO ---
 ${itensInspecao.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
    
 ${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
-
 E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             const destinatario = "lefechecklist@.gmail.com";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
-        }
-        
-        function limparFormulario() {
-            if (confirm("Deseja realmente limpar todos os campos?")) {
-                const key = getStorageKey();
-                if (key) { localStorage.removeItem(key); }
-                document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
-                location.reload();
-            }
         }
         
         function showNotification(message, type) {
@@ -1611,7 +1595,7 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
         
         // Service Worker para PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdsZWZlLWNoZWNrbGlzdC12MS4wJzsNCmNvbnN0IHVybHNUb0NhY2hlID0gWw0KICAnLycsDQogICcvaW5kZXguaHRtbCcNCl07DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGV2ZW50ID0+IHsNCiAgZXZludC53YWl0VW50aWwoDQogICAgY2FjaGVzLm9wZW4oQ0FDSEVfTkFNRSkNCiAgICAgIC50aGVuKGNhY2hlID0+IGNhY2hlLmFkZEFsbCh1cmxzVG9DYWNoZSkpDQogICk7DQp9KTsNCg0Kc2VsZi5hZGRFdmVudExpc3RlbmVyKCd2ZXJzaW9uJywgZXZlbnQgPT4ge30pOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gew0KICBldmVudC5yZXNwb25kV2l0aCgNCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkNCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQ0KICApOw0KfSk7');
+            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdsZWZlLWNoZWNrbGlzdC12MS4wJzsNCmNvbnN0IHVybHNUb0NhY2hlID0gWw0KICAnLycsDQogICcvaW5kZXguaHRtbCcNCl07DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQud2FpdFVudGlsKA0KICAgIGNhY2hlcy5vcGVuKENBQ0hFX05BTUUpDQogICAgICAudGhlbihjYWNoZSA9PiBjYWNoZS5hZGRBbGwodXJsc1RvQ2FjaGUpKQ0KICApOw0KfSk7DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcigidmVyc2lvbiIsIGV2ZW50ID0+IHt9KTsNCg0Kc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQucmVzcG9uZFdpdGgoDQogICAgY2FjaGVzLm1hdGNoKGV2ZW50LnJlcXVlc3QpDQogICAgICAudGhlbihyZXNwb25zZSA9PiByZXNwb25zZSB8fCBmZXRjaChldmVudC5yZXF1ZXN0KSkNCiAgKTsNCn0pOw==');
         }
         
         // Inicialização
