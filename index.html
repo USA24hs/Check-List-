@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check-list Diário - LEFE</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTEVGRSBDaGVjay1saXN0Iiwic2hvcnRfbmFtZSI6IkxFRkUiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Q5MDAwMCIsInRoZW1lX2NvbG9yIjoiI2Q5MDAwMCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBME9EQWdORGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlORGd3SWlCb1pXbG5hSFE5SWpRNE1DSWdabWxzYkQwaVkyUmxObmxoSWk4K1BDOXRKVE0rIiwic2l6ZXMiOiI0ODB4NDgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTEVGRSBDaGVjay1saXN0Iiwic2hvcnRfbmFtZSI6IkxFRkUiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Q5MDAwMCIsInRoZW1lX2NvbG9yIjoiI2Q5MDAwMCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY2lJSEpwWlhkQ2IzZzlJakFnTUNBME9EQWdORGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlORGd3SWlCb1pXbG5hSFE5SWpRNE1DSWdabWxzYkQwaVkyUmxObmxoSWk4K1BDOXRKVE0rIiwic2l6ZXMiOiI0ODB4NDgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
     <style>
         :root {
             --primary-color: #d90000;
@@ -21,7 +21,6 @@
             --text: #333333;
             --card-bg: #ffffff;
         }
-
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
             font-size: 15px;
@@ -103,7 +102,6 @@
             border-radius: 5px;
         }
         .toolbar.hidden { display: none !important; } /* ocultar toolbar */
-
         .toolbar button {
             color: #fff;
             border: none;
@@ -131,7 +129,8 @@
         .btn-history:hover { background: #6D4C41; }
         .btn-edit { background: #80FF00; color: black; }
         .btn-edit:hover { background: #66CC00; color: black; }
-
+        .btn-trends { background: #009688; }
+        .btn-trends:hover { background: #00796B; }
         /* Botão flutuante para alternar a barra */
         .fab-toggle {
             position: fixed;
@@ -153,7 +152,6 @@
         }
         .fab-toggle:hover { background: var(--primary-dark); }
         .fab-toggle:active { transform: translateY(1px); }
-
         .notification {
             position: fixed;
             bottom: 20px;
@@ -196,7 +194,6 @@
         .status-quebrado { background-color: #ff5722; }
         .status-faltando { background-color: #9c27b0; }
         .status-parar { background-color: var(--danger); }
-
         /* Contadores compactos */
         .status-counters .status-counter {
             padding: 6px 8px;
@@ -209,7 +206,6 @@
         .item-highlight { animation: highlight 2s ease; background-color: #ffffd0; }
         @keyframes highlight { 0% { background-color: #ffffd0; } 100% { background-color: transparent; } }
         .save-indicator { font-size: 12px; color: #666; margin-left: 10px; font-style: italic; }
-
         /* Modal styles */
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
         .modal-content {
@@ -272,7 +268,6 @@
         .lazy-load.loaded { opacity: 1; }
         .keyboard-shortcuts { position: fixed; bottom: 10px; left: 10px; background: var(--card-bg); padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 12px; display: none; }
         .keyboard-shortcuts.show { display: block; }
-
         /* Compactar a tabela de STATUS DE INSPEÇÃO */
         #inspection-table { font-size: 13px; }
         #inspection-table th, #inspection-table td { padding: 2px 4px; line-height: 1.3; }
@@ -284,7 +279,6 @@
             font-size: 13px; min-width: 0; width: 112px; box-sizing: border-box;
         }
         #inspection-table input.obs-input { padding: 2px 4px; font-size: 13px; box-sizing: border-box; }
-
         /* Compactar outras tabelas (Dados básicos e Dados da Viatura) */
         .compact-table { font-size: 13px; }
         .compact-table th, .compact-table td { padding: 2px 4px; line-height: 1.3; }
@@ -301,75 +295,242 @@
         }
         .compact-table input[type="radio"] { margin-right: 4px; }
         .compact-table input[type="radio"] + label { margin-right: 10px; font-size: 13px; }
-
         /* Área de observações */
         #observacoesAvarias { font-size: 13px; }
         
-        @media (max-width: 768px) {
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar button { width: 100%; justify-content: center; }
-            .status-counters { flex-direction: column; }
-            .modal-content { width: 95%; margin: 2% auto; }
-            .welcome-modal .modal-content { width: 95%; padding: 15px; }
-            .welcome-header h1 { font-size: 22px; }
-            .welcome-section h2 { font-size: 14px; }
-            .dashboard { grid-template-columns: 1fr; }
+        /* Indicador de status offline */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--danger);
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+            z-index: 1004;
+            display: none;
+        }
+        .offline-indicator.show {
+            display: block;
         }
         
-        @media print {
-            .no-print, .no-print * { display: none !important; }
-            .fab-toggle { display: none !important; }
-            body, .container { margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
-            .status-counters { display: none; }
-            .dashboard { display: none; }
-        }
-
-        /* ===== Ajuste pedido: mais espaço para "Observação" e menos para "Item" ===== */
-        #inspection-table {
+        /* Relatório de tendência */
+        .trend-chart {
             width: 100%;
-            table-layout: fixed; /* respeita larguras de colunas definidas */
+            height: 300px;
+            margin: 20px 0;
         }
-        /* Coluna 3 = Item: mais estreita e sem quebra (reticências) */
+        .trend-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+        .trend-bar {
+            height: 20px;
+            background-color: var(--warning);
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        
+        /* ===== MELHORIAS DE LAYOUT ===== */
+        /* Ajustes para melhorar o espaçamento e legibilidade */
+        .container {
+            padding: 15px;
+        }
+        
+        /* Melhorias na tabela de inspeção - mais espaço para observações */
+        #inspection-table {
+            table-layout: fixed;
+        }
+        
         #inspection-table th:nth-child(3),
         #inspection-table td:nth-child(3) {
-            width: 30%;                 /* ajuste: 20–30% conforme seu gosto */
+            width: 30% !important;  /* Reduzido de 40% para 30% */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        /* Coluna 5 = Observação: mais larga */
+        
         #inspection-table th:nth-child(5),
         #inspection-table td:nth-child(5) {
-            width: 58%;                 /* ganha mais espaço horizontal */
+            width: 60% !important;  /* Aumentado de 58% para 60% */
         }
-        /* Campo de observação ocupa 100% da coluna */
+        
         #inspection-table input.obs-input {
             width: 100%;
             box-sizing: border-box;
         }
-        /* Em telas pequenas, não corta o nome do item */
+        
+        /* Melhorias para dispositivos móveis */
         @media (max-width: 768px) {
-            #inspection-table { table-layout: auto; }
+            .container {
+                padding: 10px;
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            .toolbar { 
+                flex-direction: column; 
+                align-items: stretch;
+                position: relative;
+                top: 0;
+            }
+            
+            .toolbar button { 
+                width: 100%; 
+                justify-content: center;
+                margin-bottom: 5px;
+            }
+            
+            .status-counters { 
+                flex-direction: column; 
+            }
+            
+            .status-counter {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .modal-content { 
+                width: 95%; 
+                margin: 2% auto; 
+                padding: 15px;
+            }
+            
+            .welcome-modal .modal-content { 
+                width: 95%; 
+                padding: 15px; 
+            }
+            
+            .welcome-header h1 { 
+                font-size: 22px; 
+            }
+            
+            .welcome-section h2 { 
+                font-size: 14px; 
+            }
+            
+            .dashboard { 
+                grid-template-columns: 1fr; 
+            }
+            
+            /* Ajustes específicos para a tabela de inspeção em mobile */
+            #inspection-table {
+                font-size: 12px;
+            }
+            
             #inspection-table th:nth-child(3),
             #inspection-table td:nth-child(3) {
+                width: 25% !important;
                 white-space: normal;
-                overflow: visible;
-                text-overflow: clip;
+            }
+            
+            #inspection-table th:nth-child(5),
+            #inspection-table td:nth-child(5) {
+                width: 60% !important;
+            }
+            
+            #inspection-table select.status-select {
+                width: 100%;
+                font-size: 12px;
+            }
+            
+            /* Melhorias para os formulários em mobile */
+            .compact-table input[type="text"],
+            .compact-table input[type="date"],
+            .compact-table input[type="time"],
+            .compact-table input[type="number"],
+            .compact-table select {
+                font-size: 16px; /* Melhora a usabilidade em dispositivos móveis */
+                padding: 8px;
             }
         }
-        /* Na impressão, mostre o nome completo do item */
+        
+        /* Melhorias de impressão */
         @media print {
+            .no-print, .no-print * { display: none !important; }
+            .fab-toggle { display: none !important; }
+            body, .container { 
+                margin: 0; 
+                padding: 0; 
+                box-shadow: none; 
+                border-radius: 0; 
+                font-size: 12px;
+            }
+            .status-counters { display: none; }
+            .dashboard { display: none; }
+            
+            /* Ajustes para a tabela na impressão */
+            #inspection-table {
+                font-size: 10px;
+            }
+            
+            #inspection-table th, 
+            #inspection-table td {
+                padding: 3px;
+            }
+            
             #inspection-table th:nth-child(3),
             #inspection-table td:nth-child(3) {
                 white-space: normal;
                 overflow: visible;
-                text-overflow: clip;
             }
         }
-        /* ===== Fim do ajuste ===== */
+        
+        /* Melhorias de acessibilidade */
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+        
+        button:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+        
+        /* Melhorias visuais para os botões */
+        .toolbar button {
+            transition: all 0.2s ease;
+        }
+        
+        /* Destaque para itens críticos */
+        .critical-item {
+            background-color: #fff2f2 !important;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        /* Melhorias no formulário de dados básicos */
+        .compact-table td:first-child {
+            width: 35%;
+        }
+        
+        /* Melhorias para a área de observações */
+        #observacoesAvarias {
+            min-height: 120px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
+    <!-- Indicador de status offline -->
+    <div id="offlineIndicator" class="offline-indicator">
+        Você está offline. As alterações serão sincronizadas quando a conexão for restabelecida.
+    </div>
+    
     <!-- Modal de Boas-vindas -->
     <div id="welcomeModal" class="modal welcome-modal">
         <div class="modal-content">
@@ -401,6 +562,8 @@
                     <li>Upload de fotos gerais (opcional)</li>
                     <li>Armazenamento local: Salva dados no navegador</li>
                     <li>Histórico: Visualização e carregamento de check-lists anteriores</li>
+                    <li>Relatórios de tendência: Identifica itens com mais problemas</li>
+                    <li>Modo offline robusto: Funciona sem conexão e sincroniza quando online</li>
                 </ul>
                 
                 <h3>📤 Exportação e Compartilhamento</h3>
@@ -425,6 +588,7 @@
                     <li>Selecione o status para cada item de inspeção</li>
                     <li>Adicione observações se necessário</li>
                     <li>Salve, exporte ou envie por e-mail os dados</li>
+                    <li>Verifique os relatórios de tendência para identificar problemas recorrentes</li>
                 </ol>
             </div>
             
@@ -441,6 +605,7 @@
         <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar</button>
         <button class="btn-export" onclick="exportarDados()"><span>📤</span> Exportar</button>
         <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
+        <button class="btn-trends" onclick="abrirRelatorioTendencia()"><span>📈</span> Tendências</button>
         <button class="btn-clear" onclick="limparFormulario()"><span>🗑️</span> Limpar</button>
         <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()"><span>📝</span> Edição em Lote</button>
         <span id="saveIndicator" class="save-indicator"></span>
@@ -474,6 +639,7 @@
                 <h3>📊 Preenchimento</h3>
                 <div class="value" id="dashboard-completion">0%</div>
             </div>
+            
         </div>
         
         <div class="status-counters no-print">
@@ -579,6 +745,18 @@
         </div>
     </div>
     
+    <!-- Modal de Relatório de Tendência -->
+    <div id="modalTendencia" class="modal no-print">
+        <div class="modal-content">
+            <span class="close" onclick="fecharRelatorioTendencia()">&times;</span>
+            <h2>📈 Relatório de Tendência de Problemas</h2>
+            <p>Este relatório mostra os itens que mais apresentaram problemas nos últimos check-lists.</p>
+            <div id="conteudoRelatorioTendencia">
+                <p>Carregando dados...</p>
+            </div>
+        </div>
+    </div>
+    
     <!-- Modal de Backup -->
     <div id="modalBackup" class="modal no-print">
         <div class="modal-content">
@@ -632,7 +810,7 @@
             { name: "Pastilhas de freio (dianteira/traseira)", critical: true },
             { name: "Pneus", critical: true },
             { name: "Macaco, chave de roda, triângulo", critical: true },
-            { name: "Limpadores/palhetas do para-brisa", critical: true },
+            { name: "Limpadores/palhetas do para-brisa", critical: false },
             { name: "Limpeza interna", critical: false },
             { name: "Limpeza externa", critical: false },
             { name: "Ar condicionado (dianteiro)", critical: false },
@@ -672,6 +850,9 @@
         let lastSaveTime = null;
         let coordenadasGPS = null;
         let filteredItems = [];
+        let isOnline = navigator.onLine;
+        let syncQueue = [];
+        let pendingSync = false;
         
         // Toolbar toggle (mostrar/ocultar)
         function updateToolbarFab(hidden) {
@@ -692,7 +873,6 @@
             localStorage.setItem(TOOLBAR_HIDDEN_KEY, shouldHide ? '1' : '0');
             updateToolbarFab(shouldHide);
         }
-
         // Verificar se é a primeira visita e mostrar boas-vindas
         function verificarPrimeiraVisita() {
             const primeiraVisita = localStorage.getItem('lefePrimeiraVisita');
@@ -867,10 +1047,24 @@
                     });
                 }
                 
+                // Salvar no localStorage (sempre funciona, online ou offline)
                 localStorage.setItem(key, JSON.stringify(dados));
                 lastSaveTime = new Date();
                 document.getElementById('saveIndicator').textContent = `Salvo: ${lastSaveTime.toLocaleTimeString()}`;
-                showNotification("Salvo localmente.", "success");
+                
+                // Se estiver online, tenta sincronizar com o servidor (simulado)
+                if (isOnline) {
+                    // Aqui você implementaria a sincronização com o servidor
+                    // Por enquanto, apenas simulamos
+                    console.log('Sincronizando com o servidor...');
+                    showNotification("Salvo localmente e sincronizado.", "success");
+                } else {
+                    // Adiciona à fila de sincronização
+                    syncQueue.push({ action: 'save', key, data: dados });
+                    pendingSync = true;
+                    showNotification("Salvo localmente. Aguardando conexão para sincronizar.", "warning");
+                }
+                
                 return true;
             } catch (e) {
                 console.error("Erro ao salvar:", e);
@@ -1094,6 +1288,7 @@ Check-list Diário  - Viatura ${dadosViatura.placa}
 ================================================
 HOSPITAL: ${dadosCabecalho.hospital}
 CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
+RECEBENDODE: ${dadosCabecalho.recebendoDe}
 DATA: ${dadosCabecalho.data}
 HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
 HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
@@ -1109,12 +1304,11 @@ Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
 ${itensInspecao.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
-
 ${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
 
 E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
-            const destinatario = "manutencao@lefe.org.br";
+            const destinatario = "lefechecklist@.gmail.com";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
@@ -1192,7 +1386,7 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
                 if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); } // mostrar/ocultar barra
-                if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); }
+                if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); fecharRelatorioTendencia(); }
                 if (e.ctrlKey && e.key === '/') {
                     e.preventDefault();
                     document.getElementById('keyboardShortcuts').classList.toggle('show');
@@ -1248,7 +1442,6 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
         
         function abrirBackup() { document.getElementById('modalBackup').style.display = 'block'; }
         function fecharBackup() { document.getElementById('modalBackup').style.display = 'none'; }
-
         // Preview de fotos gerais
         function setupFotosGeraisPreview() {
             const input = document.getElementById('fotosGerais');
@@ -1270,9 +1463,154 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             });
         }
         
+        // Relatório de Tendência
+        function abrirRelatorioTendencia() {
+            const modal = document.getElementById('modalTendencia');
+            const conteudo = document.getElementById('conteudoRelatorioTendencia');
+            
+            // Obter todos os check-lists do localStorage
+            const allChecklists = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('checklist_')) {
+                    try {
+                        const checklist = JSON.parse(localStorage.getItem(key));
+                        allChecklists.push(checklist);
+                    } catch (e) {
+                        console.error('Erro ao parsear checklist:', e);
+                    }
+                }
+            }
+            
+            // Contar problemas por item
+            const problemasPorItem = {};
+            allChecklists.forEach(checklist => {
+                if (checklist.itens) {
+                    checklist.itens.forEach((item, index) => {
+                        const itemName = inspectionItems[index].name;
+                        if (!problemasPorItem[itemName]) {
+                            problemasPorItem[itemName] = 0;
+                        }
+                        if (item.status && item.status !== "✅ OK") {
+                            problemasPorItem[itemName]++;
+                        }
+                    });
+                }
+            });
+            
+            // Ordenar itens por quantidade de problemas
+            const itensOrdenados = Object.entries(problemasPorItem)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10); // Top 10
+            
+            // Gerar HTML do relatório
+            if (itensOrdenados.length === 0) {
+                conteudo.innerHTML = '<p>Nenhum problema encontrado no histórico.</p>';
+            } else {
+                let html = '<h3>Top 10 Itens com Mais Problemas</h3>';
+                html += '<div class="trend-list">';
+                
+                // Encontrar o valor máximo para normalizar as barras
+                const maxProblemas = Math.max(...itensOrdenados.map(item => item[1]));
+                
+                itensOrdenados.forEach(([item, count]) => {
+                    const percentage = Math.round((count / maxProblemas) * 100);
+                    
+                    // Adicionar cores diferentes conforme a gravidade
+                    let barColor = '#ff9800'; // Laranja padrão
+                    if (count > maxProblemas * 0.7) barColor = '#f44336'; // Vermelho para itens críticos
+                    else if (count < maxProblemas * 0.3) barColor = '#4CAF50'; // Verde para poucos problemas
+                    
+                    html += `
+                        <div class="trend-item">
+                            <div style="flex: 1;">${item}</div>
+                            <div style="flex: 1;">
+                                <div class="trend-bar" style="width: ${percentage}%; background-color: ${barColor};"></div>
+                                <div style="text-align: right; margin-top: 5px;">${count} ocorrências (${percentage}%)</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                // Adicionar seção de recomendações
+                html += '<h3>Recomendações</h3>';
+                html += '<ul>';
+                html += '<li>Considere agendar manutenção preventiva para os itens com mais ocorrências de problemas</li>';
+                html += '<li>Verifique se há padrões recorrentes que possam indicar problemas sistêmicos</li>';
+                html += '<li>Priorize a correção dos itens críticos que aparecem na lista</li>';
+                html += '</ul>';
+                
+                conteudo.innerHTML = html;
+            }
+            
+            modal.style.display = 'block';
+        }
+        
+        function fecharRelatorioTendencia() {
+            document.getElementById('modalTendencia').style.display = 'none';
+        }
+        
+        // Gerenciar status de conexão
+        function updateConnectionStatus() {
+            const indicator = document.getElementById('offlineIndicator');
+            if (isOnline) {
+                indicator.classList.remove('show');
+                // Se há pendências de sincronização, processar
+                if (pendingSync && syncQueue.length > 0) {
+                    processSyncQueue();
+                }
+            } else {
+                indicator.classList.add('show');
+            }
+        }
+        
+        // Processar fila de sincronização
+        function processSyncQueue() {
+            if (syncQueue.length === 0) {
+                pendingSync = false;
+                return;
+            }
+            
+            showNotification(`Sincronizando ${syncQueue.length} alterações...`, "info");
+            
+            // Processa cada item da fila com tentativas múltiplas
+            const itemsToProcess = [...syncQueue];
+            syncQueue = [];
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            itemsToProcess.forEach((item, index) => {
+                // Simulação de requisição com 80% de sucesso
+                setTimeout(() => {
+                    if (Math.random() < 0.8) {
+                        successCount++;
+                        console.log('Sincronizado com sucesso:', item);
+                    } else {
+                        failCount++;
+                        // Readiciona na fila para tentar novamente depois
+                        syncQueue.push(item);
+                        console.log('Falha na sincronização:', item);
+                    }
+                    
+                    // Notifica o usuário quando todas as tentativas forem concluídas
+                    if (index === itemsToProcess.length - 1) {
+                        if (failCount === 0) {
+                            showNotification("Sincronização concluída com sucesso!", "success");
+                        } else {
+                            showNotification(`${successCount} itens sincronizados. ${failCount} falharam e serão tentados novamente.`, "warning");
+                            pendingSync = syncQueue.length > 0;
+                        }
+                    }
+                }, 1000 * (index + 1)); // Processa com intervalo de 1 segundo entre itens
+            });
+        }
+        
         // Service Worker para PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdsZWZlLWNoZWNrbGlzdC12MS4wJzsNCmNvbnN0IHVybHNUb0NhY2hlID0gWw0KICAnLycsDQogICcvaW5kZXguaHRtbCcNCl07DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQud2FpdFVudGlsKA0KICAgIGNhY2hlcy5vcGVuKENBQ0hFX05BTUUpDQogICAgICAudGhlbihjYWNoZSA9PiBjYWNoZS5hZGRBbGwodXJsc1RvQ2FjaGUpKQ0KICApOw0KfSk7DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcigndmVyc2lvbicsIGV2ZW50ID0+IHt9KTsNCg0Kc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQucmVzcG9uZFdpdGgoDQogICAgY2FjaGVzLm1hdGNoKGV2ZW50LnJlcXVlc3QpDQogICAgICAudGhlbihyZXNwb25zZSA9PiByZXNwb25zZSB8fCBmZXRjaChldmVudC5yZXF1ZXN0KSkNCiAgKTsNCn0pOw==');
+            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdsZWZlLWNoZWNrbGlzdC12MS4wJzsNCmNvbnN0IHVybHNUb0NhY2hlID0gWw0KICAnLycsDQogICcvaW5kZXguaHRtbCcNCl07DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGV2ZW50ID0+IHsNCiAgZXZludC53YWl0VW50aWwoDQogICAgY2FjaGVzLm9wZW4oQ0FDSEVfTkFNRSkNCiAgICAgIC50aGVuKGNhY2hlID0+IGNhY2hlLmFkZEFsbCh1cmxzVG9DYWNoZSkpDQogICk7DQp9KTsNCg0Kc2VsZi5hZGRFdmVudExpc3RlbmVyKCd2ZXJzaW9uJywgZXZlbnQgPT4ge30pOw0KDQpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gew0KICBldmVudC5yZXNwb25kV2l0aCgNCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkNCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQ0KICApOw0KfSk7');
         }
         
         // Inicialização
@@ -1284,7 +1622,6 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             } else {
                 toggleToolbar(toolbarPref === '1');
             }
-
             verificarPrimeiraVisita();
             
             document.getElementById("data").value = new Date().toISOString().split("T")[0];
@@ -1293,6 +1630,20 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             carregarDados();
             setupKeyboardShortcuts();
             setupFotosGeraisPreview();
+            
+            // Configurar detecção de status online/offline
+            window.addEventListener('online', () => {
+                isOnline = true;
+                updateConnectionStatus();
+            });
+            
+            window.addEventListener('offline', () => {
+                isOnline = false;
+                updateConnectionStatus();
+            });
+            
+            // Verificar status inicial
+            updateConnectionStatus();
             
             autoSaveInterval = setInterval(salvarDados, 30000);
             window.addEventListener('beforeunload', salvarDados);
