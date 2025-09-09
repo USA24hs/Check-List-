@@ -21,34 +21,7 @@
             --text: #333333;
             --card-bg: #ffffff;
         }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --light-gray: #2a2a2a;
-                --medium-gray: #555;
-                --dark-gray: #ffffff;
-                --background: #1a1a1a;
-                --text: #ffffff;
-                --card-bg: #2d2d2d;
-            }
-        }
-        /* Override manual de tema */
-        html.theme-light {
-            --light-gray: #f4f4f4;
-            --medium-gray: #ccc;
-            --dark-gray: #333;
-            --background: #ffffff;
-            --text: #333333;
-            --card-bg: #ffffff;
-        }
-        html.theme-dark {
-            --light-gray: #2a2a2a;
-            --medium-gray: #555;
-            --dark-gray: #ffffff;
-            --background: #1a1a1a;
-            --text: #ffffff;
-            --card-bg: #2d2d2d;
-        }
-        
+
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
             font-size: 15px;
@@ -158,8 +131,6 @@
         .btn-history:hover { background: #6D4C41; }
         .btn-edit { background: #80FF00; color: black; }
         .btn-edit:hover { background: #66CC00; color: black; }
-        .btn-theme { background: #37474F; }
-        .btn-theme:hover { background: #263238; }
 
         /* Botão flutuante para alternar a barra */
         .fab-toggle {
@@ -442,7 +413,6 @@
                 <h3>📱 Design Responsivo</h3>
                 <ul>
                     <li>Layout adaptável para diferentes tamanhos de tela</li>
-                    <li>Suporte para modo claro/escuro via botão de tema</li>
                     <li>Interface otimizada para dispositivos móveis</li>
                 </ul>
             </div>
@@ -473,7 +443,6 @@
         <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
         <button class="btn-clear" onclick="limparFormulario()"><span>🗑️</span> Limpar</button>
         <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()"><span>📝</span> Edição em Lote</button>
-        <button id="btnTheme" class="btn-theme" onclick="toggleTheme()"><span>🌙</span> Tema Escuro</button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
     <!-- Botão flutuante para alternar a barra -->
@@ -632,7 +601,6 @@
         Ctrl+E - Enviar por e-mail<br>
         Ctrl+P - Imprimir<br>
         Ctrl+F - Buscar<br>
-        Ctrl+D - Alternar tema<br>
         Ctrl+B - Mostrar/Ocultar barra<br>
         Esc - Fechar modais
     </div>
@@ -699,31 +667,12 @@
             { name: "Painel de controle do salão", critical: true }
         ];
         
-        const THEME_KEY = 'lefeTheme';
         const TOOLBAR_HIDDEN_KEY = 'lefeToolbarHidden';
         let autoSaveInterval;
         let lastSaveTime = null;
         let coordenadasGPS = null;
         let filteredItems = [];
         
-        // Tema
-        function applyTheme(theme) {
-            document.documentElement.classList.toggle('theme-dark', theme === 'dark');
-            document.documentElement.classList.toggle('theme-light', theme === 'light');
-            localStorage.setItem(THEME_KEY, theme);
-            updateThemeButton();
-        }
-        function toggleTheme() {
-            const current = localStorage.getItem(THEME_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            const next = current === 'dark' ? 'light' : 'dark';
-            applyTheme(next);
-        }
-        function updateThemeButton() {
-            const btn = document.getElementById('btnTheme');
-            const isDark = document.documentElement.classList.contains('theme-dark');
-            if (btn) btn.innerHTML = isDark ? '<span>🌞</span> Tema Claro' : '<span>🌙</span> Tema Escuro';
-        }
-
         // Toolbar toggle (mostrar/ocultar)
         function updateToolbarFab(hidden) {
             const fab = document.getElementById('toggleToolbarFab');
@@ -1242,7 +1191,6 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
                 if (e.ctrlKey && e.key === 'e') { e.preventDefault(); enviarPorEmail(); }
                 if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-                if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleTheme(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); } // mostrar/ocultar barra
                 if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); }
                 if (e.ctrlKey && e.key === '/') {
@@ -1329,10 +1277,6 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Tema inicial
-            const savedTheme = localStorage.getItem(THEME_KEY);
-            applyTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-
             // Preferência da toolbar (oculta por padrão)
             const toolbarPref = localStorage.getItem(TOOLBAR_HIDDEN_KEY);
             if (toolbarPref === null) {
@@ -1349,7 +1293,6 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             carregarDados();
             setupKeyboardShortcuts();
             setupFotosGeraisPreview();
-            updateThemeButton();
             
             autoSaveInterval = setInterval(salvarDados, 30000);
             window.addEventListener('beforeunload', salvarDados);
