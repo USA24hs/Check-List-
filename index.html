@@ -129,6 +129,8 @@
             justify-content: flex-end;
             border-radius: 5px;
         }
+        .toolbar.hidden { display: none !important; } /* ocultar toolbar */
+
         .toolbar button {
             color: #fff;
             border: none;
@@ -158,6 +160,28 @@
         .btn-edit:hover { background: #66CC00; color: black; }
         .btn-theme { background: #37474F; }
         .btn-theme:hover { background: #263238; }
+
+        /* Botão flutuante para alternar a barra */
+        .fab-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1002;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 28px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .fab-toggle:hover { background: var(--primary-dark); }
+        .fab-toggle:active { transform: translateY(1px); }
 
         .notification {
             position: fixed;
@@ -323,6 +347,7 @@
         
         @media print {
             .no-print, .no-print * { display: none !important; }
+            .fab-toggle { display: none !important; }
             body, .container { margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
             .status-counters { display: none; }
             .dashboard { display: none; }
@@ -395,8 +420,8 @@
         </div>
     </div>
     
-    <!-- Barra de ferramentas -->
-    <div class="toolbar no-print">
+    <!-- Barra de ferramentas melhorada (oculta por padrão) -->
+    <div class="toolbar no-print hidden">
         <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
         <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> E-mail</button>
         <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar</button>
@@ -407,10 +432,64 @@
         <button id="btnTheme" class="btn-theme" onclick="toggleTheme()"><span>🌙</span> Tema Escuro</button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
+    <!-- Botão flutuante para alternar a barra -->
+    <button id="toggleToolbarFab"
+            class="fab-toggle no-print"
+            onclick="toggleToolbar()"
+            title="Mostrar/Ocultar barra (Ctrl+B)"
+            aria-label="Mostrar/Ocultar barra">☰</button>
     
     <div class="container">
         <h1>🚑 LEFE - SERVIÇO DE EMERGÊNCIAS MÉDICAS</h1>
         <h2>📋 CHECK-LIST DIÁRIO DE INSPEÇÃO VEICULAR E EQUIPAMENTOS</h2>
+        
+        <!-- Dashboard de estatísticas -->
+        <div class="dashboard no-print">
+            <div class="dashboard-card">
+                <h3>✅ Itens OK</h3>
+                <div class="value" id="dashboard-ok">0</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>⚠️ Itens com Problemas</h3>
+                <div class="value" id="dashboard-problems">0</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>🚨 Itens Críticos</h3>
+                <div class="value" id="dashboard-critical">0</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>📊 Preenchimento</h3>
+                <div class="value" id="dashboard-completion">0%</div>
+            </div>
+        </div>
+        
+        <div class="status-counters no-print">
+            <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
+            <div class="status-counter status-ruim">⚠️ Ruim: <span id="count-ruim">0</span></div>
+            <div class="status-counter status-quebrado">🛠️ Quebrado: <span id="count-quebrado">0</span></div>
+            <div class="status-counter status-faltando">❌ Faltando: <span id="count-faltando">0</span></div>
+            <div class="status-counter status-parar">🚨 Parar VTR: <span id="count-parar">0</span></div>
+        </div>
+        
+        <!-- Modo de edição em lote -->
+        <div id="batchEdit" class="batch-edit no-print">
+            <h3>📝 Edição em Lote</h3>
+            <p>Selecione o status que deseja aplicar a vários itens:</p>
+            <select id="batchStatus">
+                <option value=""></option>
+                <option value="✅ OK">✅ OK</option>
+                <option value="⚠️ Ruim">⚠️ Ruim</option>
+                <option value="🛠️ Quebrado">🛠️ Quebrado</option>
+                <option value="❌ Faltando">❌ Faltando</option>
+                <option value="🚨 Parar VTR">🚨 Parar VTR</option>
+            </select>
+            <button onclick="aplicarEdicaoEmLote()">Aplicar aos itens selecionados</button>
+            <button onclick="selecionarTodosItens()">Selecionar todos</button>
+            <button onclick="desselecionarTodosItens()">Desselecionar todos</button>
+        </div>
+        
+        <!-- Busca -->
+        <input type="text" id="searchInput" class="search-box no-print" placeholder="🔍 Buscar item..." oninput="filtrarItens()">
         
         <!-- Tabela Dados Básicos -->
         <table class="compact-table">
@@ -510,6 +589,7 @@
         Ctrl+P - Imprimir<br>
         Ctrl+F - Buscar<br>
         Ctrl+D - Alternar tema<br>
+        Ctrl+B - Mostrar/Ocultar barra<br>
         Esc - Fechar modais
     </div>
     
@@ -576,6 +656,7 @@
         ];
         
         const THEME_KEY = 'lefeTheme';
+        const TOOLBAR_HIDDEN_KEY = 'lefeToolbarHidden';
         let autoSaveInterval;
         let lastSaveTime = null;
         let coordenadasGPS = null;
@@ -599,6 +680,26 @@
             if (btn) btn.innerHTML = isDark ? '<span>🌞</span> Tema Claro' : '<span>🌙</span> Tema Escuro';
         }
 
+        // Toolbar toggle (mostrar/ocultar)
+        function updateToolbarFab(hidden) {
+            const fab = document.getElementById('toggleToolbarFab');
+            if (!fab) return;
+            fab.textContent = hidden ? '☰' : '⬆️';
+            const label = hidden ? 'Mostrar barra (Ctrl+B)' : 'Ocultar barra (Ctrl+B)';
+            fab.title = label;
+            fab.setAttribute('aria-label', label);
+        }
+        function toggleToolbar(forceHidden) {
+            const toolbar = document.querySelector('.toolbar');
+            if (!toolbar) return;
+            const shouldHide = typeof forceHidden === 'boolean'
+                ? forceHidden
+                : !toolbar.classList.contains('hidden');
+            toolbar.classList.toggle('hidden', shouldHide);
+            localStorage.setItem(TOOLBAR_HIDDEN_KEY, shouldHide ? '1' : '0');
+            updateToolbarFab(shouldHide);
+        }
+
         // Verificar se é a primeira visita e mostrar boas-vindas
         function verificarPrimeiraVisita() {
             const primeiraVisita = localStorage.getItem('lefePrimeiraVisita');
@@ -607,7 +708,6 @@
                 localStorage.setItem('lefePrimeiraVisita', 'false');
             }
         }
-        
         function fecharBoasVindas() {
             document.getElementById('welcomeModal').style.display = 'none';
         }
@@ -836,12 +936,19 @@
             }
         }
         
+        // Exportar dados
         function exportarDados() {
             if (!validateForm()) return;
             const key = getStorageKey();
-            if (!key) return showNotification("Preencha placa e data para exportar", "error");
+            if (!key) {
+                showNotification("Preencha placa e data para exportar", "error");
+                return;
+            }
             const dados = localStorage.getItem(key);
-            if (!dados) return showNotification("Nenhum dado para exportar", "error");
+            if (!dados) {
+                showNotification("Nenhum dado para exportar", "error");
+                return;
+            }
             const blob = new Blob([dados], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -854,6 +961,7 @@
             showNotification("Dados exportados com sucesso!", "success");
         }
         
+        // Histórico
         function abrirHistorico() {
             const modal = document.getElementById('modalHistorico');
             const lista = document.getElementById('listaHistorico');
@@ -890,15 +998,17 @@
             try {
                 const dados = JSON.parse(localStorage.getItem(key));
                 Object.keys(dados).forEach(campo => {
-                    const el = document.getElementById(campo);
-                    if (el && campo !== 'itens' && campo !== 'coordenadasGPS') el.value = dados[campo];
+                    const elemento = document.getElementById(campo);
+                    if (elemento && campo !== 'itens' && campo !== 'coordenadasGPS') {
+                        elemento.value = dados[campo];
+                    }
                 });
                 if (dados.itens) {
-                    dados.itens.forEach((item, i) => {
-                        const s = document.getElementById(`status-${i+1}`);
-                        const o = document.getElementById(`obs-${i+1}`);
-                        if (s) s.value = item.status || '';
-                        if (o) o.value = item.obs || '';
+                    dados.itens.forEach((item, index) => {
+                        const statusEl = document.getElementById(`status-${index+1}`);
+                        const obsEl = document.getElementById(`obs-${index+1}`);
+                        if (statusEl) statusEl.value = item.status || '';
+                        if (obsEl) obsEl.value = item.obs || '';
                     });
                 }
                 if (dados.coordenadasGPS) {
@@ -923,7 +1033,7 @@
             const dataInput = document.getElementById("data").value;
             const dataCheck = new Date(dataInput); dataCheck.setHours(0,0,0,0);
             if (dataCheck > today) { showNotification("A data não pode ser futura.", "error"); return false; }
-            if (!validarPlaca()) return false;
+            if (!validarPlaca()) { return false; }
             let isValid = true;
             document.querySelectorAll('.required-field').forEach(el => el.classList.remove('required-field'));
             required.forEach(id => {
@@ -931,16 +1041,16 @@
                 if (!el.value.trim()) { isValid = false; el.classList.add("required-field"); }
             });
             const criticalIssues = [];
-            inspectionItems.forEach((item, i) => {
+            inspectionItems.forEach((item, index) => {
                 if (item.critical) {
-                    const status = document.getElementById(`status-${i+1}`).value;
+                    const status = document.getElementById(`status-${index+1}`).value;
                     if (status && status !== "✅ OK") criticalIssues.push(item.name);
                 }
             });
             if (criticalIssues.length > 0) {
                 showNotification(`❗ Itens críticos com problemas: ${criticalIssues.slice(0, 3).join(", ")}${criticalIssues.length > 3 ? "..." : ""}`, "warning");
             }
-            if (!isValid) showNotification("Preencha os campos obrigatórios.", "error");
+            if (!isValid) { showNotification("Preencha os campos obrigatórios.", "error"); }
             return isValid;
         }
         
@@ -949,7 +1059,7 @@
             const dataValue = document.getElementById("data").value;
             const [y, m, d] = dataValue.split('-');
             const dataFormatada = `${d}/${m}/${y}`;
-            const cab = {
+            const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
                 data: dataFormatada,
                 horarioEntrada: document.getElementById("horarioEntrada").value,
@@ -957,7 +1067,7 @@
                 condutorPlantao: document.getElementById("condutorPlantao").value,
                 recebendoDe: document.getElementById("recebendoDe").value
             };
-            const vtr = {
+            const dadosViatura = {
                 placa: document.getElementById("placa").value.toUpperCase(),
                 kmAtual: document.getElementById("kmAtual").value,
                 nivelCombustivel: document.getElementById("nivelCombustivel").value,
@@ -965,42 +1075,52 @@
                 proximaTrocaOleo: document.getElementById("proximaTrocaOleo").value,
                 cartaoStatus: document.querySelector('input[name="cartaoStatus"]:checked')?.value || 'Não informado'
             };
-            const itens = [];
+            const itensInspecao = [];
             for (let i = 1; i <= inspectionItems.length; i++) {
                 const status = document.getElementById(`status-${i}`).value;
                 const obs = document.getElementById(`obs-${i}`).value.trim();
                 if (status || obs) {
-                    itens.push({ num: i.toString().padStart(2, '0'), item: inspectionItems[i-1].name, status: status || 'Não avaliado', obs: obs || '---' });
+                    itensInspecao.push({
+                        num: i.toString().padStart(2, '0'),
+                        item: inspectionItems[i-1].name,
+                        status: status || 'Não avaliado',
+                        obs: obs || '---'
+                    });
                 }
             }
-            if (itens.length === 0) return showNotification("Preencha ao menos um item de inspeção.", "warning");
-            const obsGerais = document.getElementById("observacoesAvarias").value;
-            const loc = coordenadasGPS ? `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 'Localização não disponível';
+            if (itensInspecao.length === 0) {
+                showNotification("Preencha ao menos um item de inspeção.", "warning");
+                return;
+            }
+            const observacoesGerais = document.getElementById("observacoesAvarias").value;
+            const localizacaoInfo = coordenadasGPS ? 
+                `LOCALIZAÇÃO: ${coordenadasGPS.latitude.toFixed(6)}, ${coordenadasGPS.longitude.toFixed(6)}` : 
+                'Localização não disponível';
             const corpoEmail = `
-Check-list Diário  - Viatura ${vtr.placa}
+Check-list Diário  - Viatura ${dadosViatura.placa}
 ================================================
-HOSPITAL: ${cab.hospital}
-CONDUTOR DE PLANTÃO: ${cab.condutorPlantao}
-DATA: ${cab.data}
-HORÁRIO DE ENTRADA: ${cab.horarioEntrada}
-HORÁRIO DE SAÍDA: ${cab.horarioSaida}
-${loc}
+HOSPITAL: ${dadosCabecalho.hospital}
+CONDUTOR DE PLANTÃO: ${dadosCabecalho.condutorPlantao}
+DATA: ${dadosCabecalho.data}
+HORÁRIO DE ENTRADA: ${dadosCabecalho.horarioEntrada}
+HORÁRIO DE SAÍDA: ${dadosCabecalho.horarioSaida}
+${localizacaoInfo}
 
 --- DADOS DA VIATURA ---
-Placa: ${vtr.placa}
-Km Atual: ${vtr.kmAtual} km
-Nível de Combustível: ${vtr.nivelCombustivel}
-Cartão de Abastecimento: ${vtr.cartaoStatus}
+Placa: ${dadosViatura.placa}
+Km Atual: ${dadosViatura.kmAtual} km
+Nível de Combustível: ${dadosViatura.nivelCombustivel}
+Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
 
 --- ITENS DE INSPEÇÃO ---
-${itens.map(i => `${i.num}. ${i.item}
+${itensInspecao.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
 
-${obsGerais ? `OBSERVAÇÕES GERAIS:\n${obsGerais}` : ''}
+${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
 
 E-mail gerado automaticamente pelo sistema LEFE.`.trim();
-            const assunto = `Check-list Viatura ${vtr.placa} - ${cab.data}`;
+            const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             const destinatario = "manutencao@lefe.org.br";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
@@ -1010,7 +1130,7 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
         function limparFormulario() {
             if (confirm("Deseja realmente limpar todos os campos?")) {
                 const key = getStorageKey();
-                if (key) localStorage.removeItem(key);
+                if (key) { localStorage.removeItem(key); }
                 document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
                 location.reload();
             }
@@ -1077,6 +1197,7 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
                 if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleTheme(); }
+                if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); } // mostrar/ocultar barra
                 if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); }
                 if (e.ctrlKey && e.key === '/') {
                     e.preventDefault();
@@ -1090,7 +1211,9 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             const backupData = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key.startsWith('checklist_')) backupData[key] = localStorage.getItem(key);
+                if (key.startsWith('checklist_')) {
+                    backupData[key] = localStorage.getItem(key);
+                }
             }
             const dataStr = JSON.stringify(backupData);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -1160,8 +1283,18 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Tema inicial
             const savedTheme = localStorage.getItem(THEME_KEY);
             applyTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+            // Preferência da toolbar (oculta por padrão)
+            const toolbarPref = localStorage.getItem(TOOLBAR_HIDDEN_KEY);
+            if (toolbarPref === null) {
+                toggleToolbar(true); // padrão: oculto
+            } else {
+                toggleToolbar(toolbarPref === '1');
+            }
+
             verificarPrimeiraVisita();
             
             document.getElementById("data").value = new Date().toISOString().split("T")[0];
@@ -1178,10 +1311,13 @@ E-mail gerado automaticamente pelo sistema LEFE.`.trim();
             document.getElementById("placa").addEventListener("change", carregarDados);
             document.getElementById("data").addEventListener("change", carregarDados);
             
+            // Fechar modais clicando fora
             window.onclick = function(event) {
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
-                    if (event.target === modal) modal.style.display = 'none';
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
                 });
             };
         });
