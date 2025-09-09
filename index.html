@@ -1304,6 +1304,7 @@ Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
 ${itensInspecao.map(i => `${i.num}. ${i.item}
    Status: ${i.status}
    Obs: ${i.obs}`).join('\n\n')}
+   
 ${observacoesGerais ? `OBSERVAÇÕES GERAIS:\n${observacoesGerais}` : ''}
 
 E-mail gerado automaticamente pelo sistema LEFE.`.trim();
