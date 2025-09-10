@@ -267,17 +267,65 @@
         .lazy-load.loaded { opacity: 1; }
         .keyboard-shortcuts { position: fixed; bottom: 10px; left: 10px; background: var(--card-bg); padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 12px; display: none; }
         .keyboard-shortcuts.show { display: block; }
+        
         /* Compactar a tabela de STATUS DE INSPEÇÃO */
-        #inspection-table { font-size: 13px; }
-        #inspection-table th, #inspection-table td { padding: 2px 4px; line-height: 1.3; }
-        #inspection-table th:nth-child(1), #inspection-table td:nth-child(1) { width: 24px; } /* checkbox */
-        #inspection-table th:nth-child(2), #inspection-table td:nth-child(2) { width: 32px; text-align: center; } /* # */
-        #inspection-table th:nth-child(4), #inspection-table td:nth-child(4) { width: 120px; padding: 2px 3px; } /* Status */
-        #inspection-table select.status-select {
-            padding: 2px 4px; height: 24px; line-height: 1.1;
-            font-size: 13px; min-width: 0; width: 112px; box-sizing: border-box;
+        #inspection-table { 
+            font-size: 13px; 
+            table-layout: fixed; /* Garante que as colunas respeitem as larguras definidas */
         }
-        #inspection-table input.obs-input { padding: 2px 4px; font-size: 13px; box-sizing: border-box; }
+
+        #inspection-table th, 
+        #inspection-table td { 
+            padding: 2px 4px; 
+            line-height: 1.3; 
+        }
+
+        #inspection-table th:nth-child(1), 
+        #inspection-table td:nth-child(1) { 
+            width: 24px; /* checkbox */
+        } 
+
+        #inspection-table th:nth-child(2), 
+        #inspection-table td:nth-child(2) { 
+            width: 32px; 
+            text-align: center; /* # */
+        } 
+
+        #inspection-table th:nth-child(3), 
+        #inspection-table td:nth-child(3) { 
+            width: 45% !important; /* Aumentado para dar mais espaço ao item */
+            white-space: normal; /* Permite quebra de linha para textos longos */
+            overflow: visible;
+            text-overflow: clip;
+            word-wrap: break-word; /* Quebra palavras longas */
+        } 
+
+        #inspection-table th:nth-child(4), 
+        #inspection-table td:nth-child(4) { 
+            width: 25% !important; /* Reduzido para status fixo */
+            padding: 2px 3px;
+            min-width: 100px; /* Largura mínima garantida */
+            max-width: 120px; /* Largura máxima para não expandir demais */
+        } 
+
+        #inspection-table select.status-select {
+            width: 100% !important; /* Ocupa toda a célula */
+            padding: 2px 4px; 
+            height: 24px; 
+            line-height: 1.1;
+            font-size: 12px; /* Reduzido para caber melhor */
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #inspection-table input.obs-input { 
+            padding: 2px 4px; 
+            font-size: 13px; 
+            box-sizing: border-box; 
+        }
+        
         /* Compactar outras tabelas (Dados básicos e Dados da Viatura) */
         .compact-table { font-size: 13px; }
         .compact-table th, .compact-table td { padding: 2px 4px; line-height: 1.3; }
@@ -296,6 +344,24 @@
         .compact-table input[type="radio"] + label { margin-right: 10px; font-size: 13px; }
         /* Área de observações */
         #observacoesAvarias { font-size: 13px; }
+        
+        /* Estilos para ocultar coluna de observações */
+        .hide-obs th:nth-child(5),
+        .hide-obs td:nth-child(5) {
+            display: none;
+        }
+        
+        /* Ajustar a largura da coluna de status quando a observação estiver oculta */
+        .hide-obs th:nth-child(4),
+        .hide-obs td:nth-child(4) {
+            width: 30% !important; /* Aumenta um pouco quando obs está oculta, mas sem exagerar */
+            max-width: 150px;
+        }
+
+        .hide-obs th:nth-child(3),
+        .hide-obs td:nth-child(3) {
+            width: 65% !important; /* Mantém a coluna item com espaço suficiente */
+        }
         
         /* Indicador de status offline */
         .offline-indicator {
@@ -341,29 +407,6 @@
         /* Ajustes para melhorar o espaçamento e legibilidade */
         .container {
             padding: 15px;
-        }
-        
-        /* Melhorias na tabela de inspeção - mais espaço para observações */
-        #inspection-table {
-            table-layout: fixed;
-        }
-        
-        #inspection-table th:nth-child(3),
-        #inspection-table td:nth-child(3) {
-            width: 30% !important;  /* Reduzido de 40% para 30% */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        #inspection-table th:nth-child(5),
-        #inspection-table td:nth-child(5) {
-            width: 60% !important;  /* Aumentado de 58% para 60% */
-        }
-        
-        #inspection-table input.obs-input {
-            width: 100%;
-            box-sizing: border-box;
         }
         
         /* Melhorias para dispositivos móveis */
@@ -434,18 +477,23 @@
             
             #inspection-table th:nth-child(3),
             #inspection-table td:nth-child(3) {
-                width: 25% !important;
-                white-space: normal;
+                width: 50% !important; /* Mais espaço para o item em mobile */
+                font-size: 11px;
+                padding: 3px 2px;
             }
             
-            #inspection-table th:nth-child(5),
-            #inspection-table td:nth-child(5) {
-                width: 60% !important;
+            #inspection-table th:nth-child(4),
+            #inspection-table td:nth-child(4) {
+                width: 20% !important; /* Status mais compacto em mobile */
+                min-width: 80px;
+                max-width: 100px;
+                padding: 3px 2px;
             }
             
             #inspection-table select.status-select {
-                width: 100%;
-                font-size: 12px;
+                font-size: 11px;
+                height: 22px;
+                padding: 1px 2px;
             }
             
             /* Melhorias para os formulários em mobile */
@@ -456,6 +504,51 @@
             .compact-table select {
                 font-size: 16px; /* Melhora a usabilidade em dispositivos móveis */
                 padding: 8px;
+            }
+            
+            /* Ajustes na tabela quando observações estiverem ocultas */
+            .hide-obs th:nth-child(4),
+            .hide-obs td:nth-child(4) {
+                width: 25% !important;
+                max-width: 110px;
+            }
+            
+            .hide-obs th:nth-child(3),
+            .hide-obs td:nth-child(3) {
+                width: 70% !important;
+            }
+        }
+        
+        /* Para telas muito pequenas */
+        @media (max-width: 480px) {
+            #inspection-table th:nth-child(3),
+            #inspection-table td:nth-child(3) {
+                width: 55% !important;
+                font-size: 10px;
+            }
+            
+            #inspection-table th:nth-child(4),
+            #inspection-table td:nth-child(4) {
+                width: 15% !important;
+                min-width: 70px;
+                max-width: 90px;
+            }
+            
+            #inspection-table select.status-select {
+                font-size: 10px;
+                height: 20px;
+            }
+            
+            /* Quando observações estão ocultas em telas muito pequenas */
+            .hide-obs th:nth-child(4),
+            .hide-obs td:nth-child(4) {
+                width: 20% !important;
+                max-width: 100px;
+            }
+            
+            .hide-obs th:nth-child(3),
+            .hide-obs td:nth-child(3) {
+                width: 75% !important;
             }
         }
         
@@ -976,9 +1069,21 @@
             }
         }
         
+        // Modificar a função generateInspectionTable para usar textos mais curtos em mobile
         function generateInspectionTable() {
             const tableBody = document.querySelector("#inspection-table tbody");
-            const statusOptions = `
+            
+            // Verifica se está em uma tela pequena para usar textos mais curtos
+            const isSmallScreen = window.innerWidth <= 480;
+            
+            const statusOptions = isSmallScreen ? `
+                <option value=""></option>
+                <option value="✅ OK">✅ OK</option>
+                <option value="⚠️ R">⚠️ R</option>
+                <option value="🛠️ Q">🛠️ Q</option>
+                <option value="❌ F">❌ F</option>
+                <option value="🚨 P">🚨 P</option>
+            ` : `
                 <option value=""></option>
                 <option value="✅ OK">✅ OK</option>
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
@@ -1014,6 +1119,33 @@
                 input.addEventListener('input', debounce(salvarDados, 1000));
             });
         }
+        
+        // Adicionar um listener para redimensionamento da tela para atualizar os selects
+        window.addEventListener('resize', function() {
+            // Se a mudança de tamanho for significativa, regenerar a tabela
+            if ((window.innerWidth <= 480 && !document.querySelector('.status-select option[value="⚠️ R"]')) ||
+                (window.innerWidth > 480 && document.querySelector('.status-select option[value="⚠️ R"]'))) {
+                // Salva os status atuais
+                const currentStatuses = {};
+                document.querySelectorAll('.status-select').forEach((select, index) => {
+                    currentStatuses[index] = select.value;
+                });
+                
+                // Regenera a tabela
+                document.querySelector("#inspection-table tbody").innerHTML = '';
+                generateInspectionTable();
+                
+                // Restaura os status
+                Object.keys(currentStatuses).forEach(index => {
+                    const select = document.getElementById(`status-${parseInt(index)+1}`);
+                    if (select) select.value = currentStatuses[index];
+                });
+                
+                // Atualiza os contadores
+                updateStatusCounters();
+                updateDashboard();
+            }
+        });
         
         function updateStatusCounters() {
             const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️ Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
@@ -1467,11 +1599,12 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             });
         }
         
-        // Função para alternar a visibilidade das seções de detalhes
+        // Função para alternar a visibilidade das seções de detalhes e coluna de observações
         function toggleDetailsSections() {
             const detailsSections = document.querySelectorAll('.details-section');
-            const dashboard = document.querySelector('.dashboard'); // Adicionado para selecionar o dashboard
-            const statusCounters = document.querySelector('.status-counters'); // Adicionado para selecionar os contadores de status
+            const dashboard = document.querySelector('.dashboard');
+            const statusCounters = document.querySelector('.status-counters');
+            const inspectionTable = document.getElementById('inspection-table');
             const btnText = document.getElementById('btnToggleDetailsText');
             
             // Verifica se as seções estão atualmente ocultas
@@ -1490,6 +1623,11 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             // Alterna a classe nos contadores de status
             if (statusCounters) {
                 statusCounters.classList.toggle('details-hidden');
+            }
+            
+            // Alterna a classe na tabela de inspeção para ocultar/mostrar a coluna de observações
+            if (inspectionTable) {
+                inspectionTable.classList.toggle('hide-obs');
             }
             
             // Atualiza o texto do botão e salva a preferência
@@ -1731,10 +1869,10 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 toggleToolbar(toolbarPref === '1');
             }
             
-            // Preferência de ocultar detalhes
+            // Preferência de ocultar detalhes (incluindo observações)
             const detailsPref = localStorage.getItem(DETAILS_HIDDEN_KEY);
             if (detailsPref === 'true') {
-                // Força a exibição dos botões e depois oculta as seções
+                // Força a exibição dos botões e depois oculta as seções e observações
                 setTimeout(() => {
                     toggleDetailsSections();
                 }, 100);
