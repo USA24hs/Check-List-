@@ -547,6 +547,12 @@
         .details-hidden {
             display: none !important;
         }
+        
+        /* Garantir que o dashboard e contadores também sejam ocultados */
+        .dashboard.details-hidden,
+        .status-counters.details-hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1464,15 +1470,27 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
         // Função para alternar a visibilidade das seções de detalhes
         function toggleDetailsSections() {
             const detailsSections = document.querySelectorAll('.details-section');
+            const dashboard = document.querySelector('.dashboard'); // Adicionado para selecionar o dashboard
+            const statusCounters = document.querySelector('.status-counters'); // Adicionado para selecionar os contadores de status
             const btnText = document.getElementById('btnToggleDetailsText');
             
             // Verifica se as seções estão atualmente ocultas
             const areHidden = detailsSections.length > 0 && detailsSections[0].classList.contains('details-hidden');
             
-            // Alterna a classe em todas as seções
+            // Alterna a classe em todas as seções de detalhes
             detailsSections.forEach(section => {
                 section.classList.toggle('details-hidden');
             });
+            
+            // Alterna a classe no dashboard
+            if (dashboard) {
+                dashboard.classList.toggle('details-hidden');
+            }
+            
+            // Alterna a classe nos contadores de status
+            if (statusCounters) {
+                statusCounters.classList.toggle('details-hidden');
+            }
             
             // Atualiza o texto do botão e salva a preferência
             if (areHidden) {
