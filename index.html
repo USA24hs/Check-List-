@@ -1171,7 +1171,7 @@
         function updateToolbarFab(hidden) {
             const fab = document.getElementById('toggleToolbarFab');
             if (!fab) return;
-            fab.textContent = hidden ? '☰' : '⬆️';
+            fab.textContent = hidden ? '☰' : '👆';
             const label = hidden ? 'Mostrar barra (Ctrl+B)' : 'Ocultar barra (Ctrl+B)';
             fab.title = label;
             fab.setAttribute('aria-label', label);
@@ -1334,6 +1334,12 @@
                     filteredItems = [...inspectionItems];
                     updateStatusCounters();
                     updateDashboard();
+                    
+                    // Verificar se a coluna de observação deve ser ocultada
+                    const detailsPref = localStorage.getItem(DETAILS_HIDDEN_KEY);
+                    if (detailsPref === 'true') {
+                        toggleObservationColumn(true);
+                    }
                 }
             }
             
@@ -1892,6 +1898,27 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             });
         }
         
+        // Função para ocultar/mostrar a coluna de observação
+        function toggleObservationColumn(hide) {
+            const table = document.getElementById('inspection-table');
+            if (!table) return;
+            
+            // Ocultar/mostrar cabeçalho da coluna de observação (5ª coluna)
+            const headerCells = table.querySelectorAll('thead th');
+            if (headerCells.length >= 5) {
+                headerCells[4].style.display = hide ? 'none' : '';
+            }
+            
+            // Ocultar/mostrar células de observação no corpo da tabela (5ª coluna)
+            const bodyRows = table.querySelectorAll('tbody tr');
+            bodyRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 5) {
+                    cells[4].style.display = hide ? 'none' : '';
+                }
+            });
+        }
+        
         // Função para alternar a visibilidade das seções de detalhes
         function toggleDetailsSections() {
             const detailsSections = document.querySelectorAll('.details-section');
@@ -1912,6 +1939,9 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             if (statusCounters) {
                 statusCounters.classList.toggle('details-hidden');
             }
+            
+            // Adicionar esta linha para ocultar/mostrar a coluna de observação
+            toggleObservationColumn(!areHidden);
             
             if (areHidden) {
                 btnText.textContent = 'Ocultar Detalhes';
@@ -2289,14 +2319,6 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 toggleToolbar(true);
             } else {
                 toggleToolbar(toolbarPref === '1');
-            }
-            
-            // Preferência de ocultar detalhes
-            const detailsPref = localStorage.getItem(DETAILS_HIDDEN_KEY);
-            if (detailsPref === 'true') {
-                setTimeout(() => {
-                    toggleDetailsSections();
-                }, 100);
             }
             
             verificarPrimeiraVisita();
