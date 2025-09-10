@@ -122,14 +122,14 @@
         .btn-email:hover { background: var(--secondary-dark); }
         .btn-save { background: var(--success); }
         .btn-save:hover { background: #3d8b40; }
-        .btn-export { background: #673AB7; }
-        .btn-export:hover { background: #5E35B1; }
         .btn-history { background: #795548; }
         .btn-history:hover { background: #6D4C41; }
         .btn-edit { background: var(--edit-color); } /* Cor alterada para o botão de edição */
         .btn-edit:hover { background: #00695C; } /* Cor de hover alterada */
         .btn-trends { background: #009688; }
         .btn-trends:hover { background: #00796B; }
+        .btn-toggle-details { background: #607D8B; }
+        .btn-toggle-details:hover { background: #455A64; }
         /* Botão flutuante para alternar a barra */
         .fab-toggle {
             position: fixed;
@@ -538,6 +538,15 @@
         .btn-maps:hover {
             background-color: #3367D6;
         }
+        
+        /* Estilo para seções ocultáveis */
+        .details-section {
+            transition: all 0.3s ease;
+        }
+        
+        .details-hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -582,7 +591,6 @@
                 
                 <h3>📤 Exportação e Compartilhamento</h3>
                 <ul>
-                    <li>Exportação de dados: Exportação em formato PDF</li>
                     <li>Envio por e-mail: Gera e-mail formatado com os dados</li>
                     <li>Impressão: Layout otimizado para impressão</li>
                 </ul>
@@ -617,10 +625,10 @@
         <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
         <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> E-mail</button>
         <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar</button>
-        <button class="btn-export" onclick="exportarDados()"><span>📤</span> Exportar</button>
         <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
         <button class="btn-trends" onclick="abrirRelatorioTendencia()"><span>📈</span> Tendências</button>
         <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()"><span>📝</span> Edição em Lote</button>
+        <button id="btnToggleDetails" class="btn-toggle-details" onclick="toggleDetailsSections()"><span>👁️</span> <span id="btnToggleDetailsText">Ocultar Detalhes</span></button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
     <!-- Botão flutuante para alternar a barra -->
@@ -684,7 +692,7 @@
         <input type="text" id="searchInput" class="search-box no-print" placeholder="🔍 Buscar item..." oninput="filtrarItens()">
         
         <!-- Tabela Dados Básicos -->
-        <table class="compact-table">
+        <table class="compact-table details-section">
             <tr><td><strong>🏥 Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima"></td></tr>
             <tr><td><strong>📆 Data:</strong></td><td><input type="date" id="data"></td></tr>
             <tr><td><strong>🕖 Horário de Entrada:</strong></td><td><input type="time" id="horarioEntrada" value="07:00"></td></tr>
@@ -693,8 +701,8 @@
             <tr><td><strong>🫂 Recebendo de:</strong></td><td><input type="text" id="recebendoDe" placeholder="Nome do condutor anterior"></td></tr>
         </table>
         
-        <h2>🚑 DADOS DA VIATURA (USA)</h2>
-        <table class="compact-table">
+        <h2 class="details-section">🚑 DADOS DA VIATURA (USA)</h2>
+        <table class="compact-table details-section">
             <tr><th>Item</th><th>Informação</th></tr>
             <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: ABC1234 ou ABC1D23" onblur="validarPlaca()"></td></tr>
             <tr><td><strong>Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847"></td></tr>
@@ -712,7 +720,7 @@
             </tr>
         </table>
         <!-- Localização -->
-        <div id="localizacao" class="location-info no-print"></div>
+        <div id="localizacao" class="location-info no-print details-section"></div>
         
         <h2>🛠️ STATUS DE INSPEÇÃO</h2>
         <p><em>Selecione o status: ✅ OK | ⚠️ Ruim | 🛠️ Quebrado | ❌ Faltando | 🚨 Parar VTR</em></p>
@@ -793,6 +801,7 @@
         Ctrl+P - Imprimir<br>
         Ctrl+F - Buscar<br>
         Ctrl+B - Mostrar/Ocultar barra<br>
+        Ctrl+D - Mostrar/Ocultar detalhes<br>
         Esc - Fechar modais
     </div>
     
@@ -859,6 +868,7 @@
         ];
         
         const TOOLBAR_HIDDEN_KEY = 'lefeToolbarHidden';
+        const DETAILS_HIDDEN_KEY = 'lefeDetailsHidden';
         let autoSaveInterval;
         let lastSaveTime = null;
         let coordenadasGPS = null;
@@ -1153,31 +1163,6 @@
             }
         }
         
-        // Exportar dados
-        function exportarDados() {
-            if (!validateForm()) return;
-            const key = getStorageKey();
-            if (!key) {
-                showNotification("Preencha placa e data para exportar", "error");
-                return;
-            }
-            const dados = localStorage.getItem(key);
-            if (!dados) {
-                showNotification("Nenhum dado para exportar", "error");
-                return;
-            }
-            const blob = new Blob([dados], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${key}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showNotification("Dados exportados com sucesso!", "success");
-        }
-        
         // Histórico
         function abrirHistorico() {
             const modal = document.getElementById('modalHistorico');
@@ -1346,14 +1331,12 @@
 ================================================================================
 INFORMAÇÕES BÁSICAS
 ================================================================================
-
 Hospital: ${dadosCabecalho.hospital}
 Condutor de Plantão: ${dadosCabecalho.condutorPlantao}
 Recebendo de: ${dadosCabecalho.recebendoDe}
 Horário de Entrada: ${dadosCabecalho.horarioEntrada}
 Horário de Saída: ${dadosCabecalho.horarioSaida}
 Localização: ${localizacaoInfo}
-
 DADOS DA VIATURA
 ================================================================================
 Placa: ${dadosViatura.placa}
@@ -1362,44 +1345,31 @@ Nível de Combustível: ${dadosViatura.nivelCombustivel}
 CRV Válido até: ${dadosViatura.crvValido}
 Próxima Troca de Óleo: ${dadosViatura.proximaTrocaOleo} km
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
-
 ITENS DE INSPEÇÃO
 ================================================================================
-
 ITENS COM STATUS ✅ OK (${itensAgrupados['✅ OK'].length} itens)
-
 ${itensAgrupados['✅ OK'].map(item => `• ${item.num}. ${item.item}`).join('\n')}
-
 ${itensAgrupados['⚠️ Ruim'].length > 0 ? `
 ITENS COM STATUS ⚠️ RUIM (${itensAgrupados['⚠️ Ruim'].length} itens)
-
 ${itensAgrupados['⚠️ Ruim'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
-
 ${itensAgrupados['🛠️ Quebrado'].length > 0 ? `
 ITENS COM STATUS 🛠️ QUEBRADO (${itensAgrupados['🛠️ Quebrado'].length} itens)
-
 ${itensAgrupados['🛠️ Quebrado'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
-
 ${itensAgrupados['❌ Faltando'].length > 0 ? `
 ITENS COM STATUS ❌ FALTANDO (${itensAgrupados['❌ Faltando'].length} itens)
 ${itensAgrupados['❌ Faltando'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
-
 ${itensAgrupados['🚨 Parar VTR'].length > 0 ? `
 ITENS COM STATUS 🚨 PARAR VTR (${itensAgrupados['🚨 Parar VTR'].length} itens)
-
 ${itensAgrupados['🚨 Parar VTR'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
-
 ${observacoesGerais ? `
 OBSERVAÇÕES GERAIS / AVARIAS
 ================================================================================
-
 ${observacoesGerais}
 ` : ''}
-
 ================================================================================
 E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()}
 ================================================================================`.trim();
@@ -1482,12 +1452,36 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); } // mostrar/ocultar barra
+                if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleDetailsSections(); } // mostrar/ocultar detalhes
                 if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); fecharRelatorioTendencia(); }
                 if (e.ctrlKey && e.key === '/') {
                     e.preventDefault();
                     document.getElementById('keyboardShortcuts').classList.toggle('show');
                 }
             });
+        }
+        
+        // Função para alternar a visibilidade das seções de detalhes
+        function toggleDetailsSections() {
+            const detailsSections = document.querySelectorAll('.details-section');
+            const btnText = document.getElementById('btnToggleDetailsText');
+            
+            // Verifica se as seções estão atualmente ocultas
+            const areHidden = detailsSections.length > 0 && detailsSections[0].classList.contains('details-hidden');
+            
+            // Alterna a classe em todas as seções
+            detailsSections.forEach(section => {
+                section.classList.toggle('details-hidden');
+            });
+            
+            // Atualiza o texto do botão e salva a preferência
+            if (areHidden) {
+                btnText.textContent = 'Ocultar Detalhes';
+                localStorage.setItem(DETAILS_HIDDEN_KEY, 'false');
+            } else {
+                btnText.textContent = 'Mostrar Detalhes';
+                localStorage.setItem(DETAILS_HIDDEN_KEY, 'true');
+            }
         }
         
         // Backup (apenas chaves checklist_)
@@ -1718,6 +1712,16 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             } else {
                 toggleToolbar(toolbarPref === '1');
             }
+            
+            // Preferência de ocultar detalhes
+            const detailsPref = localStorage.getItem(DETAILS_HIDDEN_KEY);
+            if (detailsPref === 'true') {
+                // Força a exibição dos botões e depois oculta as seções
+                setTimeout(() => {
+                    toggleDetailsSections();
+                }, 100);
+            }
+            
             verificarPrimeiraVisita();
             
             document.getElementById("data").value = new Date().toISOString().split("T")[0];
