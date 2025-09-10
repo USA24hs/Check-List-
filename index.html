@@ -20,7 +20,7 @@
             --background: #ffffff;
             --text: #333333;
             --card-bg: #ffffff;
-            --edit-color: #00796B; /* Nova cor para o botão de edição */
+            --edit-color: #00796B;
         }
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -102,7 +102,7 @@
             justify-content: flex-end;
             border-radius: 5px;
         }
-        .toolbar.hidden { display: none !important; } /* ocultar toolbar */
+        .toolbar.hidden { display: none !important; }
         .toolbar button {
             color: #fff;
             border: none;
@@ -124,12 +124,13 @@
         .btn-save:hover { background: #3d8b40; }
         .btn-history { background: #795548; }
         .btn-history:hover { background: #6D4C41; }
-        .btn-edit { background: var(--edit-color); } /* Cor alterada para o botão de edição */
-        .btn-edit:hover { background: #00695C; } /* Cor de hover alterada */
+        .btn-edit { background: var(--edit-color); }
+        .btn-edit:hover { background: #00695C; }
         .btn-trends { background: #009688; }
         .btn-trends:hover { background: #00796B; }
         .btn-toggle-details { background: #607D8B; }
         .btn-toggle-details:hover { background: #455A64; }
+        
         /* Botão flutuante para alternar a barra */
         .fab-toggle {
             position: fixed;
@@ -151,6 +152,24 @@
         }
         .fab-toggle:hover { background: var(--primary-dark); }
         .fab-toggle:active { transform: translateY(1px); }
+        
+        /* Indicador de carregamento */
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            z-index: 1005;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .loading-indicator.active {
+            transform: scaleX(1);
+        }
+        
         .notification {
             position: fixed;
             bottom: 20px;
@@ -193,7 +212,6 @@
         .status-quebrado { background-color: #ff5722; }
         .status-faltando { background-color: #9c27b0; }
         .status-parar { background-color: var(--danger); }
-        /* Contadores compactos */
         .status-counters .status-counter {
             padding: 6px 8px;
             min-width: 90px;
@@ -205,6 +223,7 @@
         .item-highlight { animation: highlight 2s ease; background-color: #ffffd0; }
         @keyframes highlight { 0% { background-color: #ffffd0; } 100% { background-color: transparent; } }
         .save-indicator { font-size: 12px; color: #666; margin-left: 10px; font-style: italic; }
+        
         /* Modal styles */
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
         .modal-content {
@@ -235,9 +254,11 @@
         /* Upload de fotos (gerais) */
         .photo-upload { margin: 10px 0; }
         .photo-preview { max-width: 200px; max-height: 200px; margin: 5px; border-radius: 5px; }
+        
         /* Histórico */
         .history-item { padding: 10px; border: 1px solid var(--medium-gray); margin: 5px 0; border-radius: 5px; cursor: pointer; background-color: var(--light-gray); }
         .history-item:hover { background-color: var(--medium-gray); }
+        
         /* Localização */
         .location-info { font-size: 12px; color: #666; margin-top: 5px; }
         .mobile-optimized select, .mobile-optimized input[type="text"] { font-size: 16px; }
@@ -269,62 +290,54 @@
         .keyboard-shortcuts.show { display: block; }
         
         /* Compactar a tabela de STATUS DE INSPEÇÃO */
-        #inspection-table { 
-            font-size: 13px; 
-            table-layout: fixed; /* Garante que as colunas respeitem as larguras definidas */
-        }
-
-        #inspection-table th, 
-        #inspection-table td { 
-            padding: 2px 4px; 
-            line-height: 1.3; 
-        }
-
+        #inspection-table { font-size: 13px; }
+        #inspection-table th, #inspection-table td { padding: 2px 4px; line-height: 1.3; }
+        
+        /* Colunas fixas: 1, 2, 4 */
         #inspection-table th:nth-child(1), 
         #inspection-table td:nth-child(1) { 
-            width: 24px; /* checkbox */
-        } 
-
+            width: 30px; 
+            min-width: 30px;
+            max-width: 30px;
+        }
+        
         #inspection-table th:nth-child(2), 
         #inspection-table td:nth-child(2) { 
-            width: 32px; 
-            text-align: center; /* # */
-        } 
-
-        #inspection-table th:nth-child(3), 
-        #inspection-table td:nth-child(3) { 
-            width: 45% !important; /* Aumentado para dar mais espaço ao item */
-            white-space: normal; /* Permite quebra de linha para textos longos */
-            overflow: visible;
-            text-overflow: clip;
-            word-wrap: break-word; /* Quebra palavras longas */
-        } 
-
+            width: 40px; 
+            min-width: 40px;
+            max-width: 40px;
+            text-align: center; 
+        }
+        
         #inspection-table th:nth-child(4), 
         #inspection-table td:nth-child(4) { 
-            width: 25% !important; /* Reduzido para status fixo */
-            padding: 2px 3px;
-            min-width: 100px; /* Largura mínima garantida */
-            max-width: 120px; /* Largura máxima para não expandir demais */
-        } 
-
+            width: 120px; 
+            min-width: 120px;
+            max-width: 120px;
+            padding: 2px 3px; 
+        }
+        
+        /* Colunas responsivas: 3 e 5 */
+        #inspection-table th:nth-child(3),
+        #inspection-table td:nth-child(3) {
+            width: auto;
+            min-width: 150px;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+        
+        #inspection-table th:nth-child(5),
+        #inspection-table td:nth-child(5) {
+            width: auto;
+            min-width: 200px;
+        }
+        
         #inspection-table select.status-select {
-            width: 100% !important; /* Ocupa toda a célula */
-            padding: 2px 4px; 
-            height: 24px; 
-            line-height: 1.1;
-            font-size: 12px; /* Reduzido para caber melhor */
-            box-sizing: border-box;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding: 2px 4px; height: 24px; line-height: 1.1;
+            font-size: 13px; min-width: 0; width: 112px; box-sizing: border-box;
         }
-
-        #inspection-table input.obs-input { 
-            padding: 2px 4px; 
-            font-size: 13px; 
-            box-sizing: border-box; 
-        }
+        #inspection-table input.obs-input { padding: 2px 4px; font-size: 13px; box-sizing: border-box; }
         
         /* Compactar outras tabelas (Dados básicos e Dados da Viatura) */
         .compact-table { font-size: 13px; }
@@ -342,26 +355,9 @@
         }
         .compact-table input[type="radio"] { margin-right: 4px; }
         .compact-table input[type="radio"] + label { margin-right: 10px; font-size: 13px; }
+        
         /* Área de observações */
         #observacoesAvarias { font-size: 13px; }
-        
-        /* Estilos para ocultar coluna de observações */
-        .hide-obs th:nth-child(5),
-        .hide-obs td:nth-child(5) {
-            display: none;
-        }
-        
-        /* Ajustar a largura da coluna de status quando a observação estiver oculta */
-        .hide-obs th:nth-child(4),
-        .hide-obs td:nth-child(4) {
-            width: 30% !important; /* Aumenta um pouco quando obs está oculta, mas sem exagerar */
-            max-width: 150px;
-        }
-
-        .hide-obs th:nth-child(3),
-        .hide-obs td:nth-child(3) {
-            width: 65% !important; /* Mantém a coluna item com espaço suficiente */
-        }
         
         /* Indicador de status offline */
         .offline-indicator {
@@ -404,9 +400,17 @@
         }
         
         /* ===== MELHORIAS DE LAYOUT ===== */
-        /* Ajustes para melhorar o espaçamento e legibilidade */
         .container {
             padding: 15px;
+        }
+        
+        #inspection-table {
+            table-layout: fixed;
+        }
+        
+        #inspection-table input.obs-input {
+            width: 100%;
+            box-sizing: border-box;
         }
         
         /* Melhorias para dispositivos móveis */
@@ -475,80 +479,55 @@
                 font-size: 12px;
             }
             
-            #inspection-table th:nth-child(3),
-            #inspection-table td:nth-child(3) {
-                width: 50% !important; /* Mais espaço para o item em mobile */
-                font-size: 11px;
-                padding: 3px 2px;
+            #inspection-table th:nth-child(1), 
+            #inspection-table td:nth-child(1) { 
+                width: 30px; 
+                min-width: 30px;
+                max-width: 30px;
             }
             
-            #inspection-table th:nth-child(4),
-            #inspection-table td:nth-child(4) {
-                width: 20% !important; /* Status mais compacto em mobile */
-                min-width: 80px;
+            #inspection-table th:nth-child(2), 
+            #inspection-table td:nth-child(2) { 
+                width: 40px; 
+                min-width: 40px;
+                max-width: 40px;
+                text-align: center; 
+            }
+            
+            #inspection-table th:nth-child(4), 
+            #inspection-table td:nth-child(4) { 
+                width: 100px;
+                min-width: 100px;
                 max-width: 100px;
-                padding: 3px 2px;
+                padding: 2px 3px; 
+            }
+            
+            #inspection-table th:nth-child(3),
+            #inspection-table td:nth-child(3) {
+                width: auto;
+                min-width: 100px;
+                white-space: normal;
+                overflow: visible;
+            }
+            
+            #inspection-table th:nth-child(5),
+            #inspection-table td:nth-child(5) {
+                width: auto;
+                min-width: 150px;
             }
             
             #inspection-table select.status-select {
-                font-size: 11px;
-                height: 22px;
-                padding: 1px 2px;
+                width: 100%;
+                font-size: 12px;
             }
             
-            /* Melhorias para os formulários em mobile */
             .compact-table input[type="text"],
             .compact-table input[type="date"],
             .compact-table input[type="time"],
             .compact-table input[type="number"],
             .compact-table select {
-                font-size: 16px; /* Melhora a usabilidade em dispositivos móveis */
+                font-size: 16px;
                 padding: 8px;
-            }
-            
-            /* Ajustes na tabela quando observações estiverem ocultas */
-            .hide-obs th:nth-child(4),
-            .hide-obs td:nth-child(4) {
-                width: 25% !important;
-                max-width: 110px;
-            }
-            
-            .hide-obs th:nth-child(3),
-            .hide-obs td:nth-child(3) {
-                width: 70% !important;
-            }
-        }
-        
-        /* Para telas muito pequenas */
-        @media (max-width: 480px) {
-            #inspection-table th:nth-child(3),
-            #inspection-table td:nth-child(3) {
-                width: 55% !important;
-                font-size: 10px;
-            }
-            
-            #inspection-table th:nth-child(4),
-            #inspection-table td:nth-child(4) {
-                width: 15% !important;
-                min-width: 70px;
-                max-width: 90px;
-            }
-            
-            #inspection-table select.status-select {
-                font-size: 10px;
-                height: 20px;
-            }
-            
-            /* Quando observações estão ocultas em telas muito pequenas */
-            .hide-obs th:nth-child(4),
-            .hide-obs td:nth-child(4) {
-                width: 20% !important;
-                max-width: 100px;
-            }
-            
-            .hide-obs th:nth-child(3),
-            .hide-obs td:nth-child(3) {
-                width: 75% !important;
             }
         }
         
@@ -566,7 +545,6 @@
             .status-counters { display: none; }
             .dashboard { display: none; }
             
-            /* Ajustes para a tabela na impressão */
             #inspection-table {
                 font-size: 10px;
             }
@@ -646,12 +624,75 @@
         .status-counters.details-hidden {
             display: none !important;
         }
+        
+        /* Confirmação de saída */
+        .exit-confirmation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1006;
+        }
+        
+        .exit-confirmation-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .exit-confirmation-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-confirm-exit {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn-cancel-exit {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+    <!-- Indicador de carregamento -->
+    <div id="loadingIndicator" class="loading-indicator"></div>
+    
     <!-- Indicador de status offline -->
     <div id="offlineIndicator" class="offline-indicator">
         Você está offline. As alterações serão sincronizadas quando a conexão for restabelecida.
+    </div>
+    
+    <!-- Confirmação de saída -->
+    <div id="exitConfirmation" class="exit-confirmation">
+        <div class="exit-confirmation-content">
+            <h3>Alterações não salvas</h3>
+            <p>Você tem alterações que não foram salvas. Deseja salvar antes de sair?</p>
+            <div class="exit-confirmation-buttons">
+                <button class="btn-confirm-exit" onclick="confirmExit(true)">Salvar e Sair</button>
+                <button class="btn-cancel-exit" onclick="confirmExit(false)">Sair sem Salvar</button>
+                <button class="btn-cancel-exit" onclick="cancelExit()">Cancelar</button>
+            </div>
+        </div>
     </div>
     
     <!-- Modal de Boas-vindas -->
@@ -659,7 +700,7 @@
         <div class="modal-content">
             <div class="welcome-header">
                 <h1>🏥 Check-list Diário - LEFE</h1>
-                <p>🚨 Este é um sistema web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>O sistema oferece uma interface intuitiva và responsiva para registrar o estado dos veículos de emergência.</p>
+                <p>🚨 Este é um sistema web completo para check-list diário de inspeção veicular e equipamentos do Serviço de Emergências Médicas (LEFE). <br>O sistema oferece uma interface intuitiva e responsiva para registrar o estado dos veículos de emergência.</p>
             </div>
             
             <div class="welcome-section">
@@ -684,7 +725,7 @@
                     <li>Upload de fotos gerais (opcional)</li>
                     <li>Armazenamento local: Salva dados no navegador</li>
                     <li>Histórico: Visualização e carregamento de check-lists anteriores</li>
-                    <li>Relatórios de tendência: Identifica itens com mais problemas para possíveis reparos </li>
+                    <li>Relatórios de tendência: Identifica itens com mais problemas para possíveis reparos</li>
                     <li>Modo offline robusto: Funciona sem conexão e sincroniza quando online</li>
                 </ul>
                 
@@ -730,6 +771,7 @@
         <button id="btnToggleDetails" class="btn-toggle-details" onclick="toggleDetailsSections()"><span>👁️</span> <span id="btnToggleDetailsText">Ocultar Detalhes</span></button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
+    
     <!-- Botão flutuante para alternar a barra -->
     <button id="toggleToolbarFab"
             class="fab-toggle no-print"
@@ -759,7 +801,6 @@
                 <h3>📊 Preenchimento</h3>
                 <div class="value" id="dashboard-completion">0%</div>
             </div>
-            
         </div>
         
         <div class="status-counters no-print">
@@ -818,6 +859,7 @@
                 </td>
             </tr>
         </table>
+        
         <!-- Localização -->
         <div id="localizacao" class="location-info no-print details-section"></div>
         
@@ -975,6 +1017,120 @@
         let isOnline = navigator.onLine;
         let syncQueue = [];
         let pendingSync = false;
+        let dadosModificados = false;
+        let db;
+        let pendingExitAction = null;
+        
+        // Inicializar IndexedDB
+        function initIndexedDB() {
+            const request = indexedDB.open('LEFE_Checklist_DB', 1);
+            
+            request.onerror = function(event) {
+                console.error('Erro ao abrir IndexedDB:', event.target.error);
+            };
+            
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                console.log('IndexedDB inicializado com sucesso');
+            };
+            
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                
+                // Criar object store para checklists
+                if (!db.objectStoreNames.contains('checklists')) {
+                    const objectStore = db.createObjectStore('checklists', { keyPath: 'id' });
+                    objectStore.createIndex('placa', 'placa', { unique: false });
+                    objectStore.createIndex('data', 'data', { unique: false });
+                    objectStore.createIndex('timestamp', 'timestamp', { unique: false });
+                }
+                
+                // Criar object store para sincronização
+                if (!db.objectStoreNames.contains('syncQueue')) {
+                    const syncStore = db.createObjectStore('syncQueue', { keyPath: 'id', autoIncrement: true });
+                    syncStore.createIndex('action', 'action', { unique: false });
+                }
+            };
+        }
+        
+        // Salvar dados no IndexedDB
+        function salvarDadosIndexedDB(dados, key) {
+            if (!db) return false;
+            
+            const transaction = db.transaction(['checklists'], 'readwrite');
+            const objectStore = transaction.objectStore('checklists');
+            
+            const checklist = {
+                id: key,
+                dados: dados,
+                timestamp: new Date().toISOString()
+            };
+            
+            const request = objectStore.put(checklist);
+            
+            request.onsuccess = function(event) {
+                console.log('Dados salvos no IndexedDB:', key);
+            };
+            
+            request.onerror = function(event) {
+                console.error('Erro ao salvar no IndexedDB:', event.target.error);
+            };
+            
+            return true;
+        }
+        
+        // Carregar dados do IndexedDB
+        function carregarDadosIndexedDB(key) {
+            if (!db) return null;
+            
+            const transaction = db.transaction(['checklists'], 'readonly');
+            const objectStore = transaction.objectStore('checklists');
+            
+            const request = objectStore.get(key);
+            
+            return new Promise((resolve, reject) => {
+                request.onsuccess = function(event) {
+                    resolve(event.target.result ? event.target.result.dados : null);
+                };
+                
+                request.onerror = function(event) {
+                    console.error('Erro ao carregar do IndexedDB:', event.target.error);
+                    reject(null);
+                };
+            });
+        }
+        
+        // Obter histórico do IndexedDB
+        function getHistoricoIndexedDB() {
+            if (!db) return [];
+            
+            const transaction = db.transaction(['checklists'], 'readonly');
+            const objectStore = transaction.objectStore('checklists');
+            const index = objectStore.index('timestamp');
+            
+            return new Promise((resolve, reject) => {
+                const request = index.openCursor(null, 'prev');
+                const historico = [];
+                
+                request.onsuccess = function(event) {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        historico.push({
+                            key: cursor.value.id,
+                            dados: cursor.value.dados
+                        });
+                        cursor.continue();
+                    } else {
+                        resolve(historico);
+                    }
+                };
+                
+                request.onerror = function(event) {
+                    console.error('Erro ao obter histórico:', event.target.error);
+                    reject([]);
+                };
+            });
+        }
         
         // Toolbar toggle (mostrar/ocultar)
         function updateToolbarFab(hidden) {
@@ -985,6 +1141,7 @@
             fab.title = label;
             fab.setAttribute('aria-label', label);
         }
+        
         function toggleToolbar(forceHidden) {
             const toolbar = document.querySelector('.toolbar');
             if (!toolbar) return;
@@ -995,6 +1152,7 @@
             localStorage.setItem(TOOLBAR_HIDDEN_KEY, shouldHide ? '1' : '0');
             updateToolbarFab(shouldHide);
         }
+        
         // Verificar se é a primeira visita e mostrar boas-vindas
         function verificarPrimeiraVisita() {
             const primeiraVisita = localStorage.getItem('lefePrimeiraVisita');
@@ -1003,6 +1161,7 @@
                 localStorage.setItem('lefePrimeiraVisita', 'false');
             }
         }
+        
         function fecharBoasVindas() {
             document.getElementById('welcomeModal').style.display = 'none';
         }
@@ -1069,21 +1228,10 @@
             }
         }
         
-        // Modificar a função generateInspectionTable para usar textos mais curtos em mobile
+        // Lazy loading para itens da tabela
         function generateInspectionTable() {
             const tableBody = document.querySelector("#inspection-table tbody");
-            
-            // Verifica se está em uma tela pequena para usar textos mais curtos
-            const isSmallScreen = window.innerWidth <= 480;
-            
-            const statusOptions = isSmallScreen ? `
-                <option value=""></option>
-                <option value="✅ OK">✅ OK</option>
-                <option value="⚠️ R">⚠️ R</option>
-                <option value="🛠️ Q">🛠️ Q</option>
-                <option value="❌ F">❌ F</option>
-                <option value="🚨 P">🚨 P</option>
-            ` : `
+            const statusOptions = `
                 <option value=""></option>
                 <option value="✅ OK">✅ OK</option>
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
@@ -1092,60 +1240,71 @@
                 <option value="🚨 Parar VTR">🚨 Parar VTR</option>
             `;
             
-            inspectionItems.forEach((item, index) => {
-                const row = document.createElement('tr');
-                if (item.critical) row.classList.add('critical-item');
-                row.innerHTML = `
-                    <td class="no-print"><input type="checkbox" class="item-selector" data-id="${index + 1}"></td>
-                    <td>${(index + 1).toString().padStart(2, '0')}</td>
-                    <td>${item.name}</td>
-                    <td><select id="status-${index + 1}" class="status-select">${statusOptions}</select></td>
-                    <td><input type="text" id="obs-${index + 1}" class="obs-input" style="width: 100%;"></td>
-                `;
-                tableBody.appendChild(row);
-            });
+            // Limpar tabela existente
+            tableBody.innerHTML = '';
             
-            filteredItems = [...inspectionItems];
+            // Criar um documento fragmento para melhor performance
+            const fragment = document.createDocumentFragment();
             
-            document.querySelectorAll('.status-select').forEach(select => {
-                select.addEventListener('change', function() {
+            // Adicionar itens em lotes para melhor performance
+            const batchSize = 10;
+            let currentBatch = 0;
+            
+            function addBatch() {
+                const end = Math.min(currentBatch + batchSize, inspectionItems.length);
+                
+                for (let i = currentBatch; i < end; i++) {
+                    const item = inspectionItems[i];
+                    const row = document.createElement('tr');
+                    if (item.critical) row.classList.add('critical-item');
+                    row.innerHTML = `
+                        <td class="no-print"><input type="checkbox" class="item-selector" data-id="${i + 1}"></td>
+                        <td>${(i + 1).toString().padStart(2, '0')}</td>
+                        <td>${item.name}</td>
+                        <td><select id="status-${i + 1}" class="status-select">${statusOptions}</select></td>
+                        <td><input type="text" id="obs-${i + 1}" class="obs-input" style="width: 100%;"></td>
+                    `;
+                    fragment.appendChild(row);
+                }
+                
+                tableBody.appendChild(fragment);
+                
+                // Adicionar event listeners apenas para os itens adicionados
+                for (let i = currentBatch; i < end; i++) {
+                    const statusSelect = document.getElementById(`status-${i + 1}`);
+                    const obsInput = document.getElementById(`obs-${i + 1}`);
+                    
+                    if (statusSelect) {
+                        statusSelect.addEventListener('change', function() {
+                            updateStatusCounters();
+                            updateDashboard();
+                            marcarModificado();
+                        });
+                    }
+                    
+                    if (obsInput) {
+                        obsInput.addEventListener('input', debounce(() => {
+                            marcarModificado();
+                        }, 1000));
+                    }
+                }
+                
+                currentBatch = end;
+                
+                // Se ainda houver itens, continuar adicionando
+                if (currentBatch < inspectionItems.length) {
+                    setTimeout(addBatch, 10); // Pequeno delay para não bloquear a UI
+                } else {
+                    // Todos os itens foram adicionados
+                    filteredItems = [...inspectionItems];
                     updateStatusCounters();
                     updateDashboard();
-                    salvarDados();
-                });
-            });
-            
-            document.querySelectorAll('.obs-input').forEach(input => {
-                input.addEventListener('input', debounce(salvarDados, 1000));
-            });
-        }
-        
-        // Adicionar um listener para redimensionamento da tela para atualizar os selects
-        window.addEventListener('resize', function() {
-            // Se a mudança de tamanho for significativa, regenerar a tabela
-            if ((window.innerWidth <= 480 && !document.querySelector('.status-select option[value="⚠️ R"]')) ||
-                (window.innerWidth > 480 && document.querySelector('.status-select option[value="⚠️ R"]'))) {
-                // Salva os status atuais
-                const currentStatuses = {};
-                document.querySelectorAll('.status-select').forEach((select, index) => {
-                    currentStatuses[index] = select.value;
-                });
-                
-                // Regenera a tabela
-                document.querySelector("#inspection-table tbody").innerHTML = '';
-                generateInspectionTable();
-                
-                // Restaura os status
-                Object.keys(currentStatuses).forEach(index => {
-                    const select = document.getElementById(`status-${parseInt(index)+1}`);
-                    if (select) select.value = currentStatuses[index];
-                });
-                
-                // Atualiza os contadores
-                updateStatusCounters();
-                updateDashboard();
+                }
             }
-        });
+            
+            // Iniciar o processo
+            addBatch();
+        }
         
         function updateStatusCounters() {
             const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️ Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
@@ -1192,8 +1351,41 @@
             };
         }
         
-        function salvarDados() {
+        // Marcar formulário como modificado
+        function marcarModificado() {
+            dadosModificados = true;
+        }
+        
+        // Confirmar saída do formulário
+        function confirmExit(saveBeforeExit) {
+            const modal = document.getElementById('exitConfirmation');
+            modal.style.display = 'none';
+            
+            if (saveBeforeExit) {
+                salvarDados().then(() => {
+                    if (pendingExitAction) {
+                        pendingExitAction();
+                        pendingExitAction = null;
+                    }
+                });
+            } else {
+                if (pendingExitAction) {
+                    pendingExitAction();
+                    pendingExitAction = null;
+                }
+            }
+        }
+        
+        function cancelExit() {
+            const modal = document.getElementById('exitConfirmation');
+            modal.style.display = 'none';
+            pendingExitAction = null;
+        }
+        
+        // Salvar dados
+        async function salvarDados() {
             try {
+                showLoading(true);
                 const key = getStorageKey();
                 if (!key) return false;
                 
@@ -1223,15 +1415,20 @@
                     });
                 }
                 
-                // Salvar no localStorage (sempre funciona, online ou offline)
+                // Salvar no localStorage (compatibilidade)
                 localStorage.setItem(key, JSON.stringify(dados));
+                
+                // Salvar no IndexedDB (melhor performance)
+                if (db) {
+                    await salvarDadosIndexedDB(dados, key);
+                }
+                
                 lastSaveTime = new Date();
+                dadosModificados = false;
                 document.getElementById('saveIndicator').textContent = `Salvo: ${lastSaveTime.toLocaleTimeString()}`;
                 
                 // Se estiver online, tenta sincronizar com o servidor (simulado)
                 if (isOnline) {
-                    // Aqui você implementaria a sincronização com o servidor
-                    // Por enquanto, apenas simulamos
                     console.log('Sincronizando com o servidor...');
                     showNotification("Salvo localmente e sincronizado.", "success");
                 } else {
@@ -1246,19 +1443,36 @@
                 console.error("Erro ao salvar:", e);
                 showNotification("Falha ao salvar.", "error");
                 return false;
+            } finally {
+                showLoading(false);
             }
         }
         
-        function carregarDados() {
+        // Carregar dados
+        async function carregarDados() {
             try {
+                showLoading(true);
                 const key = getStorageKey();
                 if (!key) return false;
                 
-                const dadosSalvos = localStorage.getItem(key);
-                if (!dadosSalvos) return false;
+                let dados = null;
                 
-                const dados = JSON.parse(dadosSalvos);
+                // Tentar carregar do IndexedDB primeiro
+                if (db) {
+                    dados = await carregarDadosIndexedDB(key);
+                }
                 
+                // Se não encontrou no IndexedDB, tentar do localStorage
+                if (!dados) {
+                    const dadosSalvos = localStorage.getItem(key);
+                    if (dadosSalvos) {
+                        dados = JSON.parse(dadosSalvos);
+                    }
+                }
+                
+                if (!dados) return false;
+                
+                // Preencher formulário
                 document.getElementById("hospital").value = dados.hospital || '';
                 document.getElementById("data").value = dados.data || '';
                 document.getElementById("horarioEntrada").value = dados.horarioEntrada || '';
@@ -1294,72 +1508,93 @@
                 
                 updateStatusCounters();
                 updateDashboard();
+                dadosModificados = false;
                 return true;
             } catch (e) {
                 console.error("Erro ao carregar:", e);
                 return false;
+            } finally {
+                showLoading(false);
             }
         }
         
         // Histórico
-        function abrirHistorico() {
-            const modal = document.getElementById('modalHistorico');
-            const lista = document.getElementById('listaHistorico');
-            lista.innerHTML = '';
-            const historico = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('checklist_')) {
-                    try { historico.push({ key, dados: JSON.parse(localStorage.getItem(key)) }); }
-                    catch (e) { console.error('Erro ao carregar histórico:', e); }
+        async function abrirHistorico() {
+            try {
+                showLoading(true);
+                const modal = document.getElementById('modalHistorico');
+                const lista = document.getElementById('listaHistorico');
+                lista.innerHTML = '';
+                
+                let historico = [];
+                
+                // Tentar obter do IndexedDB primeiro
+                if (db) {
+                    historico = await getHistoricoIndexedDB();
                 }
+                
+                // Se não encontrou no IndexedDB, tentar do localStorage
+                if (historico.length === 0) {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('checklist_')) {
+                            try { 
+                                historico.push({ 
+                                    key, 
+                                    dados: JSON.parse(localStorage.getItem(key)) 
+                                }); 
+                            } catch (e) { 
+                                console.error('Erro ao carregar histórico:', e); 
+                            }
+                        }
+                    }
+                    historico.sort((a, b) => new Date(b.dados.timestamp || 0) - new Date(a.dados.timestamp || 0));
+                }
+                
+                if (historico.length === 0) {
+                    lista.innerHTML = '<p>Nenhum check-list encontrado no histórico.</p>';
+                } else {
+                    historico.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'history-item';
+                        div.innerHTML = `
+                            <strong>Placa:</strong> ${item.dados.placa}<br>
+                            <strong>Data:</strong> ${item.dados.data}<br>
+                            <strong>Condutor:</strong> ${item.dados.condutorPlantao}<br>
+                            <small>Salvo em: ${new Date(item.dados.timestamp || 0).toLocaleString()}</small>
+                        `;
+                        div.onclick = () => carregarDoHistorico(item.key);
+                        lista.appendChild(div);
+                    });
+                }
+                
+                modal.style.display = 'block';
+            } catch (e) {
+                console.error("Erro ao abrir histórico:", e);
+                showNotification("Erro ao carregar histórico.", "error");
+            } finally {
+                showLoading(false);
             }
-            historico.sort((a, b) => new Date(b.dados.timestamp || 0) - new Date(a.dados.timestamp || 0));
-            if (historico.length === 0) {
-                lista.innerHTML = '<p>Nenhum check-list encontrado no histórico.</p>';
-            } else {
-                historico.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'history-item';
-                    div.innerHTML = `
-                        <strong>Placa:</strong> ${item.dados.placa}<br>
-                        <strong>Data:</strong> ${item.dados.data}<br>
-                        <strong>Condutor:</strong> ${item.dados.condutorPlantao}<br>
-                        <small>Salvo em: ${new Date(item.dados.timestamp || 0).toLocaleString()}</small>
-                    `;
-                    div.onclick = () => carregarDoHistorico(item.key);
-                    lista.appendChild(div);
-                });
-            }
-            modal.style.display = 'block';
         }
         
         function carregarDoHistorico(key) {
             try {
-                const dados = JSON.parse(localStorage.getItem(key));
-                Object.keys(dados).forEach(campo => {
-                    const elemento = document.getElementById(campo);
-                    if (elemento && campo !== 'itens' && campo !== 'coordenadasGPS') {
-                        elemento.value = dados[campo];
+                // Atualizar a chave de armazenamento
+                const placa = document.getElementById("placa").value.trim().toUpperCase();
+                const data = document.getElementById("data").value;
+                const currentKey = placa && data ? `checklist_${placa}_${data}` : null;
+                
+                // Se a chave atual for diferente, precisamos atualizar os campos de placa e data
+                if (currentKey !== key) {
+                    const keyParts = key.split('_');
+                    if (keyParts.length >= 3) {
+                        document.getElementById("placa").value = keyParts[1];
+                        document.getElementById("data").value = keyParts[2];
                     }
-                });
-                if (dados.itens) {
-                    dados.itens.forEach((item, index) => {
-                        const statusEl = document.getElementById(`status-${index+1}`);
-                        const obsEl = document.getElementById(`obs-${index+1}`);
-                        if (statusEl) statusEl.value = item.status || '';
-                        if (obsEl) obsEl.value = item.obs || '';
-                    });
                 }
-                if (dados.coordenadasGPS) {
-                    coordenadasGPS = dados.coordenadasGPS;
-                    const localizacaoElement = document.getElementById('localizacao');
-                    localizacaoElement.innerHTML = 
-                        `📍 Localização: ${dados.coordenadasGPS.latitude.toFixed(6)}, ${dados.coordenadasGPS.longitude.toFixed(6)} (${new Date(dados.coordenadasGPS.timestamp).toLocaleTimeString()}) 
-                         <button onclick="mostrarLocalizacaoNoMapa()" class="btn-maps">Ver no Maps</button>`;
-                }
-                updateStatusCounters();
-                updateDashboard();
+                
+                // Recarregar os dados com a nova chave
+                carregarDados();
                 fecharHistorico();
                 showNotification("Check-list carregado do histórico!", "success");
             } catch (e) {
@@ -1367,7 +1602,9 @@
             }
         }
         
-        function fecharHistorico() { document.getElementById('modalHistorico').style.display = 'none'; }
+        function fecharHistorico() { 
+            document.getElementById('modalHistorico').style.display = 'none'; 
+        }
         
         function validateForm() {
             const required = ["hospital", "data", "condutorPlantao", "placa", "kmAtual"];
@@ -1521,8 +1758,16 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
         function limparFormulario() {
             if (confirm("Deseja realmente limpar todos os campos?")) {
                 const key = getStorageKey();
-                if (key) { localStorage.removeItem(key); }
+                if (key) { 
+                    localStorage.removeItem(key);
+                    if (db) {
+                        const transaction = db.transaction(['checklists'], 'readwrite');
+                        const objectStore = transaction.objectStore('checklists');
+                        objectStore.delete(key);
+                    }
+                }
                 document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
+                dadosModificados = false;
                 location.reload();
             }
         }
@@ -1533,6 +1778,15 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             notification.className = `notification ${type}`;
             notification.style.display = "block";
             setTimeout(() => notification.style.display = "none", 6000);
+        }
+        
+        function showLoading(show) {
+            const indicator = document.getElementById('loadingIndicator');
+            if (show) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
         }
         
         // Busca/filtro
@@ -1560,15 +1814,19 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             const el = document.getElementById('batchEdit');
             el.style.display = el.style.display === 'block' ? 'none' : 'block';
         }
+        
         function toggleSelectAll(checkbox) {
             document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = checkbox.checked; });
         }
+        
         function selecionarTodosItens() {
             document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = true; });
         }
+        
         function desselecionarTodosItens() {
             document.querySelectorAll('.item-selector').forEach(cb => { cb.checked = false; });
         }
+        
         function aplicarEdicaoEmLote() {
             const status = document.getElementById('batchStatus').value;
             if (!status) return showNotification("Selecione um status para aplicar", "error");
@@ -1578,7 +1836,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 const id = cb.getAttribute('data-id');
                 document.getElementById(`status-${id}`).value = status;
             });
-            updateStatusCounters(); updateDashboard(); salvarDados();
+            updateStatusCounters(); updateDashboard(); marcarModificado();
             showNotification(`Status aplicado a ${cbs.length} itens`, "success");
         }
         
@@ -1589,8 +1847,8 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 if (e.ctrlKey && e.key === 'e') { e.preventDefault(); enviarPorEmail(); }
                 if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-                if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); } // mostrar/ocultar barra
-                if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleDetailsSections(); } // mostrar/ocultar detalhes
+                if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); }
+                if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleDetailsSections(); }
                 if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); fecharRelatorioTendencia(); }
                 if (e.ctrlKey && e.key === '/') {
                     e.preventDefault();
@@ -1599,38 +1857,27 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             });
         }
         
-        // Função para alternar a visibilidade das seções de detalhes e coluna de observações
+        // Função para alternar a visibilidade das seções de detalhes
         function toggleDetailsSections() {
             const detailsSections = document.querySelectorAll('.details-section');
             const dashboard = document.querySelector('.dashboard');
             const statusCounters = document.querySelector('.status-counters');
-            const inspectionTable = document.getElementById('inspection-table');
             const btnText = document.getElementById('btnToggleDetailsText');
             
-            // Verifica se as seções estão atualmente ocultas
             const areHidden = detailsSections.length > 0 && detailsSections[0].classList.contains('details-hidden');
             
-            // Alterna a classe em todas as seções de detalhes
             detailsSections.forEach(section => {
                 section.classList.toggle('details-hidden');
             });
             
-            // Alterna a classe no dashboard
             if (dashboard) {
                 dashboard.classList.toggle('details-hidden');
             }
             
-            // Alterna a classe nos contadores de status
             if (statusCounters) {
                 statusCounters.classList.toggle('details-hidden');
             }
             
-            // Alterna a classe na tabela de inspeção para ocultar/mostrar a coluna de observações
-            if (inspectionTable) {
-                inspectionTable.classList.toggle('hide-obs');
-            }
-            
-            // Atualiza o texto do botão e salva a preferência
             if (areHidden) {
                 btnText.textContent = 'Ocultar Detalhes';
                 localStorage.setItem(DETAILS_HIDDEN_KEY, 'false');
@@ -1642,21 +1889,72 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
         
         // Backup (apenas chaves checklist_)
         function fazerBackup() {
+            showLoading(true);
+            
             const backupData = {};
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('checklist_')) {
-                    backupData[key] = localStorage.getItem(key);
+            
+            // Tentar obter dados do IndexedDB primeiro
+            if (db) {
+                const transaction = db.transaction(['checklists'], 'readonly');
+                const objectStore = transaction.objectStore('checklists');
+                
+                const request = objectStore.openCursor();
+                
+                request.onsuccess = function(event) {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        backupData[cursor.value.id] = cursor.value.dados;
+                        cursor.continue();
+                    } else {
+                        // Se não encontrou nada no IndexedDB, tentar do localStorage
+                        if (Object.keys(backupData).length === 0) {
+                            for (let i = 0; i < localStorage.length; i++) {
+                                const key = localStorage.key(i);
+                                if (key.startsWith('checklist_')) {
+                                    backupData[key] = JSON.parse(localStorage.getItem(key));
+                                }
+                            }
+                        }
+                        
+                        // Criar e baixar o arquivo de backup
+                        const dataStr = JSON.stringify(backupData);
+                        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                        const exportFileDefaultName = `lefe_backup_${new Date().toISOString().split('T')[0]}.json`;
+                        const linkElement = document.createElement('a');
+                        linkElement.setAttribute('href', dataUri);
+                        linkElement.setAttribute('download', exportFileDefaultName);
+                        linkElement.click();
+                        
+                        showNotification("Backup criado com sucesso!", "success");
+                        showLoading(false);
+                    }
+                };
+                
+                request.onerror = function(event) {
+                    console.error('Erro ao criar backup:', event.target.error);
+                    showNotification("Erro ao criar backup.", "error");
+                    showLoading(false);
+                };
+            } else {
+                // Se não há IndexedDB, usar apenas localStorage
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('checklist_')) {
+                        backupData[key] = JSON.parse(localStorage.getItem(key));
+                    }
                 }
+                
+                const dataStr = JSON.stringify(backupData);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                const exportFileDefaultName = `lefe_backup_${new Date().toISOString().split('T')[0]}.json`;
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showNotification("Backup criado com sucesso!", "success");
+                showLoading(false);
             }
-            const dataStr = JSON.stringify(backupData);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `lefe_backup_${new Date().toISOString().split('T')[0]}.json`;
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            showNotification("Backup criado com sucesso!", "success");
         }
         
         function restaurarBackup() {
@@ -1667,18 +1965,40 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
+                        showLoading(true);
                         const backupData = JSON.parse(e.target.result);
+                        
+                        // Limpar dados existentes
                         const keysToRemove = [];
                         for (let i = 0; i < localStorage.length; i++) {
                             const key = localStorage.key(i);
                             if (key.startsWith('checklist_')) keysToRemove.push(key);
                         }
                         keysToRemove.forEach(k => localStorage.removeItem(k));
-                        Object.keys(backupData).forEach(key => { localStorage.setItem(key, backupData[key]); });
+                        
+                        // Limpar IndexedDB se disponível
+                        if (db) {
+                            const transaction = db.transaction(['checklists'], 'readwrite');
+                            const objectStore = transaction.objectStore('checklists');
+                            objectStore.clear();
+                        }
+                        
+                        // Restaurar dados
+                        Object.keys(backupData).forEach(key => { 
+                            localStorage.setItem(key, JSON.stringify(backupData[key]));
+                            
+                            // Restaurar no IndexedDB se disponível
+                            if (db) {
+                                salvarDadosIndexedDB(backupData[key], key);
+                            }
+                        });
+                        
                         showNotification("Backup restaurado com sucesso! Recarregando...", "success");
                         setTimeout(() => location.reload(), 2000);
                     } catch (error) {
+                        console.error("Erro ao restaurar backup:", error);
                         showNotification("Erro ao restaurar backup: arquivo inválido", "error");
+                        showLoading(false);
                     }
                 };
                 reader.readAsText(file);
@@ -1686,8 +2006,14 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             input.click();
         }
         
-        function abrirBackup() { document.getElementById('modalBackup').style.display = 'block'; }
-        function fecharBackup() { document.getElementById('modalBackup').style.display = 'none'; }
+        function abrirBackup() { 
+            document.getElementById('modalBackup').style.display = 'block'; 
+        }
+        
+        function fecharBackup() { 
+            document.getElementById('modalBackup').style.display = 'none'; 
+        }
+        
         // Preview de fotos gerais
         function setupFotosGeraisPreview() {
             const input = document.getElementById('fotosGerais');
@@ -1710,24 +2036,84 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
         }
         
         // Relatório de Tendência
-        function abrirRelatorioTendencia() {
-            const modal = document.getElementById('modalTendencia');
-            const conteudo = document.getElementById('conteudoRelatorioTendencia');
-            
-            // Obter todos os check-lists do localStorage
-            const allChecklists = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('checklist_')) {
-                    try {
-                        const checklist = JSON.parse(localStorage.getItem(key));
-                        allChecklists.push(checklist);
-                    } catch (e) {
-                        console.error('Erro ao parsear checklist:', e);
+        async function abrirRelatorioTendencia() {
+            try {
+                showLoading(true);
+                const modal = document.getElementById('modalTendencia');
+                const conteudo = document.getElementById('conteudoRelatorioTendencia');
+                
+                // Obter todos os check-lists
+                let allChecklists = [];
+                
+                // Tentar obter do IndexedDB primeiro
+                if (db) {
+                    const transaction = db.transaction(['checklists'], 'readonly');
+                    const objectStore = transaction.objectStore('checklists');
+                    
+                    return new Promise((resolve, reject) => {
+                        const request = objectStore.openCursor();
+                        
+                        request.onsuccess = function(event) {
+                            const cursor = event.target.result;
+                            if (cursor) {
+                                allChecklists.push(cursor.value.dados);
+                                cursor.continue();
+                            } else {
+                                // Se não encontrou nada no IndexedDB, tentar do localStorage
+                                if (allChecklists.length === 0) {
+                                    for (let i = 0; i < localStorage.length; i++) {
+                                        const key = localStorage.key(i);
+                                        if (key.startsWith('checklist_')) {
+                                            try {
+                                                const checklist = JSON.parse(localStorage.getItem(key));
+                                                allChecklists.push(checklist);
+                                            } catch (e) {
+                                                console.error('Erro ao parsear checklist:', e);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Processar dados e gerar relatório
+                                processarRelatorioTendencia(allChecklists, conteudo);
+                                modal.style.display = 'block';
+                                showLoading(false);
+                            }
+                        };
+                        
+                        request.onerror = function(event) {
+                            console.error('Erro ao obter dados para relatório:', event.target.error);
+                            conteudo.innerHTML = '<p>Erro ao carregar dados para o relatório.</p>';
+                            modal.style.display = 'block';
+                            showLoading(false);
+                        };
+                    });
+                } else {
+                    // Se não há IndexedDB, usar apenas localStorage
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('checklist_')) {
+                            try {
+                                const checklist = JSON.parse(localStorage.getItem(key));
+                                allChecklists.push(checklist);
+                            } catch (e) {
+                                console.error('Erro ao parsear checklist:', e);
+                            }
+                        }
                     }
+                    
+                    processarRelatorioTendencia(allChecklists, conteudo);
+                    modal.style.display = 'block';
+                    showLoading(false);
                 }
+            } catch (e) {
+                console.error("Erro ao abrir relatório de tendência:", e);
+                showNotification("Erro ao gerar relatório de tendência.", "error");
+                showLoading(false);
             }
-            
+        }
+        
+        function processarRelatorioTendencia(allChecklists, conteudoElement) {
             // Contar problemas por item
             const problemasPorItem = {};
             allChecklists.forEach(checklist => {
@@ -1747,11 +2133,11 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             // Ordenar itens por quantidade de problemas
             const itensOrdenados = Object.entries(problemasPorItem)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 10); // Top 10
+                .slice(0, 10);
             
             // Gerar HTML do relatório
             if (itensOrdenados.length === 0) {
-                conteudo.innerHTML = '<p>Nenhum problema encontrado no histórico.</p>';
+                conteudoElement.innerHTML = '<p>Nenhum problema encontrado no histórico.</p>';
             } else {
                 let html = '<h3>Top 10 Itens com Mais Problemas</h3>';
                 html += '<div class="trend-list">';
@@ -1763,9 +2149,9 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                     const percentage = Math.round((count / maxProblemas) * 100);
                     
                     // Adicionar cores diferentes conforme a gravidade
-                    let barColor = '#ff9800'; // Laranja padrão
-                    if (count > maxProblemas * 0.7) barColor = '#f44336'; // Vermelho para itens críticos
-                    else if (count < maxProblemas * 0.3) barColor = '#4CAF50'; // Verde para poucos problemas
+                    let barColor = '#ff9800';
+                    if (count > maxProblemas * 0.7) barColor = '#f44336';
+                    else if (count < maxProblemas * 0.3) barColor = '#4CAF50';
                     
                     html += `
                         <div class="trend-item">
@@ -1788,10 +2174,8 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 html += '<li>Priorize a correção dos itens críticos que aparecem na lista</li>';
                 html += '</ul>';
                 
-                conteudo.innerHTML = html;
+                conteudoElement.innerHTML = html;
             }
-            
-            modal.style.display = 'block';
         }
         
         function fecharRelatorioTendencia() {
@@ -1850,7 +2234,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                             pendingSync = syncQueue.length > 0;
                         }
                     }
-                }, 1000 * (index + 1)); // Processa com intervalo de 1 segundo entre itens
+                }, 1000 * (index + 1));
             });
         }
         
@@ -1861,18 +2245,20 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar IndexedDB
+            initIndexedDB();
+            
             // Preferência da toolbar (oculta por padrão)
             const toolbarPref = localStorage.getItem(TOOLBAR_HIDDEN_KEY);
             if (toolbarPref === null) {
-                toggleToolbar(true); // padrão: oculto
+                toggleToolbar(true);
             } else {
                 toggleToolbar(toolbarPref === '1');
             }
             
-            // Preferência de ocultar detalhes (incluindo observações)
+            // Preferência de ocultar detalhes
             const detailsPref = localStorage.getItem(DETAILS_HIDDEN_KEY);
             if (detailsPref === 'true') {
-                // Força a exibição dos botões e depois oculta as seções e observações
                 setTimeout(() => {
                     toggleDetailsSections();
                 }, 100);
@@ -1902,7 +2288,24 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             updateConnectionStatus();
             
             autoSaveInterval = setInterval(salvarDados, 30000);
-            window.addEventListener('beforeunload', salvarDados);
+            
+            // Adicionar confirmação ao sair com alterações não salvas
+            window.addEventListener('beforeunload', function(e) {
+                if (dadosModificados) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                    
+                    // Mostrar modal de confirmação
+                    document.getElementById('exitConfirmation').style.display = 'flex';
+                    
+                    // Impedir a navegação até que o usuário decida
+                    pendingExitAction = () => {
+                        window.removeEventListener('beforeunload', arguments.callee);
+                    };
+                    
+                    return '';
+                }
+            });
             
             document.getElementById("placa").addEventListener("change", carregarDados);
             document.getElementById("data").addEventListener("change", carregarDados);
