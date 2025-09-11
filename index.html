@@ -879,8 +879,7 @@
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
                 <option value="🛠️ Quebrado">🛠️ Quebrado</option>
                 <option value="❌ Faltando">❌ Faltando</option>
-                <option value="🚨 Parar VTR">🚨 Parar VTR</option>
-            </select>
+<option value="🚨 Parar VTR" title="Item crítico: veículo não deve operar">🚨 (P)</option>            </select>
             <button onclick="aplicarEdicaoEmLote()">Aplicar aos itens selecionados</button>
             <button onclick="selecionarTodosItens()">Selecionar todos</button>
             <button onclick="desselecionarTodosItens()">Desselecionar todos</button>
@@ -1014,66 +1013,144 @@
     </div>
     
     <script>
-        // Lista de itens com críticos
+        // Lista de itens sem a propriedade critical fixa
         const inspectionItems = [
-            { name: "Óleo do motor", critical: true },
-            { name: "Óleo hidráulico (caixa de direção)", critical: true },
-            { name: "Fluido do radiador", critical: true },
-            { name: "Fluido de freio", critical: true },
-            { name: "Água do limpador de para-brisa", critical: false },
-            { name: "Correia do alternador", critical: true },
-            { name: "Correia dentada do motor", critical: true },
-            { name: "Retrovisores", critical: true },
-            { name: "Para-brisa", critical: true },
-            { name: "Caixa de marchas", critical: true },
-            { name: "Pisca dos retrovisores", critical: false },
-            { name: "Faróis dianteiros", critical: true },
-            { name: "Lanternas traseiras", critical: true },
-            { name: "Buzina e pisca de alerta", critical: false },
-            { name: "Botões dos vidros elétricos", critical: false },
-            { name: "Travamento das portas", critical: true },
-            { name: "Sinalizadores de emergência", critical: true },
-            { name: "Sirene", critical: true },
-            { name: "Luzes internas", critical: false },
-            { name: "Farol de embarque", critical: false },
-            { name: "Freio de estacionamento", critical: true },
-            { name: "Pastilhas de freio (dianteira/traseira)", critical: true },
-            { name: "Pneus", critical: true },
-            { name: "Macaco, chave de roda, triângulo", critical: true },
-            { name: "Limpadores/palhetas do para-brisa", critical: false },
-            { name: "Limpeza interna", critical: false },
-            { name: "Limpeza externa", critical: false },
-            { name: "Ar condicionado (dianteiro)", critical: false },
-            { name: "Ar condicionado (traseiro)", critical: false },
-            { name: "Extintor de incêndio", critical: true },
-            { name: "Alarme de estacionamento", critical: false },
-            { name: "Alinhamento/Balanceamento", critical: false },
-            { name: "Cilindro de oxigênio fixo (01)", critical: true },
-            { name: "Cintos de segurança", critical: true },
-            { name: "Maca e cinto de segurança", critical: true },
-            { name: "Cadeira de rodas (se aplicável)", critical: false },
-            { name: "Prancha/Escada", critical: false },
-            { name: "Bateria, inversor, transformador", critical: true },
-            { name: "Bancos e capas", critical: false },
-            { name: "Pintura/Plotagem", critical: false },
-            { name: "Câmera de ré (se aplicável)", critical: false },
-            { name: "Chave de troca de oxigênio", critical: true },
-            { name: "Bala de oxigênio portátil", critical: true },
-            { name: "Desfibrilador", critical: true },
-            { name: "Monitor", critical: true },
-            { name: "Respirador", critical: true },
-            { name: "Oxímetro", critical: true },
-            { name: "Termômetro", critical: true },
-            { name: "Glicosímetro", critical: true },
-            { name: "Bolsa de medicação", critical: true },
-            { name: "Bolsa de entubação", critical: true },
-            { name: "Bolsa de ventilação", critical: true },
-            { name: "Bolsa via aérea", critical: true },
-            { name: "Armário do salão", critical: false },
-            { name: "Gavetas do salão", critical: false },
-            { name: "Baú do salão", critical: false },
-            { name: "Painel de controle do salão", critical: true }
+            { name: "Óleo do motor" },
+            { name: "Óleo hidráulico (caixa de direção)" },
+            { name: "Fluido do radiador" },
+            { name: "Fluido de freio" },
+            { name: "Água do limpador de para-brisa" },
+            { name: "Correia do alternador" },
+            { name: "Correia dentada do motor" },
+            { name: "Retrovisores" },
+            { name: "Para-brisa" },
+            { name: "Caixa de marchas" },
+            { name: "Pisca dos retrovisores" },
+            { name: "Faróis dianteiros" },
+            { name: "Lanternas traseiras" },
+            { name: "Buzina e pisca de alerta" },
+            { name: "Botões dos vidros elétricos" },
+            { name: "Travamento das portas" },
+            { name: "Sinalizadores de emergência" },
+            { name: "Sirene" },
+            { name: "Luzes internas" },
+            { name: "Farol de embarque" },
+            { name: "Freio de estacionamento" },
+            { name: "Pastilhas de freio (dianteira/traseira)" },
+            { name: "Pneus" },
+            { name: "Macaco, chave de roda, triângulo" },
+            { name: "Limpadores/palhetas do para-brisa" },
+            { name: "Limpeza interna" },
+            { name: "Limpeza externa" },
+            { name: "Ar condicionado (dianteiro)" },
+            { name: "Ar condicionado (traseiro)" },
+            { name: "Extintor de incêndio" },
+            { name: "Alarme de estacionamento" },
+            { name: "Alinhamento/Balanceamento" },
+            { name: "Cilindro de oxigênio fixo (01)" },
+            { name: "Cintos de segurança" },
+            { name: "Maca e cinto de segurança" },
+            { name: "Cadeira de rodas (se aplicável)" },
+            { name: "Prancha/Escada" },
+            { name: "Bateria, inversor, transformador" },
+            { name: "Bancos e capas" },
+            { name: "Pintura/Plotagem" },
+            { name: "Câmera de ré (se aplicável)" },
+            { name: "Chave de troca de oxigênio" },
+            { name: "Bala de oxigênio portátil" },
+            { name: "Desfibrilador" },
+            { name: "Monitor" },
+            { name: "Respirador" },
+            { name: "Oxímetro" },
+            { name: "Termômetro" },
+            { name: "Glicosímetro" },
+            { name: "Bolsa de medicação" },
+            { name: "Bolsa de entubação" },
+            { name: "Bolsa de ventilação" },
+            { name: "Bolsa via aérea" },
+            { name: "Armário do salão" },
+            { name: "Gavetas do salão" },
+            { name: "Baú do salão" },
+            { name: "Painel de controle do salão" }
         ];
+
+        // Itens críticos por tipo de ambulância
+        const criticalItemsByType = {
+                "BÁSICA": [
+                "Óleo do motor",
+                "Óleo hidráulico (caixa de direção)",
+                "Fluido do radiador",
+                "Fluido de freio",
+                "Correia do alternador",
+                "Correia dentada do motor",
+                "Retrovisores",
+                "Para-brisa",
+                "Caixa de marchas",
+                "Faróis dianteiros",
+                "Lanternas traseiras",
+                "Travamento das portas",
+                "Sinalizadores de emergência",
+                "Sirene",
+                "Luzes internas",
+                "Freio de estacionamento",
+                "Pastilhas de freio (dianteira/traseira)",
+                "Pneus",
+                "Macaco, chave de roda, triângulo",
+                "Extintor de incêndio",
+                "Cilindro de oxigênio fixo (01)",
+                "Cintos de segurança",
+                "Maca e cinto de segurança",
+                "Bateria, inversor, transformador",
+                "Chave de troca de oxigênio",
+                "Bala de oxigênio portátil",
+                "Oxímetro",
+                "Termômetro",
+                "Glicosímetro",
+                "Painel de controle do salão"
+            ],
+            "USA": [
+                "Óleo do motor",
+                "Óleo hidráulico (caixa de direção)",
+                "Fluido do radiador",
+                "Fluido de freio",
+                "Correia do alternador",
+                "Correia dentada do motor",
+                "Retrovisores",
+                "Para-brisa",
+                "Caixa de marchas",
+                "Faróis dianteiros",
+                "Lanternas traseiras",
+                "Travamento das portas",
+                "Sinalizadores de emergência",
+                "Sirene",
+                "Luzes internas",
+                "Freio de estacionamento",
+                "Pastilhas de freio (dianteira/traseira)",
+                "Pneus",
+                "Macaco, chave de roda, triângulo",
+                "Extintor de incêndio",
+                "Cilindro de oxigênio fixo (01)",
+                "Cintos de segurança",
+                "Maca e cinto de segurança",
+                "Bateria, inversor, transformador",
+                "Chave de troca de oxigênio",
+                "Bala de oxigênio portátil",
+                "Desfibrilador",
+                "Monitor",
+                "Respirador",
+                "Oxímetro",
+                "Termômetro",
+                "Glicosímetro",
+                "Bolsa de medicação",
+                "Bolsa de entubação",
+                "Bolsa de ventilação",
+                "Bolsa via aérea",
+                "Painel de controle do salão",
+                "Ar condicionado (dianteiro)",
+                "Ar condicionado (traseiro)",
+                "Prancha/Escada"
+            ]
+        };
         
         const TOOLBAR_HIDDEN_KEY = 'lefeToolbarHidden';
         const DETAILS_HIDDEN_KEY = 'lefeDetailsHidden';
@@ -1323,7 +1400,7 @@
                 for (let i = currentBatch; i < end; i++) {
                     const item = inspectionItems[i];
                     const row = document.createElement('tr');
-                    if (item.critical) row.classList.add('critical-item');
+                    // Removido: if (item.critical) row.classList.add('critical-item');
                     row.innerHTML = `
                         <td class="no-print"><input type="checkbox" class="item-selector" data-id="${i + 1}"></td>
                         <td>${(i + 1).toString().padStart(2, '0')}</td>
@@ -1372,11 +1449,37 @@
                     if (detailsPref === 'true') {
                         toggleObservationColumn(true);
                     }
+                    
+                    // Verificar se há um tipo de ambulância selecionado e atualizar os itens críticos
+                    const selectedAmbulance = document.querySelector('input[name="ambulanciaStatus"]:checked');
+                    if (selectedAmbulance) {
+                        updateCriticalItems(selectedAmbulance.value);
+                    }
                 }
             }
             
             // Iniciar o processo
             addBatch();
+        }
+        
+        // Função para atualizar itens críticos baseado no tipo de ambulância
+        function updateCriticalItems(type) {
+            // Obter a lista de itens críticos para o tipo selecionado
+            const criticalItems = criticalItemsByType[type] || [];
+            
+            // Percorrer todas as linhas da tabela de inspeção
+            const rows = document.querySelectorAll('#inspection-table tbody tr');
+            rows.forEach((row, index) => {
+                const itemName = inspectionItems[index].name;
+                if (criticalItems.includes(itemName)) {
+                    row.classList.add('critical-item');
+                } else {
+                    row.classList.remove('critical-item');
+                }
+            });
+            
+            // Atualizar o dashboard para refletir os itens críticos
+            updateDashboard();
         }
         
         function updateStatusCounters() {
@@ -1399,12 +1502,17 @@
             let criticalItems = 0;
             let okItems = 0;
             
+            // Obter o tipo de ambulância selecionado
+            const selectedAmbulance = document.querySelector('input[name="ambulanciaStatus"]:checked');
+            const ambulanceType = selectedAmbulance ? selectedAmbulance.value : null;
+            const criticalItemsList = ambulanceType ? criticalItemsByType[ambulanceType] : [];
+            
             document.querySelectorAll('.status-select').forEach((select, index) => {
                 const val = select.value;
                 if (val) completedItems++;
                 if (val === "✅ OK") okItems++;
                 if (val && val !== "✅ OK") problemItems++;
-                if (inspectionItems[index].critical && val && val !== "✅ OK") criticalItems++;
+                if (criticalItemsList.includes(inspectionItems[index].name) && val && val !== "✅ OK") criticalItems++;
             });
             
             const completionRate = Math.round((completedItems / totalItems) * 100);
@@ -1585,6 +1693,12 @@
                     }
                 }
                 
+                // Atualizar itens críticos baseado no tipo de ambulância
+                const selectedAmbulance = document.querySelector('input[name="ambulanciaStatus"]:checked');
+                if (selectedAmbulance) {
+                    updateCriticalItems(selectedAmbulance.value);
+                }
+                
                 updateStatusCounters();
                 updateDashboard();
                 dadosModificados = false;
@@ -1637,9 +1751,9 @@
                         const div = document.createElement('div');
                         div.className = 'history-item';
                         div.innerHTML = `
+                           <strong>VTR :</strong> ${item.dados.ambulanciaStatus || 'Não informado'}<br>
                             <strong>Placa:</strong> ${item.dados.placa}<br>
                             <strong>Data:</strong> ${item.dados.data}<br>
-                            <strong>Tipo:</strong> ${item.dados.ambulanciaStatus || 'Não informado'}<br>
                             <strong>Condutor:</strong> ${item.dados.condutorPlantao}<br>
                             <small>Salvo em: ${new Date(item.dados.timestamp || 0).toLocaleString()}</small>
                         `;
@@ -1699,9 +1813,15 @@
                 const el = document.getElementById(id);
                 if (!el.value.trim()) { isValid = false; el.classList.add("required-field"); }
             });
+            
+            // Obter o tipo de ambulância selecionado
+            const selectedAmbulance = document.querySelector('input[name="ambulanciaStatus"]:checked');
+            const ambulanceType = selectedAmbulance ? selectedAmbulance.value : null;
+            const criticalItemsList = ambulanceType ? criticalItemsByType[ambulanceType] : [];
+            
             const criticalIssues = [];
             inspectionItems.forEach((item, index) => {
-                if (item.critical) {
+                if (criticalItemsList.includes(item.name)) {
                     const status = document.getElementById(`status-${index+1}`).value;
                     if (status && status !== "✅ OK") criticalIssues.push(item.name);
                 }
@@ -1779,15 +1899,15 @@
             });
             
             const corpoEmail = `
-================================================================================
+==============================================================================
                             CHECK-LIST DIÁRIO - LEFE
-================================================================================
+==============================================================================
                                 VIATURA: ${dadosViatura.placa}
-                                TIPO: ${dadosViatura.ambulanciaStatus}
+                                VTR: ${dadosViatura.ambulanciaStatus}
                                 DATA: ${dadosCabecalho.data}
-================================================================================
+==============================================================================
 INFORMAÇÕES BÁSICAS
-================================================================================
+==============================================================================
 Hospital: ${dadosCabecalho.hospital}
 Condutor de Plantão: ${dadosCabecalho.condutorPlantao}
 Recebendo de: ${dadosCabecalho.recebendoDe}
@@ -1795,16 +1915,16 @@ Horário de Entrada: ${dadosCabecalho.horarioEntrada}
 Horário de Saída: ${dadosCabecalho.horarioSaida}
 Localização: ${localizacaoInfo}
 DADOS DA VIATURA
-================================================================================
+==============================================================================
+VTRT: ${dadosViatura.ambulanciaStatus}
 Placa: ${dadosViatura.placa}
-Tipo: ${dadosViatura.ambulanciaStatus}
 Km Atual: ${dadosViatura.kmAtual} km
 Nível de Combustível: ${dadosViatura.nivelCombustivel}
 CRV Válido até: ${dadosViatura.crvValido}
 Próxima Troca de Óleo: ${dadosViatura.proximaTrocaOleo} km
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
 ITENS DE INSPEÇÃO
-================================================================================
+==============================================================================
 ITENS COM STATUS ✅ OK (${itensAgrupados['✅ OK'].length} itens)
 ${itensAgrupados['✅ OK'].map(item => `• ${item.num}. ${item.item}`).join('\n')}
 ${itensAgrupados['⚠️ Ruim'].length > 0 ? `
@@ -1825,12 +1945,12 @@ ${itensAgrupados['🚨 Parar VTR'].map(item => `• ${item.num}. ${item.item} - 
 ` : ''}
 ${observacoesGerais ? `
 OBSERVAÇÕES GERAIS / AVARIAS
-================================================================================
+==============================================================================
 ${observacoesGerais}
 ` : ''}
 ================================================================================
 E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()}
-================================================================================`.trim();
+==============================================================================`.trim();
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
             // Correção: E-mail destinatário correto
             const destinatario = "lefechecklist@gmail.com";
@@ -2391,6 +2511,17 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                     e.returnValue = '';
                     return '';
                 }
+            });
+            
+            // Adicionar evento de mudança nos radio buttons do tipo de ambulância
+            const radios = document.querySelectorAll('input[name="ambulanciaStatus"]');
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        updateCriticalItems(this.value);
+                        marcarModificado();
+                    }
+                });
             });
             
             document.getElementById("placa").addEventListener("change", carregarDados);
