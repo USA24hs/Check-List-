@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <link rel="shortcut icon" type="image/x-icon" href="https://redehumanizasus.net/sites/default/files/33154/curso-de-urgencia-e-emergencia.png">
+    <!-- Mantém seu ícone de atalho -->
+    <link rel="shortcut icon" type="image/png" href="icons/icon-192.png">
+    <!-- Ícone para iPhone/iPad -->
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check-list Diário - LEFE</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTEVGRSBDaGVjay1saXN0Iiwic2hvcnRfbmFtZSI6IkxFRkUiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Q5MDAwMCIsInRoZW1lX2NvbG9yIjoiI2Q5MDAwMCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY2lJSEpwWlhkQ2IzZzlJakFnTUNBME9EQWdORGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlORGd3SWlCb1pXbG5hSFE5SWpRNE1DSWdabWxzYkQwaVkyUmxObmxoSWk4K1BDOXRKVE0rIiwic2l6ZXMiOiI0ODB4NDgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    
+    <!-- Manifesto para PWA -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Cor predominante do app -->
+    <meta name="theme-color" content="#d90000">
     <style>
         :root {
             --primary-color: #d90000;
@@ -1824,7 +1832,8 @@ ${observacoesGerais}
 E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()}
 ================================================================================`.trim();
             const assunto = `Check-list Viatura ${dadosViatura.placa} - ${dadosCabecalho.data}`;
-            const destinatario = "lefechecklist@.gmail.com";
+            // Correção: E-mail destinatário correto
+            const destinatario = "lefechecklist@gmail.com";
             const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
             window.location.href = mailtoLink;
             showNotification("Abrindo e-mail...", "success");
@@ -2337,11 +2346,6 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             });
         }
         
-        // Service Worker para PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdsZWZlLWNoZWNrbGlzdC12MS4wJzsNCmNvbnN0IHVybHNUb0NhY2hlID0gWw0KICAnLycsDQogICcvaW5kZXguaHRtbCcNCl07DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQud2FpdFVudGlsKA0KICAgIGNhY2hlcy5vcGVuKENBQ0hFX05BTUUpDQogICAgICAudGhlbihjYWNoZSA9PiBjYWNoZS5hZGRBbGwodXJsc1RvQ2FjaGUpKQ0KICApOw0KfSk7DQoNCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcigidmVyc2lvbiIsIGV2ZW50ID0+IHt9KTsNCg0Kc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGV2ZW50ID0+IHsNCiAgZXZlbnQucmVzcG9uZFdpdGgoDQogICAgY2FjaGVzLm1hdGNoKGV2ZW50LnJlcXVlc3QpDQogICAgICAudGhlbihyZXNwb25zZSA9PiByZXNwb25zZSB8fCBmZXRjaChldmVudC5yZXF1ZXN0KSkNCiAgKTsNCn0pOw==');
-        }
-        
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             // Inicializar IndexedDB
@@ -2385,15 +2389,6 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 if (dadosModificados) {
                     e.preventDefault();
                     e.returnValue = '';
-                    
-                    // Mostrar modal de confirmação
-                    document.getElementById('exitConfirmation').style.display = 'flex';
-                    
-                    // Impedir a navegação até que o usuário decida
-                    pendingExitAction = () => {
-                        window.removeEventListener('beforeunload', arguments.callee);
-                    };
-                    
                     return '';
                 }
             });
@@ -2410,6 +2405,14 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                     }
                 });
             };
+            
+            // Service Worker para PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker
+                    .register('service-worker.js')
+                    .then(() => console.log("✅ Service Worker registrado com sucesso"))
+                    .catch(err => console.error("Erro ao registrar Service Worker:", err));
+            }
         });
     </script>
 </body>
