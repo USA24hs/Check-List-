@@ -746,6 +746,22 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        
+        /* Estilo para botão de cópia */
+        .btn-copy {
+            background-color: #607D8B;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-copy:hover {
+            background-color: #455A64;
+        }
     </style>
 </head>
 <body>
@@ -1003,6 +1019,24 @@
         </div>
     </div>
     
+    <!-- Modal de Alternativa WhatsApp -->
+    <div id="modalWhatsApp" class="modal no-print">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalWhatsApp()">&times;</span>
+            <h2>📱 Alternativa para WhatsApp</h2>
+            <p>Não foi possível abrir o WhatsApp diretamente. Use uma das opções abaixo:</p>
+            <div style="margin: 20px 0;">
+                <button onclick="abrirWhatsAppWeb()" class="btn-whatsapp" style="width: 100%; margin-bottom: 10px;">
+                    <span>🌐</span> Abrir WhatsApp Web
+                </button>
+                <button onclick="copiarMensagemWhatsApp()" class="btn-copy" style="width: 100%; margin-bottom: 10px;">
+                    <span>📋</span> Copiar Mensagem
+                </button>
+            </div>
+            <div id="mensagemWhatsAppPreview" style="background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto; font-size: 12px; white-space: pre-wrap;"></div>
+        </div>
+    </div>
+    
     <!-- Notificação -->
     <div id="notification" class="notification"></div>
     
@@ -1170,6 +1204,7 @@
         let dadosModificados = false;
         let db;
         let pendingExitAction = null;
+        let mensagemWhatsAppAtual = '';
         
         // Inicializar IndexedDB
         function initIndexedDB() {
@@ -1965,7 +2000,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             showNotification("Abrindo e-mail...", "success");
         }
         
-        // Função para enviar por WhatsApp
+        // Função para enviar por WhatsApp com fallback
         function enviarPorWhatsApp() {
             if (!validateForm()) return;
             
@@ -1986,14 +2021,13 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             const horarioEntrada = document.getElementById("horarioEntrada").value;
             const horarioSaida = document.getElementById("horarioSaida").value;
             
-              // Gerar link do Google Maps se houver coordenadas
+            // Gerar link do Google Maps se houver coordenadas
             let localizacaoInfo = 'Localização não disponível';
             if (coordenadasGPS && coordenadasGPS.latitude && coordenadasGPS.longitude) {
                 const lat = coordenadasGPS.latitude.toFixed(6);
                 const lon = coordenadasGPS.longitude.toFixed(6);
                 const googleMapsLink = `https://maps.google.com/?q=${lat},${lon}`;
                 localizacaoInfo = ` ${lat}, ${lon}\n*Google Maps:* ${googleMapsLink}`;
-            
             }
             
             const itensInspecao = [];
@@ -2053,13 +2087,86 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             
             mensagem += `🙏🏻 *Deus seja louvado!!!*`;
             
+            // Armazenar mensagem atual para uso posterior
+            mensagemWhatsAppAtual = mensagem;
+            
             // Codificar a mensagem para URL
             const mensagemCodificada = encodeURIComponent(mensagem);
             
-            // Abrir o WhatsApp Web com a mensagem
-            window.open(`https://wa.me/?text=${mensagemCodificada}`, '_blank');
+            // Verificar se é um dispositivo móvel
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            showNotification("Abrindo WhatsApp...", "success");
+            if (isMobile) {
+                // Para dispositivos móveis, tentar abrir o aplicativo WhatsApp
+                const whatsappAppUrl = `whatsapp://send?text=${mensagemCodificada}`;
+                
+                // Tentar abrir o app
+                const timeoutId = setTimeout(() => {
+                    // Se o app não abrir em 500ms, mostrar alternativas
+                    mostrarModalWhatsApp();
+                }, 500);
+                
+                // Tentar abrir o app
+                window.location.href = whatsappAppUrl;
+                
+                // Se o app abrir, cancelar o timeout
+                window.addEventListener('blur', () => {
+                    clearTimeout(timeoutId);
+                }, { once: true });
+                
+                showNotification("Tentando abrir o WhatsApp...", "success");
+            } else {
+                // Para desktop, abrir a web version
+                const whatsappWebUrl = `https://web.whatsapp.com/send?text=${mensagemCodificada}`;
+                window.open(whatsappWebUrl, '_blank');
+                showNotification("Abrindo WhatsApp Web...", "success");
+            }
+        }
+        
+        // Função para mostrar o modal de alternativas do WhatsApp
+        function mostrarModalWhatsApp() {
+            const modal = document.getElementById('modalWhatsApp');
+            const preview = document.getElementById('mensagemWhatsAppPreview');
+            
+            // Exibir a mensagem no preview
+            preview.textContent = mensagemWhatsAppAtual;
+            
+            // Mostrar o modal
+            modal.style.display = 'block';
+            
+            showNotification("Não foi possível abrir o WhatsApp. Escolha uma alternativa.", "warning");
+        }
+        
+        // Função para fechar o modal de alternativas do WhatsApp
+        function fecharModalWhatsApp() {
+            document.getElementById('modalWhatsApp').style.display = 'none';
+        }
+        
+        // Função para abrir o WhatsApp Web
+        function abrirWhatsAppWeb() {
+            const mensagemCodificada = encodeURIComponent(mensagemWhatsAppAtual);
+            const whatsappWebUrl = `https://web.whatsapp.com/send?text=${mensagemCodificada}`;
+            window.open(whatsappWebUrl, '_blank');
+            fecharModalWhatsApp();
+            showNotification("Abrindo WhatsApp Web...", "success");
+        }
+        
+        // Função para copiar a mensagem para a área de transferência
+        function copiarMensagemWhatsApp() {
+            // Criar um elemento textarea temporário
+            const textarea = document.createElement('textarea');
+            textarea.value = mensagemWhatsAppAtual;
+            document.body.appendChild(textarea);
+            
+            // Selecionar e copiar o texto
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Remover o elemento temporário
+            document.body.removeChild(textarea);
+            
+            fecharModalWhatsApp();
+            showNotification("Mensagem copiada para a área de transferência!", "success");
         }
         
         function limparFormulario() {
@@ -2157,7 +2264,12 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'd') { e.preventDefault(); toggleDetailsSections(); }
-                if (e.key === 'Escape') { fecharHistorico(); fecharBackup(); fecharRelatorioTendencia(); }
+                if (e.key === 'Escape') { 
+                    fecharHistorico(); 
+                    fecharBackup(); 
+                    fecharRelatorioTendencia(); 
+                    fecharModalWhatsApp();
+                }
                 if (e.ctrlKey && e.key === '/') {
                     e.preventDefault();
                     document.getElementById('keyboardShortcuts').classList.toggle('show');
