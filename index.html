@@ -103,13 +103,13 @@
             top: 0;
             z-index: 999;
             background: var(--light-gray);
-            padding: 10px 0;
+            padding: 8px 0;
             max-width: 900px;
             margin: 0 auto 5px;
             text-align: right;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 5px;
             justify-content: flex-end;
             border-radius: 5px;
         }
@@ -117,15 +117,16 @@
         .toolbar button {
             color: #fff;
             border: none;
-            padding: 10px 14px;
+            padding: 6px 10px;
             border-radius: 5px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.10);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            white-space: nowrap;
         }
         .btn-print { background: var(--primary-color); }
         .btn-print:hover { background: var(--primary-dark); }
@@ -840,14 +841,15 @@
     
     <!-- Barra de ferramentas melhorada (oculta por padrão) -->
     <div class="toolbar no-print hidden">
-        <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
-        <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> E-mail</button>
-        <button class="btn-whatsapp" onclick="enviarPorWhatsApp()"><span>📱</span> WhatsApp</button>
-        <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar</button>
-        <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
-        <button class="btn-trends" onclick="abrirRelatorioTendencia()"><span>📈</span> Tendências</button>
-        <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()"><span>📝</span> Edição em Lote</button>
-        <button id="btnToggleDetails" class="btn-toggle-details" onclick="toggleDetailsSections()"><span>👁️</span> <span id="btnToggleDetailsText">Ocultar Detalhes</span></button>
+        <button class="btn-print" onclick="window.print()" title="Imprimir (Ctrl+P)">🖨️ Imprimir</button>
+        <button class="btn-email" onclick="enviarPorEmail()" title="E-mail (Ctrl+E)">✉️ E-mail</button>
+        <button class="btn-whatsapp" onclick="enviarPorWhatsApp()" title="WhatsApp (Ctrl+W)">📱 Whatts</button>
+        <button class="btn-history" onclick="abrirHistorico()" title="Histórico">📋 Histórico</button>
+        <button class="btn-trends" onclick="abrirRelatorioTendencia()" title="Tendências">📈 Top 10</button>
+        <button id="btnBatchEdit" class="btn-edit" onclick="toggleBatchEdit()" title="Edição em Lote">📝 Edição em Lote</button> 
+        <button id="btnToggleDetails" class="btn-toggle-details" onclick="toggleDetailsSections()" title="Ocultar/Mostrar Detalhes (Ctrl+D)">
+            <span>👁️ Ocultar</span>
+        </button>
         <span id="saveIndicator" class="save-indicator"></span>
     </div>
     
@@ -1025,7 +1027,7 @@
             <span class="close" onclick="fecharModalWhatsApp()">&times;</span>
             <h2>📱 Alternativa para WhatsApp</h2>
             <p>Não foi possível abrir o WhatsApp diretamente. Use uma das opções abaixo:</p>
-            <div style="margin: 20px 0;">
+            <div style="margin: 2px 0;">
                 <button onclick="abrirWhatsAppWeb()" class="btn-whatsapp" style="width: 100%; margin-bottom: 10px;">
                     <span>🌐</span> Abrir WhatsApp Web
                 </button>
@@ -1033,7 +1035,7 @@
                     <span>📋</span> Copiar Mensagem
                 </button>
             </div>
-            <div id="mensagemWhatsAppPreview" style="background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto; font-size: 12px; white-space: pre-wrap;"></div>
+            <div id="mensagemWhatsAppPreview" style="background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 250px; overflow-y: auto; font-size: 12px; white-space: pre-wrap;"></div>
         </div>
     </div>
     
@@ -2337,10 +2339,10 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             toggleObservationColumn(!areHidden);
             
             if (areHidden) {
-                btnText.textContent = 'Ocultar Detalhes';
+                if (btnText) btnText.textContent = 'Ocultar Detalhes';
                 localStorage.setItem(DETAILS_HIDDEN_KEY, 'false');
             } else {
-                btnText.textContent = 'Mostrar Detalhes';
+                if (btnText) btnText.textContent = 'Mostrar Detalhes';
                 localStorage.setItem(DETAILS_HIDDEN_KEY, 'true');
             }
         }
