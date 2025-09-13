@@ -2000,6 +2000,13 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             showNotification("Abrindo e-mail...", "success");
         }
         
+        // Função para detectar se está em um WebView
+        function isWebView() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            return userAgent.includes('android') && userAgent.includes('wv') || 
+                   userAgent.includes('iphone') && userAgent.includes('webview');
+        }
+        
         // Função para enviar por WhatsApp com fallback
         function enviarPorWhatsApp() {
             if (!validateForm()) return;
@@ -2096,8 +2103,15 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             // Verificar se é um dispositivo móvel
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            if (isMobile) {
-                // Para dispositivos móveis, tentar abrir o aplicativo WhatsApp
+            // Verificar se estamos em um WebView (dentro de um aplicativo)
+            const webView = isWebView();
+            
+            if (webView) {
+                // Estamos em um WebView, mostrar alternativas
+                mostrarModalWhatsApp();
+                showNotification("Abrindo alternativas para WhatsApp...", "info");
+            } else if (isMobile) {
+                // Para dispositivos móveis nativos, tentar abrir o aplicativo WhatsApp
                 const whatsappAppUrl = `whatsapp://send?text=${mensagemCodificada}`;
                 
                 // Tentar abrir o app
