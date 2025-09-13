@@ -30,6 +30,8 @@
             --text: #333333;
             --card-bg: #ffffff;
             --edit-color: #00796B;
+            --whatsapp-color: #25D366;
+            --whatsapp-dark: #128C7E;
         }
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -129,6 +131,8 @@
         .btn-print:hover { background: var(--primary-dark); }
         .btn-email { background: var(--secondary-color); }
         .btn-email:hover { background: var(--secondary-dark); }
+        .btn-whatsapp { background: var(--whatsapp-color); }
+        .btn-whatsapp:hover { background: var(--whatsapp-dark); }
         .btn-save { background: var(--success); }
         .btn-save:hover { background: #3d8b40; }
         .btn-history { background: #795548; }
@@ -822,6 +826,7 @@
     <div class="toolbar no-print hidden">
         <button class="btn-print" onclick="window.print()"><span>🖨️</span> Imprimir</button>
         <button class="btn-email" onclick="enviarPorEmail()"><span>✉️</span> E-mail</button>
+        <button class="btn-whatsapp" onclick="enviarPorWhatsApp()"><span>📱</span> WhatsApp</button>
         <button class="btn-save" onclick="salvarDados()"><span>💾</span> Salvar</button>
         <button class="btn-history" onclick="abrirHistorico()"><span>📋</span> Histórico</button>
         <button class="btn-trends" onclick="abrirRelatorioTendencia()"><span>📈</span> Tendências</button>
@@ -879,7 +884,8 @@
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
                 <option value="🛠️ Quebrado">🛠️ Quebrado</option>
                 <option value="❌ Faltando">❌ Faltando</option>
-<option value="🚨 Parar VTR" title="Item crítico: veículo não deve operar">🚨 (P)</option>            </select>
+                <option value="🚨 Parar VTR" title="Item crítico: veículo não deve operar">🚨 (P)</option>
+            </select>
             <button onclick="aplicarEdicaoEmLote()">Aplicar aos itens selecionados</button>
             <button onclick="selecionarTodosItens()">Selecionar todos</button>
             <button onclick="desselecionarTodosItens()">Desselecionar todos</button>
@@ -929,7 +935,7 @@
         <!-- Localização -->
         <div id="localizacao" class="location-info no-print details-section"></div>
         
-        <h2>🛠️ STATUS DE INSPEÇÃO</h2>
+        <h2>📋 STATUS DE INSPEÇÃO</h2>
         <p><em>Selecione o status: ✅ OK | ⚠️ (R) Ruim | 🛠️(Q) Quebrado | ❌ (F) Faltando | 🚨 (P) Parar VTR</em></p>
         <table id="inspection-table">
             <thead>
@@ -1005,6 +1011,7 @@
         <strong>Atalhos de teclado:</strong><br>
         Ctrl+S - Salvar<br>
         Ctrl+E - Enviar por e-mail<br>
+        Ctrl+W - Enviar por WhatsApp<br>
         Ctrl+P - Imprimir<br>
         Ctrl+F - Buscar<br>
         Ctrl+B - Mostrar/Ocultar barra<br>
@@ -1073,10 +1080,9 @@
             { name: "Baú do salão" },
             { name: "Painel de controle do salão" }
         ];
-
         // Itens críticos por tipo de ambulância
         const criticalItemsByType = {
-                "BÁSICA": [
+            "BÁSICA": [
                 "Óleo do motor",
                 "Óleo hidráulico (caixa de direção)",
                 "Fluido do radiador",
@@ -1959,6 +1965,101 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             showNotification("Abrindo e-mail...", "success");
         }
         
+        // Função para enviar por WhatsApp
+        function enviarPorWhatsApp() {
+            if (!validateForm()) return;
+            
+            const dataValue = document.getElementById("data").value;
+            const [y, m, d] = dataValue.split('-');
+            const dataFormatada = `${d}/${m}/${y}`;
+            
+            const dadosCabecalho = {
+                hospital: document.getElementById("hospital").value,
+                data: dataFormatada,
+                condutorPlantao: document.getElementById("condutorPlantao").value,
+                recebendoDe: document.getElementById("recebendoDe").value,
+                placa: document.getElementById("placa").value.toUpperCase(),
+                ambulanciaStatus: document.querySelector('input[name="ambulanciaStatus"]:checked')?.value || 'Não informado'
+            };
+            
+            // Obter horários
+            const horarioEntrada = document.getElementById("horarioEntrada").value;
+            const horarioSaida = document.getElementById("horarioSaida").value;
+            
+            // Obter localização formatada
+            let localizacaoInfo = 'Não disponível';
+            if (coordenadasGPS && coordenadasGPS.latitude && coordenadasGPS.longitude) {
+                const lat = coordenadasGPS.latitude.toFixed(6);
+                const lon = coordenadasGPS.longitude.toFixed(6);
+                localizacaoInfo = `${lat}, ${lon}`;
+            }
+            
+            const itensInspecao = [];
+            for (let i = 1; i <= inspectionItems.length; i++) {
+                const status = document.getElementById(`status-${i}`).value;
+                const obs = document.getElementById(`obs-${i}`).value.trim();
+                if (status || obs) {
+                    itensInspecao.push({
+                        num: i.toString().padStart(2, '0'),
+                        item: inspectionItems[i-1].name,
+                        status: status || 'Não avaliado',
+                        obs: obs || '---'
+                    });
+                }
+            }
+            
+            if (itensInspecao.length === 0) {
+                showNotification("Preencha ao menos um item de inspeção.", "warning");
+                return;
+            }
+            
+            const observacoesGerais = document.getElementById("observacoesAvarias").value;
+            
+            // Formatar a mensagem para WhatsApp
+            let mensagem = `📋 *CHECK-LIST DIÁRIO - LEFE*\n\n`;
+            mensagem += `🏥 *Hospital:* ${dadosCabecalho.hospital}\n`;
+            mensagem += `📆 *Data:* ${dadosCabecalho.data}\n`;
+            mensagem += `*🚑 Placa:* ${dadosCabecalho.placa}\n`;
+            mensagem += `🚑 *VTR:* ${dadosCabecalho.ambulanciaStatus}\n\n`;
+            mensagem += `🙋🏻 *Condutor:* ${dadosCabecalho.condutorPlantao}\n`;
+            
+            // Adicionando o campo "Recebendo de"
+            if (dadosCabecalho.recebendoDe) {
+                mensagem += `🫂 *Recebendo de:* ${dadosCabecalho.recebendoDe}\n`;
+            }
+            
+            // Adicionando horários
+            mensagem += `⏰ *Horário Entrada:* ${horarioEntrada}\n`;
+            mensagem += `⏰ *Horário Saída:* ${horarioSaida}\n`;
+            
+            // Adicionando localização
+            mensagem += `📍 *Localização:* ${localizacaoInfo}\n\n`;
+            
+            mensagem += `📝 *ITENS DE INSPEÇÃO:*\n\n`;
+            itensInspecao.forEach(item => {
+                mensagem += `${item.num}. ${item.item}`;
+                mensagem += `: ${item.status}`;
+                if (item.obs !== '---') {
+                    mensagem += `   Obs: ${item.obs}\n`;
+                }
+                mensagem += `\n`;
+            });
+            
+            if (observacoesGerais) {
+                mensagem += `\n 🛠️ *OBSERVAÇÕES GERAIS / AVARIAS:*\n${observacoesGerais}\n\n`;
+            }
+            
+            mensagem += `🙏🏻 *Deus seja louvado!!!*`;
+            
+            // Codificar a mensagem para URL
+            const mensagemCodificada = encodeURIComponent(mensagem);
+            
+            // Abrir o WhatsApp Web com a mensagem
+            window.open(`https://wa.me/?text=${mensagemCodificada}`, '_blank');
+            
+            showNotification("Abrindo WhatsApp...", "success");
+        }
+        
         function limparFormulario() {
             if (confirm("Deseja realmente limpar todos os campos?")) {
                 const key = getStorageKey();
@@ -2049,6 +2150,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey && e.key === 's') { e.preventDefault(); salvarDados(); }
                 if (e.ctrlKey && e.key === 'e') { e.preventDefault(); enviarPorEmail(); }
+                if (e.ctrlKey && e.key === 'w') { e.preventDefault(); enviarPorWhatsApp(); }
                 if (e.ctrlKey && e.key === 'p') { e.preventDefault(); window.print(); }
                 if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleToolbar(); }
