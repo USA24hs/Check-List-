@@ -1986,12 +1986,14 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             const horarioEntrada = document.getElementById("horarioEntrada").value;
             const horarioSaida = document.getElementById("horarioSaida").value;
             
-            // Obter localização formatada
-            let localizacaoInfo = 'Não disponível';
+              // Gerar link do Google Maps se houver coordenadas
+            let localizacaoInfo = 'Localização não disponível';
             if (coordenadasGPS && coordenadasGPS.latitude && coordenadasGPS.longitude) {
                 const lat = coordenadasGPS.latitude.toFixed(6);
                 const lon = coordenadasGPS.longitude.toFixed(6);
-                localizacaoInfo = `${lat}, ${lon}`;
+                const googleMapsLink = `https://maps.google.com/?q=${lat},${lon}`;
+                localizacaoInfo = ` ${lat}, ${lon}\n*Google Maps:* ${googleMapsLink}`;
+            
             }
             
             const itensInspecao = [];
