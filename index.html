@@ -369,14 +369,17 @@
         }
         
         #inspection-table input.obs-input { 
-            padding: 1px 2px !important; 
+            padding: 2px 2px !important; 
             font-size: 13px !important; 
             box-sizing: border-box !important;
         }
         
         /* Compactar outras tabelas (Dados básicos e Dados da Viatura) */
         .compact-table { font-size: 13px; }
-        .compact-table th, .compact-table td { padding: 1px 2px; line-height: 1.3; }
+        .compact-table th, .compact-table td { 
+            padding: 3px 4px !important; 
+            line-height: 1.1 !important; 
+        }
         .compact-table th { white-space: nowrap; }
         .compact-table input[type="text"],
         .compact-table input[type="date"],
@@ -385,11 +388,19 @@
         .compact-table select,
         .compact-table textarea {
             font-size: 13px;
-            padding: 2px 3px;
-            height: 28px;
+            padding: 3px 4px !important;
+            height: auto !important;
+            min-height: 10px !important;
+            box-sizing: border-box;
         }
+        /* Adicione esta regra abaixo para aumentar o tipo de plantão */
+#tipoPlantao {
+    width: 100% !important;
+    min-width: 200px !important;
+}
+        
         .compact-table input[type="radio"] { margin-right: 2px; }
-        .compact-table input[type="radio"] + label { margin-right: 5px; font-size: 13px; }
+        .compact-table input[type="radio"] + label { margin-right: 3px; font-size: 13px; }
         
         /* Área de observações */
         #observacoesAvarias { font-size: 13px; }
@@ -776,17 +787,14 @@
             padding: 10px;
             display: none; /* Inicialmente oculto */
         }
-
         .temporary-message.show {
             display: block;
         }
-
         .temporary-message-content {
             max-width: 900px;
             margin: 0 auto;
             position: relative;
         }
-
         .temporary-message-close {
             position: absolute;
             top: 5px;
@@ -797,26 +805,21 @@
             cursor: pointer;
             color: #666;
         }
-
         .temporary-message-body {
             display: flex;
             align-items: center;
         }
-
         .temporary-message-text {
             flex: 1;
             padding-right: 15px;
         }
-
         .temporary-message-text h3 {
             margin: 0 0 5px 0;
             color: var(--primary-color);
         }
-
         .temporary-message-text p {
             margin: 0 0 10px 0;
         }
-
         .temporary-message-link {
             display: inline-block;
             background-color: var(--primary-color);
@@ -826,23 +829,19 @@
             text-decoration: none;
             font-weight: bold;
         }
-
         .temporary-message-link:hover {
             background-color: var(--primary-dark);
         }
-
         .temporary-message-image {
             width: 100px;
             height: 100px;
         }
-
         .temporary-message-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 5px;
         }
-
         /* Ajuste para dispositivos móveis */
         @media (max-width: 768px) {
             .temporary-message-body {
@@ -914,7 +913,7 @@
                 <h2>Funcionalidades Principais</h2>
                 <h3>📝 Registro de Dados</h3>
                 <ul>
-                    <li>Informações básicas (hospital, data, horários, condutores)</li>
+                    <li>Informações básicas (hospital, data, tipo de plantão, horários, condutores)</li>
                     <li>Dados da viatura (placa, quilometragem, combustível, etc.)</li>
                     <li>Validação automática de placa brasileira</li>
                 </ul>
@@ -1031,6 +1030,19 @@
         <table class="compact-table details-section">
             <tr><td><strong>🏥 Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima"></td></tr>
             <tr><td><strong>📆 Data:</strong></td><td><input type="date" id="data"></td></tr>
+            <tr><td><strong>⏱️ Plantão:</strong></td>
+                <td>
+                    <select id="tipoPlantao" required>
+                        <option value="">Selecione...</option>
+                        <option value="SD 12hs">SD 12hs</option>
+                        <option value="SN 12hs">SN 12hs</option>
+                        <option value="DN 24hs">DN 24hs</option>
+                        <option value="Extra SD 12hs">Extra SD 12hs</option>
+                        <option value="Extra SN 12hs">Extra SN 12hs</option>
+                        <option value="Extra DN 24hs">Extra DN 24hs</option>
+                    </select>
+                </td>
+            </tr>
             <tr><td><strong>⏰ Horário de Entrada:</strong></td><td><input type="time" id="horarioEntrada" value="07:00"></td></tr>
             <tr><td><strong>⏰ Horário de Saída:</strong></td><td><input type="time" id="horarioSaida" value="19:00"></td></tr>
             <tr><td><strong>🙋 Condutor de Plantão:</strong></td><td><input type="text" id="condutorPlantao" placeholder="Nome completo"></td></tr>
@@ -1744,6 +1756,7 @@
                 const dados = {
                     hospital: document.getElementById("hospital").value,
                     data: document.getElementById("data").value,
+                    tipoPlantao: document.getElementById("tipoPlantao").value,
                     horarioEntrada: document.getElementById("horarioEntrada").value,
                     horarioSaida: document.getElementById("horarioSaida").value,
                     condutorPlantao: document.getElementById("condutorPlantao").value,
@@ -1828,6 +1841,7 @@
                 // Preencher formulário
                 document.getElementById("hospital").value = dados.hospital || '';
                 document.getElementById("data").value = dados.data || '';
+                document.getElementById("tipoPlantao").value = dados.tipoPlantao || '';
                 document.getElementById("horarioEntrada").value = dados.horarioEntrada || '';
                 document.getElementById("horarioSaida").value = dados.horarioSaida || '';
                 document.getElementById("condutorPlantao").value = dados.condutorPlantao || '';
@@ -1925,6 +1939,7 @@
                            <strong>VTR :</strong> ${item.dados.ambulanciaStatus || 'Não informado'}<br>
                             <strong>Placa:</strong> ${item.dados.placa}<br>
                             <strong>Data:</strong> ${item.dados.data}<br>
+                            <strong>Plantão:</strong> ${item.dados.tipoPlantao || 'Não informado'}<br>
                             <strong>Condutor:</strong> ${item.dados.condutorPlantao}<br>
                             <small>Salvo em: ${new Date(item.dados.timestamp || 0).toLocaleString()}</small>
                         `;
@@ -1972,7 +1987,7 @@
         }
         
         function validateForm() {
-            const required = ["hospital", "data", "condutorPlantao", "placa", "kmAtual"];
+            const required = ["hospital", "data", "tipoPlantao", "condutorPlantao", "placa", "kmAtual"];
             const today = new Date(); today.setHours(0,0,0,0);
             const dataInput = document.getElementById("data").value;
             const dataCheck = new Date(dataInput); dataCheck.setHours(0,0,0,0);
@@ -1984,6 +1999,14 @@
                 const el = document.getElementById(id);
                 if (!el.value.trim()) { isValid = false; el.classList.add("required-field"); }
             });
+            
+            // Verificar se o tipo de plantão foi selecionado
+            const tipoPlantao = document.getElementById("tipoPlantao");
+            if (!tipoPlantao.value) {
+                isValid = false;
+                tipoPlantao.classList.add("required-field");
+                showNotification("Selecione o plantão.", "error");
+            }
             
             // Obter o tipo de ambulância selecionado
             const selectedAmbulance = document.querySelector('input[name="ambulanciaStatus"]:checked');
@@ -2012,6 +2035,7 @@
             const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
                 data: dataFormatada,
+                tipoPlantao: document.getElementById("tipoPlantao").value,
                 horarioEntrada: document.getElementById("horarioEntrada").value,
                 horarioSaida: document.getElementById("horarioSaida").value,
                 condutorPlantao: document.getElementById("condutorPlantao").value,
@@ -2080,6 +2104,8 @@
 INFORMAÇÕES BÁSICAS
 ==============================================================================
 Hospital: ${dadosCabecalho.hospital}
+Data: ${dadosCabecalho.data}
+Plantão: ${dadosCabecalho.tipoPlantao}
 Condutor de Plantão: ${dadosCabecalho.condutorPlantao}
 Recebendo de: ${dadosCabecalho.recebendoDe}
 Horário de Entrada: ${dadosCabecalho.horarioEntrada}
@@ -2148,6 +2174,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             const dadosCabecalho = {
                 hospital: document.getElementById("hospital").value,
                 data: dataFormatada,
+                tipoPlantao: document.getElementById("tipoPlantao").value,
                 condutorPlantao: document.getElementById("condutorPlantao").value,
                 recebendoDe: document.getElementById("recebendoDe").value,
                 placa: document.getElementById("placa").value.toUpperCase(),
@@ -2192,6 +2219,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             let mensagem = `📋 *CHECK-LIST DIÁRIO - LEFE*\n\n`;
             mensagem += `🏥 *Hospital:* ${dadosCabecalho.hospital}\n`;
             mensagem += `📆 *Data:* ${dadosCabecalho.data}\n`;
+            mensagem += `⏱️ *Plantão:* ${dadosCabecalho.tipoPlantao}\n`;
             mensagem += `*🚑 Placa:* ${dadosCabecalho.placa}\n`;
             mensagem += `🚑 *VTR:* ${dadosCabecalho.ambulanciaStatus}\n\n`;
             mensagem += `🙋🏻 *Condutor:* ${dadosCabecalho.condutorPlantao}\n`;
@@ -2894,6 +2922,12 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                         marcarModificado();
                     }
                 });
+            });
+            
+            // Adicionar evento de mudança no campo tipoPlantao
+            const tipoPlantaoSelect = document.getElementById("tipoPlantao");
+            tipoPlantaoSelect.addEventListener('change', function() {
+                marcarModificado();
             });
             
             document.getElementById("placa").addEventListener("change", carregarDados);
