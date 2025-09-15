@@ -311,10 +311,7 @@
         .keyboard-shortcuts.show { display: block; }
         
         /* Compactar a tabela de STATUS DE INSPEÇÃO */
-        #inspection-table { 
-            font-size: 13px;
-            table-layout: fixed !important;
-        }
+        #inspection-table { font-size: 13px; }
         #inspection-table th, #inspection-table td { padding: 2px 4px; line-height: 1.3; }
         
         /* Colunas fixas (1, 2, 4) - tamanho mínimo absoluto */
@@ -335,32 +332,31 @@
             text-align: center !important;
             padding: 0 !important;
             overflow: hidden;
-        }
-        
-        #inspection-table th:nth-child(4), 
-        #inspection-table td:nth-child(4) { 
-            width: 90px !important; 
-            min-width: 90px !important;
-            max-width: 90px !important;
-            padding: 0 !important;
-            overflow: hidden;
-        }
-        
-        /* Ajustar o checkbox para caber no espaço reduzido */
-        #inspection-table input[type="checkbox"] {
-            width: 16px !important;
-            height: 16px !important;
-            margin: 2px !important;
-        }
-        
-        /* Ajustar o select de status para caber no espaço reduzido */
-        #inspection-table select.status-select {
-            width: 86px !important;
-            height: 24px !important;
-            font-size: 12px !important;
-            padding: 0 2px !important;
-            margin: 2px !important;
-        }
+                    }
+            
+            #inspection-table th:nth-child(4), 
+            #inspection-table td:nth-child(4) { 
+                width: 70px !important; 
+                min-width: 70px !important;
+                max-width: 70px !important;
+                padding: 0 !important;
+            }
+            
+            /* Ajustar o checkbox para caber no espaço reduzido em mobile */
+            #inspection-table input[type="checkbox"] {
+                width: 12px !important;
+                height: 12px !important;
+                margin: 2px !important;
+            }
+            
+            /* Ajustar o select de status para caber no espaço reduzido em mobile */
+            #inspection-table select.status-select {
+                width: 66px !important;
+                height: 20px !important;
+                font-size: 10px !important;
+                padding: 0 2px !important;
+                margin: 2px !important;
+            }
         
         /* Colunas responsivas: 3 e 5 */
         #inspection-table th:nth-child(3),
@@ -384,6 +380,25 @@
             box-sizing: border-box !important;
         }
         
+        /* Compactar outras tabelas (Dados básicos e Dados da Viatura) */
+        .compact-table { font-size: 13px; }
+        .compact-table th, .compact-table td { 
+            padding: 3px 4px !important; 
+            line-height: 1.1 !important; 
+        }
+        .compact-table th { white-space: nowrap; }
+        .compact-table input[type="text"],
+        .compact-table input[type="date"],
+        .compact-table input[type="time"],
+        .compact-table input[type="number"],
+        .compact-table select,
+        .compact-table textarea {
+            font-size: 13px;
+            padding: 3px 4px !important;
+            height: auto !important;
+            min-height: 10px !important;
+            box-sizing: border-box;
+        }
         /* Adicione esta regra abaixo para aumentar o tipo de plantão */
 #tipoPlantao {
     width: 100% !important;
@@ -439,6 +454,15 @@
         /* ===== MELHORIAS DE LAYOUT ===== */
         .container {
             padding: 15px;
+        }
+        
+        #inspection-table {
+            table-layout: fixed;
+        }
+        
+        #inspection-table input.obs-input {
+            width: 100%;
+            box-sizing: border-box;
         }
         
         /* Melhorias para dispositivos móveis */
@@ -554,9 +578,9 @@
             
             #inspection-table th:nth-child(4), 
             #inspection-table td:nth-child(4) { 
-                width: 80px !important; 
-                min-width: 80px !important;
-                max-width: 80px !important;
+                width: 60px !important; 
+                min-width: 60px !important;
+                max-width: 60px !important;
                 padding: 0 !important;
             }
             
@@ -569,11 +593,11 @@
             
             /* Ajustar o select de status para caber no espaço reduzido em mobile */
             #inspection-table select.status-select {
-                width: 76px !important;
-                height: 22px !important;
-                font-size: 11px !important;
-                padding: 1px !important;
-                margin: 2px !important;
+                width: 56px !important;
+                height: 18px !important;
+                font-size: 10px !important;
+                padding: 1 1px !important;
+                margin: 2 !important;
             }
             
             #inspection-table th:nth-child(3),
