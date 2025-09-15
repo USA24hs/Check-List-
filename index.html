@@ -205,6 +205,13 @@
             background-color: #fff2f2;
         }
         
+        /* Indicador de campo obrigatório */
+        .required-label::after {
+            content: " *";
+            color: var(--danger);
+            font-weight: bold;
+        }
+        
         /* Status counters */
         .status-counters {
             display: flex;
@@ -1028,9 +1035,9 @@
         
         <!-- Tabela Dados Básicos -->
         <table class="compact-table details-section">
-            <tr><td><strong>🏥 Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima"></td></tr>
-            <tr><td><strong>📆 Data:</strong></td><td><input type="date" id="data"></td></tr>
-            <tr><td><strong>⏱️ Plantão:</strong></td>
+            <tr><td><strong class="required-label">🏥 Hospital:</strong></td><td><input type="text" id="hospital" placeholder="Hospital Raimundo Lima" required></td></tr>
+            <tr><td><strong class="required-label">📆 Data:</strong></td><td><input type="date" id="data" required></td></tr>
+            <tr><td><strong class="required-label">⏱️ Plantão:</strong></td>
                 <td>
                     <select id="tipoPlantao" required>
                         <option value="">Selecione...</option>
@@ -1043,33 +1050,33 @@
                     </select>
                 </td>
             </tr>
-            <tr><td><strong>⏰ Horário de Entrada:</strong></td><td><input type="time" id="horarioEntrada" value="07:00"></td></tr>
-            <tr><td><strong>⏰ Horário de Saída:</strong></td><td><input type="time" id="horarioSaida" value="19:00"></td></tr>
-            <tr><td><strong>🙋 Condutor de Plantão:</strong></td><td><input type="text" id="condutorPlantao" placeholder="Nome completo"></td></tr>
-            <tr><td><strong>🫂 Recebendo de:</strong></td><td><input type="text" id="recebendoDe" placeholder="Nome do condutor anterior"></td></tr>
+            <tr><td><strong class="required-label">⏰ Horário de Entrada:</strong></td><td><input type="time" id="horarioEntrada" value="07:00" required></td></tr>
+            <tr><td><strong class="required-label">⏰ Horário de Saída:</strong></td><td><input type="time" id="horarioSaida" value="19:00" required></td></tr>
+            <tr><td><strong class="required-label">🙋 Condutor de Plantão:</strong></td><td><input type="text" id="condutorPlantao" placeholder="Nome completo" required></td></tr>
+            <tr><td><strong class="required-label">🫂 Recebendo de:</strong></td><td><input type="text" id="recebendoDe" placeholder="Nome do condutor anterior" required></td></tr>
         </table>
         
         <h2 class="details-section">🚑 DADOS DA VIATURA (BASICA / USA)</h2>
         <table class="compact-table details-section">
             <tr><th>Item</th><th>Informação</th></tr>
             <tr>
-                <td><strong>Ambulância</strong></td>
+                <td><strong class="required-label">Ambulância</strong></td>
                 <td>
-                    <input type="radio" id="ambulanciaBasica" name="ambulanciaStatus" value="BÁSICA"> 
+                    <input type="radio" id="ambulanciaBasica" name="ambulanciaStatus" value="BÁSICA" required> 
                     <label for="ambulanciaBasica">BÁSICA</label>
                     <input type="radio" id="ambulanciaUSA" name="ambulanciaStatus" value="USA"> 
                     <label for="ambulanciaUSA">USA / UTI</label>
                 </td>
             </tr>
-            <tr><td><strong>Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: ABC1234 ou ABC1D23" onblur="validarPlaca()"></td></tr>
-            <tr><td><strong>Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847"></td></tr>
-            <tr><td><strong>Nível de Combustível</strong></td><td><input type="text" id="nivelCombustivel" placeholder="Ex: 5/10 traços ou 1/2 tanque"></td></tr>
-            <tr><td><strong>CRV Válido até</strong></td><td><input type="number" id="crvValido" placeholder="Ano (ex: 2024)"></td></tr>
-            <tr><td><strong>Próxima Troca de Óleo km</strong></td><td><input type="number" id="proximaTrocaOleo" placeholder="Km da próxima troca"></td></tr>
+            <tr><td><strong class="required-label">Placa</strong></td><td><input type="text" id="placa" placeholder="Ex: ABC1234 ou ABC1D23" onblur="validarPlaca()" required></td></tr>
+            <tr><td><strong class="required-label">Km Atual</strong></td><td><input type="number" id="kmAtual" placeholder="Ex: 337847" required></td></tr>
+            <tr><td><strong class="required-label">Nível de Combustível</strong></td><td><input type="text" id="nivelCombustivel" placeholder="Ex: 5/10 traços ou 1/2 tanque" required></td></tr>
+            <tr><td><strong class="required-label">CRV Válido até</strong></td><td><input type="number" id="crvValido" placeholder="Ano (ex: 2024)" required></td></tr>
+            <tr><td><strong class="required-label">Próxima Troca de Óleo km</strong></td><td><input type="number" id="proximaTrocaOleo" placeholder="Km da próxima troca" required></td></tr>
             <tr>
-                <td><strong>Cartão de Abastecimento</strong></td>
+                <td><strong class="required-label">Cartão de Abastecimento</strong></td>
                 <td>
-                    <input type="radio" id="cartaoDisponivel" name="cartaoStatus" value="Disponível"> 
+                    <input type="radio" id="cartaoDisponivel" name="cartaoStatus" value="Disponível" required> 
                     <label for="cartaoDisponivel">Disponível</label>
                     <input type="radio" id="cartaoNaoDisponivel" name="cartaoStatus" value="Não Disponível"> 
                     <label for="cartaoNaoDisponivel">Não Disponível</label>
@@ -1987,7 +1994,21 @@
         }
         
         function validateForm() {
-            const required = ["hospital", "data", "tipoPlantao", "condutorPlantao", "placa", "kmAtual"];
+            // Campos obrigatórios atualizados
+            const required = [
+                "hospital", 
+                "data", 
+                "tipoPlantao", 
+                "horarioEntrada", 
+                "horarioSaida", 
+                "condutorPlantao", 
+                "recebendoDe",
+                "placa", 
+                "kmAtual", 
+                "nivelCombustivel", 
+                "crvValido", 
+                "proximaTrocaOleo"
+            ];
             const today = new Date(); today.setHours(0,0,0,0);
             const dataInput = document.getElementById("data").value;
             const dataCheck = new Date(dataInput); dataCheck.setHours(0,0,0,0);
@@ -2006,6 +2027,20 @@
                 isValid = false;
                 tipoPlantao.classList.add("required-field");
                 showNotification("Selecione o plantão.", "error");
+            }
+            
+            // Verificar se o tipo de ambulância foi selecionado
+            const ambulanciaStatus = document.querySelector('input[name="ambulanciaStatus"]:checked');
+            if (!ambulanciaStatus) {
+                isValid = false;
+                showNotification("Selecione o tipo de ambulância (BÁSICA ou USA).", "error");
+            }
+            
+            // Verificar se o status do cartão foi selecionado
+            const cartaoStatus = document.querySelector('input[name="cartaoStatus"]:checked');
+            if (!cartaoStatus) {
+                isValid = false;
+                showNotification("Selecione o status do cartão de abastecimento.", "error");
             }
             
             // Obter o tipo de ambulância selecionado
