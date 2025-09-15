@@ -2097,22 +2097,22 @@ Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
 ITENS DE INSPEÇÃO
 ==============================================================================
 ITENS COM STATUS ✅ OK (${itensAgrupados['✅ OK'].length} itens)
-${itensAgrupados['✅ OK'].map(item => `• ${item.num}. ${item.item}`).join('\n')}
+${itensAgrupados['✅ OK'].map(item => `• ${item.item}`).join('\n')}
 ${itensAgrupados['⚠️ Ruim'].length > 0 ? `
 ITENS COM STATUS ⚠️ RUIM (${itensAgrupados['⚠️ Ruim'].length} itens)
-${itensAgrupados['⚠️ Ruim'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+${itensAgrupados['⚠️ Ruim'].map(item => `• ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
 ${itensAgrupados['🛠️ Quebrado'].length > 0 ? `
 ITENS COM STATUS 🛠️ QUEBRADO (${itensAgrupados['🛠️ Quebrado'].length} itens)
-${itensAgrupados['🛠️ Quebrado'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+${itensAgrupados['🛠️ Quebrado'].map(item => `• ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
 ${itensAgrupados['❌ Faltando'].length > 0 ? `
 ITENS COM STATUS ❌ FALTANDO (${itensAgrupados['❌ Faltando'].length} itens)
-${itensAgrupados['❌ Faltando'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+${itensAgrupados['❌ Faltando'].map(item => `• ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
 ${itensAgrupados['🚨 Parar VTR'].length > 0 ? `
 ITENS COM STATUS 🚨 PARAR VTR (${itensAgrupados['🚨 Parar VTR'].length} itens)
-${itensAgrupados['🚨 Parar VTR'].map(item => `• ${item.num}. ${item.item} - Obs: ${item.obs}`).join('\n')}
+${itensAgrupados['🚨 Parar VTR'].map(item => `• ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
 ${observacoesGerais ? `
 OBSERVAÇÕES GERAIS / AVARIAS
@@ -2210,7 +2210,7 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             
             mensagem += `📝 *ITENS DE INSPEÇÃO:*\n\n`;
             itensInspecao.forEach(item => {
-                mensagem += `${item.num}. ${item.item}`;
+                mensagem += `${item.item}`;
                 mensagem += `: ${item.status}`;
                 if (item.obs !== '---') {
                     mensagem += `   Obs: ${item.obs}\n`;
