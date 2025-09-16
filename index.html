@@ -1007,7 +1007,7 @@
         <div class="status-counters no-print">
             <div class="status-counter status-ok">✅ OK: <span id="count-ok">0</span></div>
             <div class="status-counter status-ruim">⚠️ (R) Ruim: <span id="count-ruim">0</span></div>
-            <div class="status-counter status-quebrado">🛠️ (Q) Quebrado: <span id="count-quebrado">0</span></div>
+            <div class="status-counter status-quebrado">🛠️  (Q) Quebrado: <span id="count-quebrado">0</span></div>
             <div class="status-counter status-faltando">❌ (F) Faltando: <span id="count-faltando">0</span></div>
             <div class="status-counter status-parar">🚨 (P) Parar VTR: <span id="count-parar">0</span></div>
         </div>
@@ -1020,7 +1020,7 @@
                 <option value=""></option>
                 <option value="✅ OK">✅ OK</option>
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
-                <option value="🛠️ Quebrado">🛠️ Quebrado</option>
+                <option value="🛠️ Quebrado">🛠️  Quebrado</option>
                 <option value="❌ Faltando">❌ Faltando</option>
                 <option value="🚨 Parar VTR" title="Item crítico: veículo não deve operar">🚨 (P)</option>
             </select>
@@ -1087,7 +1087,7 @@
         <div id="localizacao" class="location-info no-print details-section"></div>
         
         <h2>📋 STATUS DE INSPEÇÃO</h2>
-        <p><em>Selecione o status: ✅ OK | ⚠️ (R) Ruim | 🛠️(Q) Quebrado | ❌ (F) Faltando | 🚨 (P) Parar VTR</em></p>
+        <p><em>Selecione o status: ✅ OK | ⚠️ (R) Ruim | 🛠️ (Q) Quebrado | ❌ (F) Faltando | 🚨 (P) Parar VTR</em></p>
         <table id="inspection-table">
             <thead>
                 <tr>
@@ -1568,7 +1568,7 @@
                 <option value=""></option>
                 <option value="✅ OK">✅ OK</option>
                 <option value="⚠️ Ruim">⚠️ (R)</option>
-                <option value="🛠️ Quebrado">🛠 (Q)</option>
+                <option value="🛠️  Quebrado">🛠 (Q)</option>
                 <option value="❌ Faltando">❌ (F)</option>
                 <option value="🚨 Parar VTR">🚨 (P)</option>
             `;
@@ -1672,14 +1672,14 @@
         }
         
         function updateStatusCounters() {
-            const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️ Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
+            const counters = { '✅ OK': 0, '⚠️ Ruim': 0, '🛠️  Quebrado': 0, '❌ Faltando': 0, '🚨 Parar VTR': 0 };
             document.querySelectorAll('.status-select').forEach(select => {
                 if (select.value && counters[select.value] !== undefined) counters[select.value]++;
             });
             
             document.getElementById('count-ok').textContent = counters['✅ OK'];
             document.getElementById('count-ruim').textContent = counters['⚠️ Ruim'];
-            document.getElementById('count-quebrado').textContent = counters['🛠️ Quebrado'];
+            document.getElementById('count-quebrado').textContent = counters['🛠️  Quebrado'];
             document.getElementById('count-faltando').textContent = counters['❌ Faltando'];
             document.getElementById('count-parar').textContent = counters['🚨 Parar VTR'];
         }
@@ -2116,7 +2116,7 @@
             const itensAgrupados = {
                 '✅ OK': [],
                 '⚠️ Ruim': [],
-                '🛠️ Quebrado': [],
+                '🛠️  Quebrado': [],
                 '❌ Faltando': [],
                 '🚨 Parar VTR': []
             };
@@ -2162,8 +2162,8 @@ ${itensAgrupados['⚠️ Ruim'].length > 0 ? `
 ITENS COM STATUS ⚠️ RUIM (${itensAgrupados['⚠️ Ruim'].length} itens)
 ${itensAgrupados['⚠️ Ruim'].map(item => `• ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
-${itensAgrupados['🛠️ Quebrado'].length > 0 ? `
-ITENS COM STATUS 🛠️ QUEBRADO (${itensAgrupados['🛠️ Quebrado'].length} itens)
+${itensAgrupados['🛠️  Quebrado'].length > 0 ? `
+ITENS COM STATUS 🛠️  QUEBRADO (${itensAgrupados['🛠️ Quebrado'].length} itens)
 ${itensAgrupados['🛠️ Quebrado'].map(item => `• ${item.item} - Obs: ${item.obs}`).join('\n')}
 ` : ''}
 ${itensAgrupados['❌ Faltando'].length > 0 ? `
@@ -2253,14 +2253,15 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             let mensagem = `📋 *CHECK-LIST DIÁRIO - LEFE*\n\n`;
             mensagem += `🏥 *Hospital:* ${dadosCabecalho.hospital}\n`;
             mensagem += `📆 *Data:* ${dadosCabecalho.data}\n`;
-            mensagem += `⏱️ *Plantão:* ${dadosCabecalho.tipoPlantao}\n`;
             mensagem += `*🚑 Placa:* ${dadosCabecalho.placa}\n`;
             mensagem += `🚑 *VTR:* ${dadosCabecalho.ambulanciaStatus}\n\n`;
             mensagem += `🙋🏻 *Condutor:* ${dadosCabecalho.condutorPlantao}\n`;
             
             // Adicionando o campo "Recebendo de"
             if (dadosCabecalho.recebendoDe) {
-                mensagem += `🫂 *Recebendo de:* ${dadosCabecalho.recebendoDe}\n`;
+            mensagem += `🫂 *Recebendo de:* ${dadosCabecalho.recebendoDe}\n`;
+            mensagem += `⏱️ *Plantão:* ${dadosCabecalho.tipoPlantao}\n`;
+    
             }
             
             // Adicionando horários
@@ -2275,16 +2276,17 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
                 mensagem += `${item.item}`;
                 mensagem += `: ${item.status}`;
                 if (item.obs !== '---') {
-                    mensagem += `   Obs: ${item.obs}\n`;
+                    mensagem += `   Obs: ${item.obs}`;
                 }
                 mensagem += `\n`;
             });
             
             if (observacoesGerais) {
-                mensagem += `\n 🛠️ *OBSERVAÇÕES GERAIS / AVARIAS:*\n${observacoesGerais}\n\n`;
+                mensagem += `\n 🛠️ *OBSERVAÇÕES GERAIS / AVARIAS:*
+                \n${observacoesGerais}\n`;
             }
             
-            mensagem += `🙏🏻 *Deus seja louvado!!!*`;
+            mensagem += `\n🙏🏻 *Deus seja louvado!!!*`;
             
             // Armazenar mensagem atual para uso posterior
             mensagemWhatsAppAtual = mensagem;
