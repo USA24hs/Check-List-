@@ -332,31 +332,31 @@
             text-align: center !important;
             padding: 0 !important;
             overflow: hidden;
-                    }
-            
-            #inspection-table th:nth-child(4), 
-            #inspection-table td:nth-child(4) { 
-                width: 70px !important; 
-                min-width: 70px !important;
-                max-width: 70px !important;
-                padding: 0 !important;
-            }
-            
-            /* Ajustar o checkbox para caber no espaço reduzido em mobile */
-            #inspection-table input[type="checkbox"] {
-                width: 12px !important;
-                height: 12px !important;
-                margin: 2px !important;
-            }
-            
-            /* Ajustar o select de status para caber no espaço reduzido em mobile */
-            #inspection-table select.status-select {
-                width: 66px !important;
-                height: 20px !important;
-                font-size: 10px !important;
-                padding: 0 2px !important;
-                margin: 2px !important;
-            }
+        }
+        
+        #inspection-table th:nth-child(4), 
+        #inspection-table td:nth-child(4) { 
+            width: 70px !important; 
+            min-width: 70px !important;
+            max-width: 70px !important;
+            padding: 0 !important;
+        }
+        
+        /* Ajustar o checkbox para caber no espaço reduzido em mobile */
+        #inspection-table input[type="checkbox"] {
+            width: 12px !important;
+            height: 12px !important;
+            margin: 2px !important;
+        }
+        
+        /* Ajustar o select de status para caber no espaço reduzido em mobile */
+        #inspection-table select.status-select {
+            width: 66px !important;
+            height: 20px !important;
+            font-size: 10px !important;
+            padding: 0 2px !important;
+            margin: 2px !important;
+        }
         
         /* Colunas responsivas: 3 e 5 */
         #inspection-table th:nth-child(3),
@@ -1020,7 +1020,7 @@
                 <option value=""></option>
                 <option value="✅ OK">✅ OK</option>
                 <option value="⚠️ Ruim">⚠️ Ruim</option>
-                <option value="🛠️ Quebrado">🛠️  Quebrado</option>
+                <option value="🛠️  Quebrado">🛠️  Quebrado</option>
                 <option value="❌ Faltando">❌ Faltando</option>
                 <option value="🚨 Parar VTR" title="Item crítico: veículo não deve operar">🚨 (P)</option>
             </select>
@@ -1568,7 +1568,7 @@
                 <option value=""></option>
                 <option value="✅ OK">✅ OK</option>
                 <option value="⚠️ Ruim">⚠️ (R)</option>
-                <option value="🛠️  Quebrado">🛠 (Q)</option>
+                <option value="🛠️  Quebrado">🛠️ (Q)</option>
                 <option value="❌ Faltando">❌ (F)</option>
                 <option value="🚨 Parar VTR">🚨 (P)</option>
             `;
@@ -2149,10 +2149,10 @@ DADOS DA VIATURA
 ==============================================================================
 VTR: ${dadosViatura.ambulanciaStatus}
 Placa: ${dadosViatura.placa}
-Km Atual: ${dadosViatura.kmAtual} km
+Km Atual: ${dadosViatura.kmAtual}
 Nível de Combustível: ${dadosViatura.nivelCombustivel}
 CRV Válido até: ${dadosViatura.crvValido}
-Próxima Troca de Óleo: ${dadosViatura.proximaTrocaOleo} km
+Km Próxima Troca de Óleo: ${dadosViatura.proximaTrocaOleo}
 Cartão de Abastecimento: ${dadosViatura.cartaoStatus}
 ITENS DE INSPEÇÃO
 ==============================================================================
@@ -2219,6 +2219,10 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             const horarioEntrada = document.getElementById("horarioEntrada").value;
             const horarioSaida = document.getElementById("horarioSaida").value;
             
+            // Obter dados da viatura
+            const kmAtual = document.getElementById("kmAtual").value;
+            const proximaTrocaOleo = document.getElementById("proximaTrocaOleo").value;
+            
             // Gerar link do Google Maps se houver coordenadas
             let localizacaoInfo = 'Localização não disponível';
             if (coordenadasGPS && coordenadasGPS.latitude && coordenadasGPS.longitude) {
@@ -2253,17 +2257,18 @@ E-mail gerado automaticamente pelo sistema LEFE em ${new Date().toLocaleString()
             let mensagem = `📋 *CHECK-LIST DIÁRIO - LEFE*\n\n`;
             mensagem += `🏥 *Hospital:* ${dadosCabecalho.hospital}\n`;
             mensagem += `📆 *Data:* ${dadosCabecalho.data}\n`;
+            mensagem += `🚑 *VTR:* ${dadosCabecalho.ambulanciaStatus}\n`;
             mensagem += `*🚑 Placa:* ${dadosCabecalho.placa}\n`;
-            mensagem += `🚑 *VTR:* ${dadosCabecalho.ambulanciaStatus}\n\n`;
+            mensagem += `*🚑 km Atual:* ${kmAtual}\n`;
+            mensagem += `*🚑 Km Próxima Troca de Óleo:* ${proximaTrocaOleo}\n\n`;
             mensagem += `🙋🏻 *Condutor:* ${dadosCabecalho.condutorPlantao}\n`;
             
             // Adicionando o campo "Recebendo de"
             if (dadosCabecalho.recebendoDe) {
-            mensagem += `🫂 *Recebendo de:* ${dadosCabecalho.recebendoDe}\n`;
+                mensagem += `🫂 *Recebendo de:* ${dadosCabecalho.recebendoDe}\n`;
+            }
             mensagem += `⏱️ *Plantão:* ${dadosCabecalho.tipoPlantao}\n`;
     
-            }
-            
             // Adicionando horários
             mensagem += `⏰ *Horário Entrada:* ${horarioEntrada}\n`;
             mensagem += `⏰ *Horário Saída:* ${horarioSaida}\n`;
